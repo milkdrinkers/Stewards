@@ -4,6 +4,9 @@ import com.palmergames.bukkit.towny.object.TownBlock;
 import io.github.milkdrinkers.settlers.api.settler.AbstractSettler;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
+import io.github.milkdrinkers.stewards.trait.StewardTrait;
+import net.citizensnpcs.api.ai.TeleportStuckAction;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -27,6 +30,24 @@ public class Steward {
         this.isEnabled = isEnabled;
         this.isHidden = isHidden;
         this.dailyUpkeepCost = dailyUpkeepCost;
+    }
+
+    public void startFollowing(Player player) {
+        getSettler().getNpc().getNavigator().setTarget(player, false);
+        getSettler().getNpc().getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
+        getSettler().getNpc().getNavigator().getDefaultParameters().speedModifier(100.f);
+        getSettler().getNpc().getNavigator().getDefaultParameters().distanceMargin(4.0);
+        getSettler().getNpc().getNavigator().getDefaultParameters().destinationTeleportMargin(64);
+        getSettler().getNpc().getTraitNullable(StewardTrait.class).setFollowing(true);
+        getSettler().getNpc().getTraitNullable(StewardTrait.class).setFollowingPlayer(player);
+        StewardLookup.get().setStewardFollowingPlayer(player, this);
+    }
+
+    public void stopFollowing(Player player) {
+        getSettler().getNpc().getNavigator().cancelNavigation();
+        getSettler().getNpc().getTraitNullable(StewardTrait.class).setFollowing(false);
+        getSettler().getNpc().getTraitNullable(StewardTrait.class).setFollowingPlayer(null);
+        StewardLookup.get().removeStewardFollowingPlayer(player);
     }
 
     public StewardType getStewardType() {

@@ -142,11 +142,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             if (trait.isFollowing()) {
                 ConfirmMoveGui.createGui(steward, player).open(player);
             } else {
-                steward.getSettler().getNpc().getNavigator().setTarget(player, false);
-                steward.getSettler().getNpc().getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
-                trait.setFollowing(true);
-                trait.setFollowingPlayer(player);
-                StewardLookup.get().setStewardFollowingPlayer(player, steward);
+                steward.startFollowing(player);
                 gui.close(player);
             }
         }));

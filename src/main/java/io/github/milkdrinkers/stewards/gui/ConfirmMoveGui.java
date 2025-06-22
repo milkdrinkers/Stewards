@@ -55,24 +55,14 @@ public class ConfirmMoveGui {
         if (trait == null) return;
 
         gui.setItem(0, ItemBuilder.from(backItem).asGuiItem(e -> {
+            steward.stopFollowing(player);
             steward.getSettler().getNpc().getNavigator().setTarget(trait.getAnchorLocation());
-
-            trait.setFollowing(false);
-            trait.setFollowingPlayer(null);
-
-            StewardLookup.get().removeStewardFollowingPlayer(player);
-
             gui.close(player);
         }));
 
         gui.setItem(2, ItemBuilder.from(stayItem).asGuiItem(e -> {
-            steward.getSettler().getNpc().getNavigator().cancelNavigation();
-
-
+            steward.stopFollowing(player);
             trait.setAnchorLocation(steward.getSettler().getNpc().getEntity().getLocation());
-            trait.setFollowing(false);
-            trait.setFollowingPlayer(null);
-
             StewardLookup.get().removeStewardFollowingPlayer(player);
 
             gui.close(player);
