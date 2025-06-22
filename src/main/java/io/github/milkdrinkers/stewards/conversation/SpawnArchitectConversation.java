@@ -75,7 +75,7 @@ public class SpawnArchitectConversation {
                     HologramTrait hologramTrait = steward.getSettler().getNpc().getOrAddTrait(HologramTrait.class);
                     hologramTrait.addLine("&7[&6" + steward.getStewardType().getName() + "&7]");
 
-                    steward.getSettler().getNpc().getOrAddTrait(LookClose.class);
+                    steward.getSettler().getNpc().getOrAddTrait(LookClose.class).setRange(16);
 
                     if (female) {
                         Appearance.applyFemaleStewardSkin(steward);
