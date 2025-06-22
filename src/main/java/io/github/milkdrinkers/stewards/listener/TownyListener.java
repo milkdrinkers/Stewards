@@ -14,7 +14,6 @@ import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.economy.transaction.TransactionType;
 import io.github.alathra.alathraports.api.PortsAPI;
-import io.github.milkdrinkers.colorparser.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
@@ -95,6 +94,8 @@ public class TownyListener implements Listener {
             try {
                 steward.getSettler().getNpc().teleport(town.getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setAnchorLocation(steward.getSettler().getNpc().getEntity().getLocation());
+                steward.stopFollowing(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
+                steward.getSettler().getNpc().getNavigator().setTarget(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getAnchorLocation());
             } catch (TownyException ex) {
                 throw new RuntimeException(ex);
             }
