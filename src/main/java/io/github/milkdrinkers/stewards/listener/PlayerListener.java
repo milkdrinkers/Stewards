@@ -38,48 +38,14 @@ public class PlayerListener implements Listener {
             if (!steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).isHired()) {
                 if (steward.getSettler().getNpc().hasTrait(ArchitectTrait.class)) {
                     steward.getSettler().getNpc().teleport(e.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    steward.stopFollowing(e.getPlayer());
+                    steward.startFollowing(e.getPlayer());
                 } else {
-                    steward.getSettler().delete();
-                    StewardLookup.get().removeStewardFollowingPlayer(e.getPlayer());
-                    TownMetaData.setUnhiredSteward(TownyAPI.getInstance().getTown(e.getPlayer()), false);
-                }
+                    steward.stopFollowing(e.getPlayer());
+                } 
+            } else {
+                steward.stopFollowing(e.getPlayer());
             }
-
-            StewardTrait trait = steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class);
-
-            StewardLookup.get().removeStewardFollowingPlayer(e.getPlayer());
-            steward.getSettler().getNpc().getNavigator().setTarget(trait.getAnchorLocation());
-            trait.setFollowing(false);
-            trait.setFollowingPlayer(null);
         }
     }
-
-    @EventHandler
-    public void onPlayerTeleportToSpawn(PlayerTeleportEvent e) {
-        // Return if player is followed, handled above.
-        if (StewardLookup.get().isPlayerFollowed(e.getPlayer())) return;
-
-        // If player doesn't have an architect, return.
-        if (!StewardLookup.get().hasArchitect(e.getPlayer())) return;
-
-        if (!Cfg.get().getBoolean("architect.teleport.enabled")) return;
-
-        // Get the configured world and null check
-        World world = Bukkit.getWorld(Cfg.get().getString("architect.teleport.world"));
-        if (world == null) return;
-
-        if (e.getTo().getWorld() != world) return;
-
-        Steward steward = StewardLookup.get().getArchitect(e.getPlayer());
-        if (steward == null) return;
-
-        // If steward is not an architect, don't continue
-        if (!steward.getSettler().getNpc().hasTrait(ArchitectTrait.class)) return;
-
-        // If architect is hired, i.e. town is created, don't continue
-        if (steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).isHired()) return;
-
-        steward.getSettler().getNpc().teleport(e.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-    }
-
 }

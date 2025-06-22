@@ -6,10 +6,6 @@ update-checker:
 
 # Language, specify the language file to use, for example `en_US` which will load `/lang/en_US.json`
 language: "en_US"
-architect:
-  teleport:
-    enabled: true # If true the architect will teleport with the player when teleporting to the world set below, regardless if it is following.
-    world: "spawn"
 bailiff:
   claims:
     level-1: 20 # Additional claims added by the bailiff.
