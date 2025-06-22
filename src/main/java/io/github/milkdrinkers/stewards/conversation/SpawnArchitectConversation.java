@@ -86,6 +86,8 @@ public class SpawnArchitectConversation {
                     StewardLookup.get().registerSteward(steward);
 
                     settler.spawn();
+
+                    steward.startFollowing(player);
                 } catch (InvalidStewardException e) {
                     throw new RuntimeException(e);
                 }
