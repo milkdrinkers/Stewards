@@ -88,6 +88,7 @@ public class ConfirmFireGui {
             } else { // This should never happen.
                 player.sendMessage(ColorParser.of("<red>Something went wrong, the steward couldn't be removed from town metadata.").build());
             }
+            StewardLookup.get().removeStewardUuidFromTown(town, steward);
             StewardLookup.get().unregisterSteward(steward);
             steward.getSettler().delete();
             gui.close(player);

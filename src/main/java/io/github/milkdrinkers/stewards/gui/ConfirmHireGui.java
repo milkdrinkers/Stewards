@@ -107,6 +107,8 @@ public class ConfirmHireGui {
                     } else { // This should never happen.
                         player.sendMessage(ColorParser.of("<red>Something went wrong, the steward couldn't be saved to town metadata.").build());
                     }
+
+                    StewardLookup.get().addStewardUuidToTown(town, steward);
                 } else {
                     player.sendMessage(ColorParser.of("<red>There's not enough money in your town bank to hire this steward.").build());
                 }

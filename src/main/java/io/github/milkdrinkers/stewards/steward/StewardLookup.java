@@ -1,5 +1,6 @@
 package io.github.milkdrinkers.stewards.steward;
 
+import com.palmergames.bukkit.towny.object.Town;
 import io.github.milkdrinkers.settlers.api.settler.AbstractSettler;
 import io.github.milkdrinkers.stewards.Reloadable;
 import io.github.milkdrinkers.stewards.Stewards;
@@ -7,6 +8,7 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class StewardLookup implements Reloadable {
@@ -15,6 +17,7 @@ public class StewardLookup implements Reloadable {
     private final HashMap<UUID, Steward> settlerStewardHashmap = new HashMap<>();
     private final HashMap<UUID, Steward> stewardFollowingPlayerHashmap = new HashMap<>();
     private final HashMap<UUID, Steward> architectMap = new HashMap<>();
+    private final HashMap<UUID, List<UUID>> townStewardUuidMap = new HashMap<>();
 
     public static StewardLookup get() {
         return Stewards.getInstance().getStewardLookup();
@@ -22,6 +25,55 @@ public class StewardLookup implements Reloadable {
 
     public StewardLookup(Stewards plugin) {
         this.plugin = plugin;
+    }
+
+    public List<UUID> getTownStewardUuids(UUID uuid) {
+        return townStewardUuidMap.get(uuid);
+    }
+
+    public List<UUID> getTownStewardUuids(Town town) {
+        return getTownStewardUuids(town.getUUID());
+    }
+
+    public void setTownStewardUuids(UUID uuid, List<UUID> uuids) {
+        townStewardUuidMap.put(uuid, uuids);
+    }
+
+    public void setTownStewardUuids(Town town, List<UUID> uuids) {
+        setTownStewardUuids(town.getUUID(), uuids);
+    }
+
+    public void addStewardUuidToTown(UUID townUuid, UUID stewardUuid) {
+        List<UUID> uuids = townStewardUuidMap.get(townUuid);
+        if (uuids == null) {
+            uuids = List.of(stewardUuid);
+        } else {
+            uuids.add(stewardUuid);
+        }
+        townStewardUuidMap.put(townUuid, uuids);
+    }
+
+    public void addStewardUuidToTown(Town town, Steward steward) {
+        addStewardUuidToTown(town.getUUID(), steward.getSettler().getNpc().getUniqueId());
+    }
+
+    public void removeStewardUuidFromTown(UUID townUuid, UUID stewardUuid) {
+        List<UUID> uuids = townStewardUuidMap.get(townUuid);
+        if (uuids != null) {
+            uuids.remove(stewardUuid);
+        }
+    }
+
+    public void removeStewardUuidFromTown(Town town, Steward steward) {
+        removeStewardUuidFromTown(town.getUUID(), steward.getSettler().getNpc().getUniqueId());
+    }
+
+    public void clearTownStewardUuids(UUID townUuid) {
+        townStewardUuidMap.remove(townUuid);
+    }
+
+    public void clearTownStewardUuids(Town town) {
+        clearTownStewardUuids(town.getUUID());
     }
 
     public void removeStewardFollowingPlayer(UUID uuid) {

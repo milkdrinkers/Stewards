@@ -4,6 +4,7 @@ import com.palmergames.adventure.text.Component;
 import com.palmergames.adventure.text.event.HoverEvent;
 import com.palmergames.adventure.text.format.NamedTextColor;
 import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.event.DeleteTownEvent;
 import com.palmergames.bukkit.towny.event.NewDayEvent;
 import com.palmergames.bukkit.towny.event.NewTownEvent;
 import com.palmergames.bukkit.towny.event.PreDeleteTownEvent;
@@ -96,6 +97,8 @@ public class TownyListener implements Listener {
                 steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setAnchorLocation(steward.getSettler().getNpc().getEntity().getLocation());
                 steward.stopFollowing(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
                 steward.getSettler().getNpc().getNavigator().setTarget(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getAnchorLocation());
+
+                StewardLookup.get().addStewardUuidToTown(town, steward);
             } catch (TownyException ex) {
                 throw new RuntimeException(ex);
             }
@@ -105,36 +108,11 @@ public class TownyListener implements Listener {
     }
 
     @EventHandler
-    public void onTownRemoved(PreDeleteTownEvent e) {
-        if (TownMetaData.hasArchitect(e.getTown())) {
-            Steward steward = StewardLookup.get().getSteward(TownMetaData.getArchitect(e.getTown()));
-            StewardLookup.get().unregisterSteward(steward);
-            steward.getSettler().delete();
-        }
-
-        if (TownMetaData.hasBailiff(e.getTown())) {
-            Steward steward = StewardLookup.get().getSteward(TownMetaData.getBailiff(e.getTown()));
-            StewardLookup.get().unregisterSteward(steward);
-            steward.getSettler().delete();
-        }
-
-        if (TownMetaData.hasPortmaster(e.getTown())) {
-            Steward steward = StewardLookup.get().getSteward(TownMetaData.getPortmaster(e.getTown()));
-            StewardLookup.get().unregisterSteward(steward);
-            steward.getSettler().delete();
-        }
-
-        if (TownMetaData.hasStablemaster(e.getTown())) {
-            Steward steward = StewardLookup.get().getSteward(TownMetaData.getStablemaster(e.getTown()));
-            StewardLookup.get().unregisterSteward(steward);
-            steward.getSettler().delete();
-        }
-
-        if (TownMetaData.hasTreasurer(e.getTown())) {
-            Steward steward = StewardLookup.get().getSteward(TownMetaData.getTreasurer(e.getTown()));
-            StewardLookup.get().unregisterSteward(steward);
-            steward.getSettler().delete();
-        }
+    public void onTownRemoved(DeleteTownEvent e) {
+        StewardLookup.get().getTownStewardUuids(e.getTownUUID()).forEach(stewardUuid -> {
+            StewardLookup.get().getSteward(stewardUuid).getSettler().delete();
+            StewardLookup.get().unregisterSteward(stewardUuid);
+        });
     }
 
     @EventHandler
