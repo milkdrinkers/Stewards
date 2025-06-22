@@ -160,6 +160,19 @@ public class SettlersListener implements Listener {
         } else if (e.getSettler().getNpc().hasTrait(StablemasterTrait.class)) {
             PortsAPI.deleteAbstractCarriageStation(PortsAPI.getCarriageStationFromTown(TownyAPI.getInstance().getTown(StewardLookup.get().getSteward(e.getSettler()).getTownUUID())));
         }
+
+        // If the NPC is following a player, we clear that player's following state
+        if (e.getSettler().getNpc().getTraitNullable(StewardTrait.class).isFollowing()) {
+            StewardLookup.get().removeStewardFollowingPlayer(e.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
+        }
+
+        // If architect and town hasn't been created, we remove that the player has an active architect
+        if (e.getSettler().getNpc().hasTrait(ArchitectTrait.class) && !e.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
+            StewardLookup.get().clearHasArchitect(e.getSettler().getNpc().getTraitNullable(ArchitectTrait.class).getSpawningPlayer());
+        }
+
+        // Uncache the Steward. We don't delete the Settler or NPC objects, as this is handled by their respective plugins
+        StewardLookup.get().unregisterSteward(StewardLookup.get().getSteward(e.getSettler()));
     }
 
 }
