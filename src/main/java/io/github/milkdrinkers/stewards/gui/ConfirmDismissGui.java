@@ -51,7 +51,14 @@ public class ConfirmDismissGui {
         gui.setItem(1, 2, ItemBuilder.from(dismissItem).asGuiItem(e -> {
             gui.close(player);
             steward.getSettler().getNpc().destroy();
-            TownMetaData.setUnhiredSteward(TownyAPI.getInstance().getTown(player), false);
+
+            Resident resident = TownyAPI.getInstance().getResident(player);
+            if (resident != null) {
+                player.sendMessage(ColorParser.of("This is a temporary string that is going to be replaced soon :)").build());
+            }
+            if (resident.hasTown()) {
+                TownMetaData.setUnhiredSteward(TownyAPI.getInstance().getTown(player), false);
+            }
         }));
 
         gui.setItem(1, 4, ItemBuilder.from(backItem).asGuiItem(e -> {
