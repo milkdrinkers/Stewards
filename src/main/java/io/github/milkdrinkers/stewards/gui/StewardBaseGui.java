@@ -20,6 +20,7 @@ import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.*;
 import io.github.milkdrinkers.stewards.utility.Appearance;
 import io.github.milkdrinkers.stewards.utility.Cfg;
+import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -142,6 +143,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                 ConfirmMoveGui.createGui(steward, player).open(player);
             } else {
                 steward.getSettler().getNpc().getNavigator().setTarget(player, false);
+                steward.getSettler().getNpc().getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
                 trait.setFollowing(true);
                 trait.setFollowingPlayer(player);
                 StewardLookup.get().setStewardFollowingPlayer(player, steward);
