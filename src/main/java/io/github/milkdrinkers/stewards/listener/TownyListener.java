@@ -79,6 +79,8 @@ public class TownyListener implements Listener {
 
         TownMetaData.setArchitect(town, steward);
 
+        StewardLookup.get().addStewardUuidToTown(town, steward);
+
         steward.setTownUUID(town.getUUID());
         steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).hire();
         steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setTownUUID(town.getUUID());
@@ -97,8 +99,6 @@ public class TownyListener implements Listener {
                 steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setAnchorLocation(steward.getSettler().getNpc().getEntity().getLocation());
                 steward.stopFollowing(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
                 steward.getSettler().getNpc().getNavigator().setTarget(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getAnchorLocation());
-
-                StewardLookup.get().addStewardUuidToTown(town, steward);
             } catch (TownyException ex) {
                 throw new RuntimeException(ex);
             }

@@ -45,11 +45,7 @@ public class StewardLookup implements Reloadable {
 
     public void addStewardUuidToTown(UUID townUuid, UUID stewardUuid) {
         List<UUID> uuids = townStewardUuidMap.get(townUuid);
-        if (uuids == null) {
-            uuids = List.of(stewardUuid);
-        } else {
-            uuids.add(stewardUuid);
-        }
+        uuids.add(stewardUuid);
         townStewardUuidMap.put(townUuid, uuids);
     }
 
@@ -62,6 +58,7 @@ public class StewardLookup implements Reloadable {
         if (uuids != null) {
             uuids.remove(stewardUuid);
         }
+        townStewardUuidMap.put(townUuid, uuids);
     }
 
     public void removeStewardUuidFromTown(Town town, Steward steward) {
