@@ -42,7 +42,7 @@ public class PlayerListener implements Listener {
                     steward.startFollowing(e.getPlayer());
                 } else {
                     steward.stopFollowing(e.getPlayer());
-                } 
+                }
             } else {
                 steward.stopFollowing(e.getPlayer());
             }

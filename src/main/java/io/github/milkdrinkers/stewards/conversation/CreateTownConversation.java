@@ -8,6 +8,7 @@ import io.github.milkdrinkers.colorparser.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.towny.TownyDataUtil;
 import io.github.milkdrinkers.stewards.utility.Logger;
+import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;
 import org.bukkit.conversations.*;
 import org.bukkit.entity.Player;
@@ -35,14 +36,14 @@ public class CreateTownConversation {
     private static final Prompt newTownPrompt = new StringPrompt() {
         @Override
         public @NotNull String getPromptText(@NotNull ConversationContext context) {
-            return "What do you want your town to be called?";
+            return Translation.of("towny.new-town-name");
         }
 
         @Override
         public @Nullable Prompt acceptInput(@NotNull ConversationContext context, @Nullable String input) {
             if (TownyAPI.getInstance().getTown(input) != null) {
                 Player player = (Player) context.getForWhom();
-                player.sendMessage(Component.text("That name is already taken."));
+                player.sendMessage(Component.text(Translation.of("towny.name-taken")));
                 return newTownPrompt;
             }
             townName = input;
@@ -54,7 +55,7 @@ public class CreateTownConversation {
 
         @Override
         public @NotNull String getPromptText(@NotNull ConversationContext context) {
-            return "Do you want to create the town '" + townName + "'? [Yes/No]";
+            return Translation.of("towny.new-town-confirmation").formatted(townName);
         }
 
         @Override
@@ -65,7 +66,7 @@ public class CreateTownConversation {
 
             Resident resident = TownyAPI.getInstance().getResident(player);
             if (resident == null) {
-                player.sendMessage(ColorParser.of("<red>Something went wrong with town creation. Please contact staff if this persists.").build());
+                player.sendMessage(ColorParser.of(Translation.of("error.resident-null")).build());
                 Logger.get().error("Something prevented town block claim on town creation. Resident returned null.");
                 return Prompt.END_OF_CONVERSATION;
             }
@@ -74,7 +75,7 @@ public class CreateTownConversation {
                 TownyDataUtil.addPlayerAndSteward(player, steward);
                 TownCommand.newTown(player, townName, resident, false);
             } catch (TownyException e) {
-                player.sendMessage(ColorParser.of("<red>Something went wrong with town creation. Please contact staff if this persists.").build());
+                player.sendMessage(ColorParser.of(Translation.of("error.towny-exception")).build());
                 Logger.get().error(e.getMessage());
                 TownyDataUtil.removePlayerAndSteward(player);
                 return Prompt.END_OF_CONVERSATION;

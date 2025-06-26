@@ -46,7 +46,7 @@ public class ArchitectSpawnerTrait extends Trait {
         }
 
         if (Hook.getVaultHook().getEconomy().getBalance(Bukkit.getOfflinePlayer(player.getUniqueId())) < TownySettings.getNewTownPrice()) {
-            player.sendMessage(ColorParser.of(Translation.of("traits.spawner.cannot-afford")).parseMinimessagePlaceholder("<price>", String.valueOf(TownySettings.getNewTownPrice())).build());
+            player.sendMessage(ColorParser.of(Translation.of("traits.spawner.cannot-afford").formatted(String.valueOf(TownySettings.getNewTownPrice()))).build());
             return;
         }
 

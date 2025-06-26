@@ -6,6 +6,7 @@ import io.github.milkdrinkers.colorparser.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Appearance;
+import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class AppearanceGui {
 
     public static Gui createGui(Steward steward, Player player) {
-        Gui gui = Gui.gui().title(Component.text("Re-roll name and skin"))
+        Gui gui = Gui.gui().title(Component.text(Translation.of("gui.appearance.title")))
             .rows(1)
             .create();
 
@@ -36,7 +37,7 @@ public class AppearanceGui {
 
         ItemStack exitItem = new ItemStack(Material.PAPER);
         ItemMeta exitMeta = exitItem.getItemMeta();
-        exitMeta.displayName(ColorParser.of("<red>Back").build().decoration(TextDecoration.ITALIC, false));
+        exitMeta.displayName(ColorParser.of(Translation.of("gui.general.back")).build().decoration(TextDecoration.ITALIC, false));
         exitMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         exitItem.setItemMeta(exitMeta);
 
@@ -44,19 +45,19 @@ public class AppearanceGui {
 
         ItemStack nameItem = new ItemStack(Material.NAME_TAG);
         ItemMeta nameMeta = nameItem.getItemMeta();
-        nameMeta.displayName(ColorParser.of("<green>Re-roll name").build().decoration(TextDecoration.ITALIC, false));
+        nameMeta.displayName(ColorParser.of(Translation.of("gui.appearance.name")).build().decoration(TextDecoration.ITALIC, false));
         nameMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         nameItem.setItemMeta(nameMeta);
 
         ItemStack skinItem = new ItemStack(Material.LEATHER_CHESTPLATE);
         ItemMeta skinMeta = skinItem.getItemMeta();
-        skinMeta.displayName(ColorParser.of("<green>Re-roll skin").build().decoration(TextDecoration.ITALIC, false));
+        skinMeta.displayName(ColorParser.of(Translation.of("gui.appearance.skin")).build().decoration(TextDecoration.ITALIC, false));
         skinMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         skinItem.setItemMeta(skinMeta);
 
         ItemStack nameAndSkinItem = new ItemStack(Material.PLAYER_HEAD);
         ItemMeta nameAndSkinMeta = nameAndSkinItem.getItemMeta();
-        nameAndSkinMeta.displayName(ColorParser.of("<green>Re-roll name and skin").build().decoration(TextDecoration.ITALIC, false));
+        nameAndSkinMeta.displayName(ColorParser.of(Translation.of("gui.appearance.name-and-skin")).build().decoration(TextDecoration.ITALIC, false));
         nameAndSkinMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         nameAndSkinItem.setItemMeta(nameAndSkinMeta);
 

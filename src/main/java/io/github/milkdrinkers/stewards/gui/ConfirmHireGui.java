@@ -13,6 +13,7 @@ import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.*;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.Logger;
+import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Chunk;
@@ -27,7 +28,7 @@ import java.util.List;
 public class ConfirmHireGui {
 
     public static Gui createGui(Steward steward, Player player, int cost) {
-        Gui gui = Gui.gui().title(Component.text("Hire " + steward.getStewardType().getName()))
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.hire.title")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -44,14 +45,14 @@ public class ConfirmHireGui {
     private static void populateButtons(Gui gui, Steward steward, Player player, int cost) {
         ItemStack hireItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta hireMeta = hireItem.getItemMeta();
-        hireMeta.displayName(ColorParser.of("<green>Hire " + steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
-        hireMeta.lore(List.of(ColorParser.of("<grey>Hiring this steward costs " + cost + "⊚.").build().decoration(TextDecoration.ITALIC, false)));
+        hireMeta.displayName(ColorParser.of(Translation.of("gui.hire.hire")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+        hireMeta.lore(List.of(ColorParser.of(Translation.of("gui.hire.hire-lore")).build().decoration(TextDecoration.ITALIC, false)));
         hireMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         hireItem.setItemMeta(hireMeta);
 
         ItemStack backItem = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.displayName(ColorParser.of("<red>Back").build().decoration(TextDecoration.ITALIC, false));
+        backMeta.displayName(ColorParser.of(Translation.of("gui.general.back")).build().decoration(TextDecoration.ITALIC, false));
         backMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         backItem.setItemMeta(backMeta);
 
@@ -66,7 +67,7 @@ public class ConfirmHireGui {
 
             if (checkTownBlock(steward, player)) {
                 if (checkTownBank(steward, player, cost)) {
-                    player.sendMessage(ColorParser.of("<green>You have successfully hired the " + steward.getStewardType().getName() + ".").build());
+                    player.sendMessage(ColorParser.of(Translation.of("gui.hire.hire-success")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build());
                     steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).hire();
                     steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
                     steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setLevel(1);
@@ -105,15 +106,16 @@ public class ConfirmHireGui {
                         TownMetaData.setTreasurer(TownyAPI.getInstance().getTown(player), steward);
                         TownMetaData.setBankLimit(TownyAPI.getInstance().getTown(player), Cfg.get().getInt("treasurer.limit.level-1"));
                     } else { // This should never happen.
-                        player.sendMessage(ColorParser.of("<red>Something went wrong, the steward couldn't be saved to town metadata.").build());
+                        Logger.get().error("Something went wrong: No type-specific trait was found for " + steward.getSettler().getNpc());
+                        player.sendMessage(ColorParser.of(Translation.of("error.improper-trait")).build());
                     }
 
                     StewardLookup.get().addStewardUuidToTown(town, steward);
                 } else {
-                    player.sendMessage(ColorParser.of("<red>There's not enough money in your town bank to hire this steward.").build());
+                    player.sendMessage(ColorParser.of(Translation.of("gui.hire.not-enough-funds")).build());
                 }
             } else {
-                player.sendMessage(ColorParser.of("<red>This steward is too close to another steward.").build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.hire.too-close")).build());
             }
             gui.close(player);
         }));

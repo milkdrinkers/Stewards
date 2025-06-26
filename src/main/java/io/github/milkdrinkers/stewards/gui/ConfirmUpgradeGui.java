@@ -15,6 +15,7 @@ import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.Logger;
+import io.github.milkdrinkers.wordweaver.Translation;
 import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -29,7 +30,7 @@ import java.util.List;
 public class ConfirmUpgradeGui {
 
     public static Gui createGui(Steward steward, Player player, int cost) {
-        Gui gui = Gui.gui().title(Component.text("Upgrade " + steward.getStewardType().getName()))
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.upgrade.title")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -46,27 +47,27 @@ public class ConfirmUpgradeGui {
     private static void populateButtons(Gui gui, Steward steward, Player player, int cost) {
         ItemStack upgradeItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta upgradeMeta = upgradeItem.getItemMeta();
-        upgradeMeta.displayName(ColorParser.of("<green>Upgrade " + steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
-        upgradeMeta.lore(List.of(ColorParser.of("<grey>Upgrading costs " + cost + "⊚.").build().decoration(TextDecoration.ITALIC, false)));
+        upgradeMeta.displayName(ColorParser.of(Translation.of("gui.upgrade.upgrade")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+        upgradeMeta.lore(List.of(ColorParser.of(Translation.of("gui.upgrade.upgrade-lore")).parseMinimessagePlaceholder("cost", String.valueOf(cost)).build().decoration(TextDecoration.ITALIC, false)));
         upgradeMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         upgradeItem.setItemMeta(upgradeMeta);
 
         ItemStack backItem = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.displayName(ColorParser.of("<red>Back").build().decoration(TextDecoration.ITALIC, false));
+        backMeta.displayName(ColorParser.of(Translation.of("gui.general.back")).build().decoration(TextDecoration.ITALIC, false));
         backMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         backItem.setItemMeta(backMeta);
 
         gui.setItem(1, 2, ItemBuilder.from(upgradeItem).asGuiItem(e -> {
             if (!checkTownBank(steward, player, cost)) {
-                player.sendMessage(ColorParser.of("<red>You don't have enough money in your town bank to upgrade this steward.").build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.not-enough-funds")).build());
                 gui.close(player);
                 return;
             }
 
             Town town = TownyAPI.getInstance().getTown(player);
             if (town == null) {
-                player.sendMessage(ColorParser.of("<red>Something went wrong, the steward couldn't be upgraded.").build());
+                player.sendMessage(ColorParser.of(Translation.of("error.towny-exception")).build());
                 Logger.get().error("Something went wrong when checking town for {}. Town was null.", player.getName());
                 gui.close(player);
                 return;
@@ -74,7 +75,7 @@ public class ConfirmUpgradeGui {
 
             if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).levelUp()) {
                 steward.levelUp();
-                player.sendMessage(ColorParser.of("<green>You have upgraded your steward to level " + steward.getLevel() + "!").build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade")).build());
 
                 if (steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().BAILIFF_ID)) {
 
@@ -85,7 +86,8 @@ public class ConfirmUpgradeGui {
 
                     Port port = PortsAPI.getPortFromTown(town);
                     if (port == null) { // This shouldn't be possible
-                        player.sendMessage(ColorParser.of("<red>Something went wrong, the port couldn't be upgraded.").build());
+                        Logger.get().error("Something went wrong when upgrading steward {}. Port was null.", steward.getSettler().getNpc().getName());
+                        player.sendMessage(ColorParser.of(Translation.of("error.no-upgrade")).build());
                         gui.close(player);
                         return;
                     }
@@ -95,7 +97,8 @@ public class ConfirmUpgradeGui {
 
                     CarriageStation station = PortsAPI.getCarriageStationFromTown(town);
                     if (station == null) {
-                        player.sendMessage(ColorParser.of("<red>Something went wrong, the carriage station couldn't be upgraded.").build());
+                        Logger.get().error("Something went wrong when upgrading steward {}. CarriageStation was null.", steward.getSettler().getNpc().getName());
+                        player.sendMessage(ColorParser.of(Translation.of("error.no-upgrade")).build());
                         gui.close(player);
                         return;
                     }
@@ -114,7 +117,8 @@ public class ConfirmUpgradeGui {
                 hologramTrait.addLine("&7[&b" + steward.getStewardType().getName() + "&7]" + " &aLvl " + steward.getLevel());
 
             } else {
-                player.sendMessage(ColorParser.of("<red>Something went wrong, the steward couldn't be upgraded.").build());
+                Logger.get().error("Something went wrong when upgrading steward {}. Level was not upgraded.", steward.getSettler().getNpc().getName());
+                player.sendMessage(ColorParser.of(Translation.of("error.no-upgrade")).build());
             }
             gui.close(player);
         }));

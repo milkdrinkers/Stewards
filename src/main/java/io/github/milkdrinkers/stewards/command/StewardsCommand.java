@@ -36,7 +36,7 @@ class StewardsCommand {
 
     private void executorSpawn(CommandSender sender, CommandArguments args) {
         try {
-            boolean female = Math.random() > 0.5; // TODO most up to date spawn logic.
+            boolean female = Math.random() > 0.5;
             String name = Appearance.getMaleName();
             if (female)
                 name = Appearance.getFemaleName();

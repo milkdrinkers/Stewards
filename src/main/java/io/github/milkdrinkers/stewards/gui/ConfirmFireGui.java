@@ -16,6 +16,7 @@ import io.github.milkdrinkers.stewards.trait.StablemasterTrait;
 import io.github.milkdrinkers.stewards.trait.TreasurerTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.Logger;
+import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -29,7 +30,7 @@ import java.util.List;
 public class ConfirmFireGui {
 
     public static Gui createGui(Steward steward, Player player) {
-        Gui gui = Gui.gui().title(Component.text("Fire " + steward.getStewardType().getName()))
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.fire.title")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -46,8 +47,8 @@ public class ConfirmFireGui {
     private static void populateButtons(Gui gui, Steward steward, Player player) {
         ItemStack fireItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta fireMeta = fireItem.getItemMeta();
-        fireMeta.displayName(ColorParser.of("<green>Hire " + steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
-        fireMeta.lore(List.of(ColorParser.of("<grey>This action is permanent and cannot be undone.").build().decoration(TextDecoration.ITALIC, false)));
+        fireMeta.displayName(ColorParser.of(Translation.of("gui.fire.fire")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+        fireMeta.lore(List.of(ColorParser.of(Translation.of("gui.fire.fire-lore")).build().decoration(TextDecoration.ITALIC, false)));
         fireMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         fireItem.setItemMeta(fireMeta);
 
@@ -58,7 +59,7 @@ public class ConfirmFireGui {
         backItem.setItemMeta(backMeta);
 
         gui.setItem(1, 2, ItemBuilder.from(fireItem).asGuiItem(e -> {
-            player.sendMessage(ColorParser.of("<green>You have fired the " + steward.getStewardType().getName() + ".").build().decoration(TextDecoration.ITALIC, false));
+            player.sendMessage(ColorParser.of(Translation.of("gui.fire.fire-success")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
 
             Town town = TownyAPI.getInstance().getTown(player);
             if (town == null) { // This should never happen, as player was allowed to interact with steward
@@ -86,7 +87,8 @@ public class ConfirmFireGui {
                 TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
 
             } else { // This should never happen.
-                player.sendMessage(ColorParser.of("<red>Something went wrong, the steward couldn't be removed from town metadata.").build());
+                player.sendMessage(ColorParser.of(Translation.of("error.improper-trait")).build());
+                Logger.get().error("Something went wrong, the steward didn't have a type-trait. Steward: {}", steward.getSettler().getNpc().getUniqueId());
             }
             StewardLookup.get().removeStewardUuidFromTown(town, steward);
             StewardLookup.get().unregisterSteward(steward);

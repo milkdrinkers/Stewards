@@ -15,6 +15,7 @@ import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.trait.TreasurerTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.Logger;
+import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -28,7 +29,7 @@ import java.util.List;
 public class ConfirmStipendGui {
 
     public static Gui createGui(Steward steward, Player player, int cost) {
-        Gui gui = Gui.gui().title(Component.text("Hire " + steward.getStewardType().getName()))
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.stipend.title")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -45,20 +46,20 @@ public class ConfirmStipendGui {
     private static void populateButtons(Gui gui, Steward steward, Player player, int cost) {
         ItemStack upgradeItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta upgradeMeta = upgradeItem.getItemMeta();
-        upgradeMeta.displayName(ColorParser.of("<green>Pay " + steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
-        upgradeMeta.lore(List.of(ColorParser.of("<grey>Paying this steward costs " + cost + "⊚.").build().decoration(TextDecoration.ITALIC, false)));
+        upgradeMeta.displayName(ColorParser.of(Translation.of("gui.stipend.pay")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+        upgradeMeta.lore(List.of(ColorParser.of(Translation.of("gui.stipend.pay-lore")).parseMinimessagePlaceholder("price", String.valueOf(cost)).build().decoration(TextDecoration.ITALIC, false)));
         upgradeMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         upgradeItem.setItemMeta(upgradeMeta);
 
         ItemStack backItem = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.displayName(ColorParser.of("<red>Back").build().decoration(TextDecoration.ITALIC, false));
+        backMeta.displayName(ColorParser.of(Translation.of("gui.general.back")).build().decoration(TextDecoration.ITALIC, false));
         backMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         backItem.setItemMeta(backMeta);
 
         gui.setItem(1, 2, ItemBuilder.from(upgradeItem).asGuiItem(e -> {
             if (checkTownBank(player, cost)) {
-                player.sendMessage(ColorParser.of("<green>You have successfully paid the " + steward.getStewardType().getName() + ".").build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.stipend.pay-success")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build());
                 steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setStriking(false);
 
                 Town town = TownyAPI.getInstance().getTown(player);
@@ -80,10 +81,11 @@ public class ConfirmStipendGui {
                     TownMetaData.setTreasurer(TownyAPI.getInstance().getTown(player), steward);
                     TownMetaData.setBankLimit(TownyAPI.getInstance().getTown(player), Cfg.get().getInt("treasurer.limit.level-" + steward.getLevel()));
                 } else { // This should never happen.
-                    player.sendMessage(ColorParser.of("<red>Something went wrong, the steward couldn't be paid.").build());
+                    Logger.get().error("Something went wrong: No type-specific trait was found for " + steward.getSettler().getNpc());
+                    player.sendMessage(ColorParser.of(Translation.of("error.improper-trait")).build());
                 }
             } else {
-                player.sendMessage(ColorParser.of("<red>There's not enough money in your town bank to pay this steward.").build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.stipend.not-enough-funds")).build());
             }
             gui.close(player);
         }));

@@ -15,13 +15,176 @@
     "spawner": {
       "has-architect": "Looks like you already have company. I can't spare another architect to go with you.",
       "has-town": "Looks like you're already in a town. If you want to create your own town, you have to leave your current one first.",
-      "cannot-afford": "You don't have enough money to create a new town right now. Come back when you have <price>⊚.",
+      "cannot-afford": "You don't have enough money to create a new town right now. Come back when you have %s⊚.",
       "spawn": "So you want to create a town? [Yes/No]",
       "spawned": "This architect will go with you. Lead them to where you want your new town, and let them work their magic.",
       "come-back": "Come back to me when you're ready to start your very own town."
     }
   },
+  "gui": {
+    "general": {
+      "back": "<red>Back",
+      "cancel": "<red>Cancel",
+      "exit": "<dark_red>Exit",
+      "re-roll": "<green>Re-roll name and skin",
+      "follow": "<green>Follow me",
+      "stop-following": "<green>Stop following",
+      "info": {
+        "name": "<green><name>",
+        "lore-1": "<grey>Type: <type>",
+        "lore-2": "<grey>Level: <level>",
+        "lore-3": "<grey>Daily cost: <cost>"
+      },
+      "hire": {
+        "name": "<green>Hire steward",
+        "cost": "<grey>Hiring this steward costs <cost>⊚."
+      },
+      "dismiss": {
+        "name": "<red>Dismiss Steward"
+      },
+      "upgrade": {
+        "name-1": "<green>Upgrade <type>",
+        "lore-1": "<grey>Upgrading this steward costs <cost>⊚.",
+        "name-2": "<green><type>",
+        "lore-2": "<grey>You've reached the maximum level for this steward.",
+        "unclickable-message": "<green>You've reached the maximum level for this steward."
+      },
+      "fire": {
+        "name": "<red>Fire steward"
+      },
+      "travel": {
+        "name": "<green>Open travel menu"
+      }
+    },
+    "architect": {
+      "create": {
+        "name": "<green>Create town",
+        "lore": "<grey>Creating a town costs <cost>⊚."
+      },
+      "dismiss": {
+        "name": "<red>Dismiss Steward"
+      },
+      "treasurer": {
+        "hire": {
+          "name": "<green>Hire the Treasurer",
+          "lore-1": "<grey>The Treasurer costs <cost>⊚ to hire.",
+          "lore-2": "<grey>The Treasurer will allow you to increase your town bank limit."
+        },
+        "striking": {
+          "name": "<green>Your Treasurer is striking",
+          "lore-1": "<grey>You weren't able to pay your Treasurer's wage, so they are now striking.",
+          "lore-2": "<grey>Getting your Treasurer back costs <cost>⊚."
+        },
+        "hired": {
+          "name": "<green>Treasurer",
+          "lore-1": "<grey>You've already hired the Treasurer.",
+          "lore-2": "<grey>Talk to the Treasurer to upgrade them and increase your bank limit."
+        }
+      },
+      "bailiff": {
+        "hire": {
+          "name": "<green>Hire the Bailiff",
+          "lore-1": "<grey>The Bailiff costs <cost>⊚ to hire.",
+          "lore-2": "<grey>The Bailiff will grant you extra claims."
+        },
+        "hired": {
+          "name": "<green>Bailiff",
+          "lore-1": "<grey>You've already hired the Bailiff.",
+          "lore-2": "<grey>Talk to the Bailiff to upgrade them and increase your bonus claims."
+        }
+      },
+      "portmaster": {
+        "hire": {
+          "name": "<green>Hire the Port Master",
+          "lore-1": "<grey>The Port Master costs <cost>⊚ to hire.",
+          "lore-2": "<grey>The Port Master will allow you to create a port."
+        },
+        "striking": {
+          "name": "<green>Your Port Master is striking",
+          "lore-1": "<grey>You weren't able to pay your Port Master's wage, so they are now striking.",
+          "lore-2": "<grey>Getting your Port Master back costs <cost>⊚."
+        },
+        "hired": {
+          "name": "<green>Port Master",
+          "lore-1": "<grey>You've already hired the Port Master.",
+          "lore-2": "<grey>Talk to the Port Master to upgrade your port."
+        }
+      },
+      "stablemaster": {
+        "hire": {
+          "name": "<green>Hire the Stable Master",
+          "lore-1": "<grey>The Stable Master costs <cost>⊚ to hire.",
+          "lore-2": "<grey>The Stable Master will allow you to create a port."
+        },
+        "striking": {
+          "name": "<green>Your Stable Master is striking",
+          "lore-1": "<grey>You weren't able to pay your Stable Master's wage, so they are now striking.",
+          "lore-2": "<grey>Getting your Stable Master back costs <cost>⊚."
+        },
+        "hired": {
+          "name": "<green>Stable Master",
+          "lore-1": "<grey>You've already hired the Stable Master.",
+          "lore-2": "<grey>Talk to the Stable Master to upgrade your port."
+        }
+      }
+    },
+    "appearance": {
+      "title": "Re-roll name and skin",
+      "name": "<green>Re-roll name",
+      "skin": "<green>Re-roll skin",
+      "name-and-skin": "<green>Re-roll name and skin"
+    },
+    "dismiss": {
+      "title": "Dismiss steward",
+      "dismiss-steward": "<red>Dismiss steward",
+      "dismiss-steward-lore": "<red>This action is permanent and cannot be undone."
+    },
+    "fire": {
+      "title": "Fire <type>",
+      "fire": "<red>Fire <type>",
+      "fire-lore": "<red>This action is permanent and cannot be undone.",
+      "fire-success": "<green>You have fired the <type>."
+    },
+    "hire": {
+      "title": "Hire <type>",
+      "hire": "<green>Hire <type>",
+      "hire-lore": "<grey>Hiring this steward costs <price>⊚.",
+      "portmaster-closer": "<red>The Port Master needs to be closer to water.",
+      "hire-success": "<green>You have successfully hired the <type>.",
+      "not-enough-funds": "<red>There's not enough money in your town bank to hire this steward.",
+      "too-close": "<red>This steward is too close to another steward."
+    },
+    "following": {
+      "title": "Stop following",
+      "go-back": "<green>Go back to previous location",
+      "stay": "<green>Stay here",
+      "follow": "<green>Keep following"
+    },
+    "stipend": {
+      "title": "Pay <type>",
+      "pay": "<green>Pay <type>",
+      "pay-lore": "<grey>Paying this steward costs <price>⊚.",
+      "pay-success": "<green>You have successfully paid the <type>.",
+      "not-enough-funds": "<red>There's not enough money in your town bank to pay this steward."
+    },
+    "upgrade": {
+      "title": "Upgrade <type>",
+      "upgrade": "<green>Upgrade <type>",
+      "upgrade-lore": "<grey>Upgrading costs <cost>⊚.",
+      "upgrade-success": "<green>You have upgraded yor steward to level <level>!",
+      "not-enough-funds": "<red>There's not enough money in your town bank to hire this steward."
+    }
+  },
+  "towny": {
+    "name-taken": "That name is already taken.",
+    "new-town-name": "What do you want your town to be called?",
+    "new-town-confirmation": "Do you want to create the town %s? [Yes/No]"
+  },
   "error": {
-    "resident-null": "<red>Something went wrong. Please contact staff if this issue persists."
+    "resident-null": "<red>Something went wrong. Please contact staff if this issue persists.",
+    "towny-exception": "<red>Something went wrong. Please contact staff if this issue persists.",
+    "improper-trait": "<red>Something went wrong. Please report this issue.",
+    "no-upgrade": "<red>Something went wrong. Please report this issue.",
+    "dismiss": "<red>You need to hire or dismiss the spawned steward before you can spawn another one."
   }
 }

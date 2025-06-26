@@ -20,6 +20,7 @@ import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.*;
 import io.github.milkdrinkers.stewards.utility.Appearance;
 import io.github.milkdrinkers.stewards.utility.Cfg;
+import io.github.milkdrinkers.wordweaver.Translation;
 import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
@@ -107,7 +108,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
     private static void populateButtons(Gui gui, Steward steward, Player player) {
         ItemStack exitItem = new ItemStack(Material.BARRIER);
         ItemMeta exitMeta = exitItem.getItemMeta();
-        exitMeta.displayName(ColorParser.of("<dark_red>Exit").build().decoration(TextDecoration.ITALIC, false));
+        exitMeta.displayName(ColorParser.of(Translation.of("gui.general.exit")).build().decoration(TextDecoration.ITALIC, false));
         exitMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         exitItem.setItemMeta(exitMeta);
 
@@ -115,7 +116,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
         ItemStack appearanceItem = new ItemStack(Material.PLAYER_HEAD);
         ItemMeta appearanceMeta = appearanceItem.getItemMeta();
-        appearanceMeta.displayName(ColorParser.of("<green>Re-roll name and skin").build().decoration(TextDecoration.ITALIC, false));
+        appearanceMeta.displayName(ColorParser.of(Translation.of("gui.general.re-roll")).build().decoration(TextDecoration.ITALIC, false));
         appearanceMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         appearanceItem.setItemMeta(appearanceMeta);
 
@@ -126,10 +127,10 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         ItemMeta followMeta = followItem.getItemMeta();
 
 
-        if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isFollowing()) { // TODO NO ITALICS IN NAMES
-            followMeta.displayName(ColorParser.of("<green>Stop following").build().decoration(TextDecoration.ITALIC, false));
+        if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isFollowing()) {
+            followMeta.displayName(ColorParser.of(Translation.of("gui.general.follow")).build().decoration(TextDecoration.ITALIC, false));
         } else {
-            followMeta.displayName(ColorParser.of("<green>Follow me").build().decoration(TextDecoration.ITALIC, false));
+            followMeta.displayName(ColorParser.of(Translation.of("gui.general.stop-following")).build().decoration(TextDecoration.ITALIC, false));
         }
 
         followMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
@@ -149,20 +150,18 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
         ItemStack infoItem = new ItemStack(Material.BOOK);
         ItemMeta infoMeta = infoItem.getItemMeta();
-        infoMeta.displayName(ColorParser.of("<green>" + steward.getSettler().getNpc().getName()).build().decoration(TextDecoration.ITALIC, false));
+        infoMeta.displayName(ColorParser.of(Translation.of("gui.general.info.name")).parseMinimessagePlaceholder("name", steward.getSettler().getNpc().getName()).build().decoration(TextDecoration.ITALIC, false));
         infoMeta.lore(List.of(
-            ColorParser.of("<grey>Type: " + steward.getStewardType().getSettlerPrefix()).build().decoration(TextDecoration.ITALIC, false)
+            ColorParser.of(Translation.of("gui.general.info.lore-1")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false)
         ));
 
         if (!steward.getSettler().getNpc().hasTrait(ArchitectTrait.class)) {
-            infoMeta.lore().add(ColorParser.of("<grey>Level: " + steward.getLevel()).build().decoration(TextDecoration.ITALIC, false));
+            infoMeta.lore().add(ColorParser.of(Translation.of("gui.general.info.lore-2")).parseMinimessagePlaceholder("level", String.valueOf(steward.getLevel())).build().decoration(TextDecoration.ITALIC, false));
 
             if (!steward.getSettler().getNpc().hasTrait(BailiffTrait.class) && steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
-                infoMeta.lore().add(ColorParser.of("<grey>Daily cost: " +
-                    Cfg.get().getInt(steward.getStewardType().getName().toLowerCase().replace(" ", "-")
-                        + ".daily-cost.level-" + steward.getLevel())).build().decoration(TextDecoration.ITALIC, false));
+                infoMeta.lore().add(ColorParser.of(Translation.of("gui.general.info.lore-3")).parseMinimessagePlaceholder("cost", String.valueOf(Cfg.get().getInt(steward.getStewardType().getName().toLowerCase().replace(" ", "-")
+                    + ".daily-cost.level-" + steward.getLevel()))).build().decoration(TextDecoration.ITALIC, false));
             }
-
         }
 
         infoMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
@@ -176,15 +175,15 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
         ItemStack hireItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta hireMeta = hireItem.getItemMeta();
-        hireMeta.displayName(ColorParser.of("<green>Hire steward").build().decoration(TextDecoration.ITALIC, false));
-        hireMeta.lore(List.of(ColorParser.of("<grey>Hiring this steward costs <cost>⊚.")
+        hireMeta.displayName(ColorParser.of(Translation.of("gui.general.hire.name")).build().decoration(TextDecoration.ITALIC, false));
+        hireMeta.lore(List.of(ColorParser.of(Translation.of("gui.general.hire.cost"))
             .parseMinimessagePlaceholder("cost", String.valueOf(cost)).build().decoration(TextDecoration.ITALIC, false)));
         hireMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         hireItem.setItemMeta(hireMeta);
 
         ItemStack dismissItem = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta dismissMeta = dismissItem.getItemMeta();
-        dismissMeta.displayName(ColorParser.of("<red>Dismiss Steward").build().decoration(TextDecoration.ITALIC, false));
+        dismissMeta.displayName(ColorParser.of(Translation.of("gui.general.dismiss.name")).build().decoration(TextDecoration.ITALIC, false));
         dismissMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         dismissItem.setItemMeta(dismissMeta);
 
@@ -205,13 +204,13 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         ItemMeta upgradeMeta = upgradeItem.getItemMeta();
 
         if (steward.getLevel() < steward.getStewardType().getMaxLevel()) {
-            upgradeMeta.displayName(ColorParser.of("<green>Upgrade <steward>")
-                .parseMinimessagePlaceholder("steward", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
-            upgradeMeta.lore(List.of(ColorParser.of("<grey>Upgrading this steward costs <cost>⊚.")
+            upgradeMeta.displayName(ColorParser.of(Translation.of("gui.general.upgrade.name-1"))
+                .parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+            upgradeMeta.lore(List.of(ColorParser.of(Translation.of("gui.general.upgrade.lore-1"))
                 .parseMinimessagePlaceholder("cost", String.valueOf(cost)).build().decoration(TextDecoration.ITALIC, false)));
         } else {
-            upgradeMeta.displayName(ColorParser.of("<green>" + steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
-            upgradeMeta.lore(List.of(ColorParser.of("<grey>You've reached the maximum level for this steward.").build().decoration(TextDecoration.ITALIC, false)));
+            upgradeMeta.displayName(ColorParser.of(Translation.of("gui.general.upgrade.name-2")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+            upgradeMeta.lore(List.of(ColorParser.of(Translation.of("gui.general.upgrade.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
         }
 
         upgradeMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
@@ -219,7 +218,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
         ItemStack fireItem = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta fireMeta = fireItem.getItemMeta();
-        fireMeta.displayName(ColorParser.of("<red>Fire steward").build().decoration(TextDecoration.ITALIC, false));
+        fireMeta.displayName(ColorParser.of(Translation.of("gui.general.fire.name")).build().decoration(TextDecoration.ITALIC, false));
         fireMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         fireItem.setItemMeta(fireMeta);
 
@@ -231,7 +230,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                         ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
                     } else {
                         gui.close(player);
-                        player.sendMessage(ColorParser.of("<red>You've reached the maximum level for this steward.").build().decoration(TextDecoration.ITALIC, false));
+                        player.sendMessage(ColorParser.of(Translation.of("gui.general.upgrade.unclickable-message")).build().decoration(TextDecoration.ITALIC, false));
                     }
                 }));
 
@@ -242,7 +241,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
             ItemStack portItem = new ItemStack(Material.OAK_BOAT);
             ItemMeta portMeta = portItem.getItemMeta();
-            portMeta.displayName(ColorParser.of("<green>Open travel menu").build().decoration(TextDecoration.ITALIC, false));
+            portMeta.displayName(ColorParser.of(Translation.of("gui.general.travel.name")).build().decoration(TextDecoration.ITALIC, false));
             portMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             portItem.setItemMeta(portMeta);
             gui.setItem(3, 5, ItemBuilder.from(portItem).asGuiItem(event -> {
@@ -257,7 +256,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                         ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
                     } else {
                         gui.close(player);
-                        player.sendMessage(ColorParser.of("<red>You've reached the maximum level for this steward.").build().decoration(TextDecoration.ITALIC, false));
+                        player.sendMessage(ColorParser.of(Translation.of("gui.general.upgrade.unclickable-message")).build().decoration(TextDecoration.ITALIC, false));
                     }
                 }));
 
@@ -268,7 +267,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
             ItemStack stationItem = new ItemStack(Material.SADDLE);
             ItemMeta stationMeta = stationItem.getItemMeta();
-            stationMeta.displayName(ColorParser.of("<green>Open travel menu").build().decoration(TextDecoration.ITALIC, false));
+            stationMeta.displayName(ColorParser.of(Translation.of("gui.general.travel.name")).build().decoration(TextDecoration.ITALIC, false));
             stationMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             stationItem.setItemMeta(stationMeta);
 
@@ -282,7 +281,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                     ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
                 } else {
                     gui.close(player);
-                    player.sendMessage(ColorParser.of("<red>You've reached the maximum level for this steward.").build());
+                    player.sendMessage(ColorParser.of(Translation.of("gui.general.upgrade.unclickable-message")).build());
                 }
             }));
 
@@ -295,14 +294,14 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
     private static void populateArchitectNoTownButtons(Gui gui, Steward steward, Player player) {
         ItemStack townItem = new ItemStack(Material.RED_BED);
         ItemMeta townMeta = townItem.getItemMeta();
-        townMeta.displayName(ColorParser.of("<green>Create town").build().decoration(TextDecoration.ITALIC, false));
-        townMeta.lore(List.of(ColorParser.of("<grey>Creating a town costs " + Math.round(TownySettings.getNewTownPrice()) + "⊚").build().decoration(TextDecoration.ITALIC, false)));
+        townMeta.displayName(ColorParser.of(Translation.of("gui.architect.create.name")).build().decoration(TextDecoration.ITALIC, false));
+        townMeta.lore(List.of(ColorParser.of(Translation.of("gui.architect.create.lore")).parseMinimessagePlaceholder("cost", String.valueOf(Math.round(TownySettings.getNewTownPrice()))).build().decoration(TextDecoration.ITALIC, false)));
         townMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         townItem.setItemMeta(townMeta);
 
         ItemStack dismissItem = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta dismissMeta = dismissItem.getItemMeta();
-        dismissMeta.displayName(ColorParser.of("<red>Dismiss Steward").build().decoration(TextDecoration.ITALIC, false));
+        dismissMeta.displayName(ColorParser.of(Translation.of("gui.architect.dismiss.name")).build().decoration(TextDecoration.ITALIC, false));
         dismissMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         dismissItem.setItemMeta(dismissMeta);
 
@@ -326,43 +325,43 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
         if (!TownMetaData.hasTreasurer(town)) {
 
-            treasurerMeta.displayName(ColorParser.of("<green>Hire the Treasurer").build().decoration(TextDecoration.ITALIC, false));
+            treasurerMeta.displayName(ColorParser.of(Translation.of("gui.architect.treasurer.hire.name")).build().decoration(TextDecoration.ITALIC, false));
             treasurerMeta.lore(List.of(
-                ColorParser.of("<grey>The Treasurer costs " + Cfg.get().getInt("treasurer.upgrade-cost.level-1") + "⊚ to hire.").build().decoration(TextDecoration.ITALIC, false),
-                ColorParser.of("<grey>The Treasurer will allow you to increase your town bank limit.").build().decoration(TextDecoration.ITALIC, false)));
+                ColorParser.of(Translation.of("gui.architect.treasurer.hire.lore-1")).parseMinimessagePlaceholder("cost", String.valueOf(Cfg.get().getInt("treasurer.upgrade-cost.level-1"))).build().decoration(TextDecoration.ITALIC, false),
+                ColorParser.of(Translation.of("gui.architect.treasurer.hire.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
         } else {
             if (StewardLookup.get().getSteward(TownMetaData.getTreasurer(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).isStriking()) {
-                treasurerMeta.displayName(ColorParser.of("<green>Your Treasurer is striking").build().decoration(TextDecoration.ITALIC, false));
+                treasurerMeta.displayName(ColorParser.of(Translation.of("gui.architect.treasurer.striking.name")).build().decoration(TextDecoration.ITALIC, false));
                 treasurerMeta.lore(List.of(
-                    ColorParser.of("<grey>You weren't able to pay your Treasurer's wage, so they are now striking.").build().decoration(TextDecoration.ITALIC, false),
-                    ColorParser.of("<grey>Getting your Treasurer back costs <cost>⊚.")
+                    ColorParser.of(Translation.of("gui.architect.treasurer.striking.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                    ColorParser.of(Translation.of("gui.architect.treasurer.striking.lore-2"))
                         .parseMinimessagePlaceholder("cost",
                             String.valueOf(Cfg.get().getInt("treasurer.stipend.level-" +
                                 StewardLookup.get().getSteward(TownMetaData.getTreasurer(town)).getLevel())))
                         .build().decoration(TextDecoration.ITALIC, false)));
             } else {
-                treasurerMeta.displayName(ColorParser.of("<green>Treasurer").build().decoration(TextDecoration.ITALIC, false));
+                treasurerMeta.displayName(ColorParser.of(Translation.of("gui.architect.treasurer.hired.name")).build().decoration(TextDecoration.ITALIC, false));
                 treasurerMeta.lore(List.of(
-                    ColorParser.of("<grey>You've already hired the Treasurer.").build().decoration(TextDecoration.ITALIC, false),
-                    ColorParser.of("<grey>Talk to the Treasurer to upgrade them and increase your bank limit.").build().decoration(TextDecoration.ITALIC, false)));
+                    ColorParser.of(Translation.of("gui.architect.treasurer.hired.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                    ColorParser.of(Translation.of("gui.architect.treasurer.hired.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
             }
         }
         treasurerMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         treasurerItem.setItemMeta(treasurerMeta);
 
-        ItemStack bailiffItem = new ItemStack(Material.OAK_DOOR); // TODO translations
+        ItemStack bailiffItem = new ItemStack(Material.OAK_DOOR);
         ItemMeta bailiffMeta = bailiffItem.getItemMeta();
 
         if (!TownMetaData.hasBailiff(town)) {
-            bailiffMeta.displayName(ColorParser.of("<green>Hire the Bailiff").build().decoration(TextDecoration.ITALIC, false));
+            bailiffMeta.displayName(ColorParser.of(Translation.of("gui.architect.bailiff.hire.name")).build().decoration(TextDecoration.ITALIC, false));
             bailiffMeta.lore(List.of(
-                ColorParser.of("<grey>The Bailiff costs " + Cfg.get().getInt("bailiff.upgrade-cost.level-1") + "⊚ to hire.").build().decoration(TextDecoration.ITALIC, false),
-                ColorParser.of("<grey>The Bailiff will grant you extra claims.").build().decoration(TextDecoration.ITALIC, false)));
+                ColorParser.of(Translation.of("gui.architect.bailiff.hire.lore-1")).parseMinimessagePlaceholder("cost", String.valueOf(Cfg.get().getInt("bailiff.upgrade-cost.level-1"))).build().decoration(TextDecoration.ITALIC, false),
+                ColorParser.of(Translation.of("gui.architect.bailiff.hire.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
         } else {
-            bailiffMeta.displayName(ColorParser.of("<green>Bailiff").build().decoration(TextDecoration.ITALIC, false));
+            bailiffMeta.displayName(ColorParser.of(Translation.of("gui.architect.bailiff.hired.name")).build().decoration(TextDecoration.ITALIC, false));
             bailiffMeta.lore(List.of(
-                ColorParser.of("<grey>You've already hired the Bailiff.").build().decoration(TextDecoration.ITALIC, false),
-                ColorParser.of("<grey>Talk to the Bailiff to upgrade them and increase your bank limit.").build().decoration(TextDecoration.ITALIC, false)));
+                ColorParser.of(Translation.of("gui.architect.bailiff.hired.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                ColorParser.of(Translation.of("gui.architect.bailiff.hired.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
         }
         bailiffMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         bailiffItem.setItemMeta(bailiffMeta);
@@ -371,25 +370,25 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         ItemMeta portmasterMeta = portmasterItem.getItemMeta();
 
         if (!TownMetaData.hasPortmaster(town)) {
-            portmasterMeta.displayName(ColorParser.of("<green>Hire the Port Master").build().decoration(TextDecoration.ITALIC, false));
+            portmasterMeta.displayName(ColorParser.of(Translation.of("gui.architect.portmaster.hire.name")).build().decoration(TextDecoration.ITALIC, false));
             portmasterMeta.lore(List.of(
-                ColorParser.of("<grey>The Port Master costs " + Cfg.get().getInt("portmaster.upgrade-cost.level-1") + "⊚ to hire.").build().decoration(TextDecoration.ITALIC, false),
-                ColorParser.of("<grey>The Port Master will allow you to create a port.").build().decoration(TextDecoration.ITALIC, false)));
+                ColorParser.of(Translation.of("gui.architect.portmaster.hire.lore-1")).parseMinimessagePlaceholder("cost", String.valueOf(Cfg.get().getInt("portmaster.upgrade-cost.level-1"))).build().decoration(TextDecoration.ITALIC, false),
+                ColorParser.of(Translation.of("gui.architect.portmaster.hire.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
         } else {
             if (StewardLookup.get().getSteward(TownMetaData.getPortmaster(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).isStriking()) {
-                treasurerMeta.displayName(ColorParser.of("<green>Your Port Master is striking").build().decoration(TextDecoration.ITALIC, false));
+                treasurerMeta.displayName(ColorParser.of(Translation.of("gui.architect.portmaster.striking.name")).build().decoration(TextDecoration.ITALIC, false));
                 treasurerMeta.lore(List.of(
-                    ColorParser.of("<grey>You weren't able to pay your Port Master's wage, so they are now striking.").build().decoration(TextDecoration.ITALIC, false),
-                    ColorParser.of("<grey>Getting your Port Master back costs <cost>⊚.")
+                    ColorParser.of(Translation.of("gui.architect.portmaster.striking.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                    ColorParser.of(Translation.of("gui.architect.portmaster.striking.lore-2"))
                         .parseMinimessagePlaceholder("cost",
                             String.valueOf(Cfg.get().getInt("portmaster.stipend.level-" +
                                 StewardLookup.get().getSteward(TownMetaData.getPortmaster(town)).getLevel())))
                         .build().decoration(TextDecoration.ITALIC, false)));
             } else {
-                portmasterMeta.displayName(ColorParser.of("<green>Port Master").build().decoration(TextDecoration.ITALIC, false));
+                portmasterMeta.displayName(ColorParser.of(Translation.of("gui.architect.portmaster.hired.name")).build().decoration(TextDecoration.ITALIC, false));
                 portmasterMeta.lore(List.of(
-                    ColorParser.of("<grey>You've already hired the Port Master.").build().decoration(TextDecoration.ITALIC, false),
-                    ColorParser.of("<grey>Talk to the Port Master to upgrade your port.").build().decoration(TextDecoration.ITALIC, false)));
+                    ColorParser.of(Translation.of("gui.architect.portmaster.hired.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                    ColorParser.of(Translation.of("gui.architect.portmaster.hired.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
             }
         }
         portmasterMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
@@ -400,25 +399,25 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
 
         if (!TownMetaData.hasStablemaster(town)) {
-            stablemasterMeta.displayName(ColorParser.of("<green>Hire the Stable Master").build().decoration(TextDecoration.ITALIC, false));
+            stablemasterMeta.displayName(ColorParser.of(Translation.of("gui.architect.stablemaster.hire.name")).build().decoration(TextDecoration.ITALIC, false));
             stablemasterMeta.lore(List.of(
-                ColorParser.of("<grey>The Stable Master costs " + Cfg.get().getInt("stablemaster.upgrade-cost.level-1") + "⊚ to hire.").build().decoration(TextDecoration.ITALIC, false),
-                ColorParser.of("<grey>The Stable Master will allow you to create a carriage station.").build().decoration(TextDecoration.ITALIC, false)));
+                ColorParser.of(Translation.of("gui.architect.stablemaster.hire.lore-1")).parseMinimessagePlaceholder("cost", String.valueOf(Cfg.get().getInt("stablemaster.upgrade-cost.level-1"))).build().decoration(TextDecoration.ITALIC, false),
+                ColorParser.of(Translation.of("gui.architect.stablemaster.hire.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
         } else {
             if (StewardLookup.get().getSteward(TownMetaData.getStablemaster(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).isStriking()) {
-                stablemasterMeta.displayName(ColorParser.of("<green>Your Stable Master is striking").build().decoration(TextDecoration.ITALIC, false));
+                stablemasterMeta.displayName(ColorParser.of(Translation.of("gui.architect.stablemaster.striking.name")).build().decoration(TextDecoration.ITALIC, false));
                 stablemasterMeta.lore(List.of(
-                    ColorParser.of("<grey>You weren't able to pay your Stable Master's wage, so they are now striking.").build().decoration(TextDecoration.ITALIC, false),
-                    ColorParser.of("<grey>Getting your Stable Master back costs <cost>⊚.")
+                    ColorParser.of(Translation.of("gui.architect.stablemaster.hire.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                    ColorParser.of(Translation.of("gui.architect.stablemaster.hire.lore-2"))
                         .parseMinimessagePlaceholder("cost",
                             String.valueOf(Cfg.get().getInt("stablemaster.stipend.level-" +
                                 StewardLookup.get().getSteward(TownMetaData.getStablemaster(town)).getLevel())))
                         .build().decoration(TextDecoration.ITALIC, false)));
             } else {
-                stablemasterMeta.displayName(ColorParser.of("<green>Stable Master").build().decoration(TextDecoration.ITALIC, false));
+                stablemasterMeta.displayName(ColorParser.of(Translation.of("gui.architect.stablemaster.hired.name")).build().decoration(TextDecoration.ITALIC, false));
                 stablemasterMeta.lore(List.of(
-                    ColorParser.of("<grey>You've already hired the Stable Master").build().decoration(TextDecoration.ITALIC, false),
-                    ColorParser.of("<grey>Talk to the Stable Master to upgrade your carriage station.").build().decoration(TextDecoration.ITALIC, false)));
+                    ColorParser.of(Translation.of("gui.architect.stablemaster.hired.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                    ColorParser.of(Translation.of("gui.architect.stablemaster.hired.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
             }
         }
         stablemasterMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
@@ -436,7 +435,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                     createSteward(Stewards.getInstance().getStewardTypeHandler().TREASURER_ID, player);
                     TownMetaData.setUnhiredSteward(town, true);
                 } else {
-                    player.sendMessage(ColorParser.of("<red>You need to hire or dismiss the spawned steward before you can spawn another one.").build());
+                    player.sendMessage(ColorParser.of(Translation.of("error.dismiss")).build());
                 }
                 gui.close(player);
             }
@@ -450,7 +449,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                     createSteward(Stewards.getInstance().getStewardTypeHandler().BAILIFF_ID, player);
                     TownMetaData.setUnhiredSteward(town, true);
                 } else {
-                    player.sendMessage(ColorParser.of("<red>You need to hire or dismiss the spawned steward before you can spawn another one.").build());
+                    player.sendMessage(ColorParser.of(Translation.of("error.dismiss")).build());
                 }
             }
             gui.close(player);
@@ -468,7 +467,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                     createSteward(Stewards.getInstance().getStewardTypeHandler().PORTMASTER_ID, player);
                     TownMetaData.setUnhiredSteward(town, true);
                 } else {
-                    player.sendMessage(ColorParser.of("<red>You need to hire or dismiss the spawned steward before you can spawn another one.").build());
+                    player.sendMessage(ColorParser.of(Translation.of("error.dismiss")).build());
                 }
                 gui.close(player);
             }
@@ -486,7 +485,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                     createSteward(Stewards.getInstance().getStewardTypeHandler().STABLEMASTER_ID, player);
                     TownMetaData.setUnhiredSteward(town, true);
                 } else {
-                    player.sendMessage(ColorParser.of("<red>You need to hire or dismiss the spawned steward before you can spawn another one.").build());
+                    player.sendMessage(ColorParser.of(Translation.of("error.dismiss")).build());
                 }
                 gui.close(player);
             }
