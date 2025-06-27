@@ -28,6 +28,10 @@ public class SpawnArchitectConversation {
     private static Player player;
     private static Location spawnLocation;
 
+    @Deprecated
+    /**
+     * @deprecated Deprecated in favor of conditions registered in {@link io.github.milkdrinkers.stewards.quest.BetonQuestHandler}
+     */
     public static Prompt getSpawnArchitectPrompt(Player player, Location spawnLocation) {
         SpawnArchitectConversation.player = player;
         SpawnArchitectConversation.spawnLocation = spawnLocation;

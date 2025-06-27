@@ -40,6 +40,7 @@ repositories {
     maven("https://repo.glaremasters.me/repository/towny/") { // Towny
         content { includeGroup("com.palmergames.bukkit.towny") }
     }
+    maven("https://nexus.betonquest.org/repository/betonquest/") // BetonQuest
 }
 
 dependencies {
@@ -77,6 +78,10 @@ dependencies {
         exclude("me.clip.placeholderapi.libs", "kyori")
     }
     compileOnly(libs.towny)
+    compileOnly(libs.betonquest) {
+        exclude("com.comphenix.packetwrapper", "PacketWrapper")
+        exclude("de.themoep", "minedown-adventure")
+    }
     compileOnly(files("libs/AlathraPorts-1.0.1.jar"))
 
     // Testing - Core
@@ -188,14 +193,14 @@ bukkit { // Options: https://github.com/Minecrell/plugin-yml#bukkit
     prefix = project.name
     version = "${project.version}"
     description = "${project.description}"
-    authors = listOf("darksaid98", "ShermansWorld", "rooooose-b")
+    authors = listOf("rooooose-b", "darksaid98", "ShermansWorld")
     contributors = listOf()
     apiVersion = "1.21"
     foliaSupported = true // Mark plugin as supporting Folia
 
     // Misc properties
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD // STARTUP or POSTWORLD
-    depend = listOf("Towny")
+    depend = listOf("Towny", "BetonQuest")
     softDepend = listOf("PacketEvents", "Vault", "PlaceholderAPI")
     loadBefore = listOf()
     provides = listOf()
