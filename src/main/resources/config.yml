@@ -6,6 +6,9 @@ update-checker:
 
 # Language, specify the language file to use, for example `en_US` which will load `/lang/en_US.json`
 language: "en_US"
+architect:
+  allowed-worlds:
+    - "world"
 bailiff:
   claims:
     level-1: 20 # Additional claims added by the bailiff.

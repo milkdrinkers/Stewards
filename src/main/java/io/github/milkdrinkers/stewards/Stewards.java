@@ -5,6 +5,7 @@ import io.github.milkdrinkers.stewards.command.CommandHandler;
 import io.github.milkdrinkers.stewards.config.ConfigHandler;
 import io.github.milkdrinkers.stewards.hook.HookManager;
 import io.github.milkdrinkers.stewards.listener.ListenerHandler;
+import io.github.milkdrinkers.stewards.quest.BetonQuestHandler;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.threadutil.SchedulerHandler;
@@ -39,6 +40,8 @@ public class Stewards extends JavaPlugin {
     private StewardTypeHandler stewardTypeHandler;
     private StewardLookup stewardLookup;
 
+    private BetonQuestHandler betonQuestHandler;
+
     // Handlers list (defines order of load/enable/disable)
     private List<? extends Reloadable> handlers;
 
@@ -65,6 +68,7 @@ public class Stewards extends JavaPlugin {
         listenerHandler = new ListenerHandler(this);
         updateHandler = new UpdateHandler(this);
         schedulerHandler = new SchedulerHandler();
+        betonQuestHandler = new BetonQuestHandler();
 
         handlers = List.of(
             configHandler,
@@ -75,7 +79,8 @@ public class Stewards extends JavaPlugin {
             commandHandler,
             listenerHandler,
             updateHandler,
-            schedulerHandler
+            schedulerHandler,
+            betonQuestHandler
         );
 
         for (Reloadable handler : handlers)
