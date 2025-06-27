@@ -80,6 +80,7 @@ dependencies {
     compileOnly(libs.towny)
     compileOnly(libs.betonquest) {
         exclude("com.comphenix.packetwrapper", "PacketWrapper")
+        exclude("de.themoep", "minedown-adventure")
     }
     compileOnly(files("libs/AlathraPorts-1.0.1.jar"))
 

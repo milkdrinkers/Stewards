@@ -20,9 +20,9 @@ public class BetonQuestHandler implements Reloadable {
         final BetonQuestLoggerFactory loggerFactory = BetonQuest.getInstance().getLoggerFactory();
         final PrimaryServerThreadData data = new PrimaryServerThreadData(plugin.getServer(), plugin.getServer().getScheduler(), plugin);
 
-        BetonQuest.getInstance().getQuestRegistries().getConditionTypes().register("stewardshastown", new HasTownConditionFactory(loggerFactory, data));
-        BetonQuest.getInstance().getQuestRegistries().getConditionTypes().register("stewardshasarchitect", new HasArchitectConditionFactory(loggerFactory, data));
-        BetonQuest.getInstance().getQuestRegistries().getConditionTypes().register("stewardscanaffordarchitect", new CanAffordArchitectConditionFactory(loggerFactory, data));
+        BetonQuest.getInstance().getQuestRegistries().condition().register("stewardshastown", new HasTownConditionFactory(loggerFactory, data));
+        BetonQuest.getInstance().getQuestRegistries().condition().register("stewardshasarchitect", new HasArchitectConditionFactory(loggerFactory, data));
+        BetonQuest.getInstance().getQuestRegistries().condition().register("stewardscanaffordarchitect", new CanAffordArchitectConditionFactory(loggerFactory, data));
     }
 
     @Override
