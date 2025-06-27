@@ -16,12 +16,12 @@ public class ArchitectTrait extends Trait {
     @Persist Instant createTime;
 
     public void load(DataKey key) {
-        spawningPlayer = (UUID) key.getRaw("spawningplayer");
+        spawningPlayer = UUID.fromString(key.getString("spawningplayer"));
         createTime = Instant.ofEpochSecond(key.getLong("createtime"));
     }
 
     public void save(DataKey key) {
-        key.setRaw("spawningplayer", spawningPlayer);
+        key.setString("spawningplayer", spawningPlayer.toString());
         key.setLong("createtime", createTime.getEpochSecond());
     }
 
