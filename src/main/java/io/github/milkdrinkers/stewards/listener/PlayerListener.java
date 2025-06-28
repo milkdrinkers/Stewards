@@ -25,7 +25,6 @@ public class PlayerListener implements Listener {
             StewardTrait trait = steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class);
 
             StewardLookup.get().removeStewardFollowingPlayer(e.getPlayer());
-            steward.getSettler().getNpc().getNavigator().setTarget(trait.getAnchorLocation());
             trait.setFollowing(false);
             trait.setFollowingPlayer(null);
         }
