@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ConfirmMoveGui {
 
     public static Gui createGui(Steward steward, Player player) {
-        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.move.title")).build())
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.following.title")).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -36,19 +36,19 @@ public class ConfirmMoveGui {
     private static void populateButtons(Gui gui, Steward steward, Player player) {
         ItemStack backItem = new ItemStack(Material.RED_BED);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.displayName(ColorParser.of(Translation.of("gui.move.go-back")).build().decoration(TextDecoration.ITALIC, false));
+        backMeta.displayName(ColorParser.of(Translation.of("gui.following.go-back")).build().decoration(TextDecoration.ITALIC, false));
         backMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         backItem.setItemMeta(backMeta);
 
         ItemStack stayItem = new ItemStack(Material.GRASS_BLOCK);
         ItemMeta stayMeta = stayItem.getItemMeta();
-        stayMeta.displayName(ColorParser.of(Translation.of("gui.move.stay")).build().decoration(TextDecoration.ITALIC, false));
+        stayMeta.displayName(ColorParser.of(Translation.of("gui.following.stay")).build().decoration(TextDecoration.ITALIC, false));
         stayMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         stayItem.setItemMeta(stayMeta);
 
         ItemStack continueItem = new ItemStack(Material.LEAD);
         ItemMeta continueMeta = continueItem.getItemMeta();
-        continueMeta.displayName(ColorParser.of(Translation.of("gui.move.follow")).build().decoration(TextDecoration.ITALIC, false));
+        continueMeta.displayName(ColorParser.of(Translation.of("gui.following.follow")).build().decoration(TextDecoration.ITALIC, false));
         continueMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         continueItem.setItemMeta(continueMeta);
 
