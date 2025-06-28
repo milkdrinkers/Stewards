@@ -99,6 +99,7 @@ class StewardsCommand {
             }
 
             StewardLookup.get().registerSteward(steward);
+            StewardLookup.get().setArchitect(player, steward);
 
             settler.spawn();
 
