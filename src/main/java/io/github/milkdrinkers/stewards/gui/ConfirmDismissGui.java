@@ -7,7 +7,10 @@ import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
+import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
+import io.github.milkdrinkers.stewards.trait.ArchitectTrait;
+import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;
@@ -53,7 +56,9 @@ public class ConfirmDismissGui {
 
         gui.setItem(1, 2, ItemBuilder.from(dismissItem).asGuiItem(e -> {
             gui.close(player);
-            steward.getSettler().getNpc().destroy();
+
+            if (steward.getSettler().getNpc().hasTrait(ArchitectTrait.class) && !steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired())
+                StewardLookup.get().clearHasArchitect(player);
 
             Resident resident = TownyAPI.getInstance().getResident(player);
             if (resident == null) {
@@ -63,6 +68,8 @@ public class ConfirmDismissGui {
             if (resident.hasTown()) {
                 TownMetaData.setUnhiredSteward(TownyAPI.getInstance().getTown(player), false);
             }
+            steward.getSettler().getNpc().destroy();
+
         }));
 
         gui.setItem(1, 4, ItemBuilder.from(backItem).asGuiItem(e -> {
