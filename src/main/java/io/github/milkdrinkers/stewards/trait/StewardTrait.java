@@ -231,12 +231,8 @@ public class StewardTrait extends Trait {
 
         if (TownyAPI.getInstance().getTown(npc.getEntity().getLocation()) == null
             || !TownyAPI.getInstance().getTown(npc.getEntity().getLocation()).getUUID().equals(townUUID) ) {
-
-            StewardLookup.get().removeStewardFollowingPlayer(followingPlayer);
             followingPlayer.sendMessage(ColorParser.of("<red>Stewards aren't allowed to move outside of their town.").build());
-
-            following = false;
-            followingPlayer = null;
+            StewardLookup.get().getSteward(npc).stopFollowing(followingPlayer);
             npc.getNavigator().setTarget(anchorLocation);
             return;
         }
