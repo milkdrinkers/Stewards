@@ -128,9 +128,9 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
 
         if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isFollowing()) {
-            followMeta.displayName(ColorParser.of(Translation.of("gui.general.follow")).build().decoration(TextDecoration.ITALIC, false));
-        } else {
             followMeta.displayName(ColorParser.of(Translation.of("gui.general.stop-following")).build().decoration(TextDecoration.ITALIC, false));
+        } else {
+            followMeta.displayName(ColorParser.of(Translation.of("gui.general.follow")).build().decoration(TextDecoration.ITALIC, false));
         }
 
         followMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
@@ -514,7 +514,9 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                 .setTownUUID(TownyAPI.getInstance().getTown(player).getUUID())
                 .build();
 
-            steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
+            StewardTrait trait = steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class);
+            trait.setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
+            trait.setFollowingPlayer(player);
 
             HologramTrait hologramTrait = steward.getSettler().getNpc().getOrAddTrait(HologramTrait.class);
             hologramTrait.clear();

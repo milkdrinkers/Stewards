@@ -82,6 +82,7 @@ class StewardsCommand {
             StewardTrait stewardTrait = steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class);
             stewardTrait.setFemale(female);
             stewardTrait.setLevel(1);
+            stewardTrait.setFollowingPlayer(player);
 
             ArchitectTrait architectTrait = steward.getSettler().getNpc().getOrAddTrait(ArchitectTrait.class);
             architectTrait.setCreateTime(Instant.now());
@@ -90,6 +91,7 @@ class StewardsCommand {
             HologramTrait hologramTrait = steward.getSettler().getNpc().getOrAddTrait(HologramTrait.class);
             hologramTrait.addLine("&7[&6" + steward.getStewardType().getName() + "&7]");
 
+            steward.getSettler().getNpc().addTrait(LookClose.class);
             steward.getSettler().getNpc().getOrAddTrait(LookClose.class).setRange(16);
 
             if (female) {
@@ -102,8 +104,6 @@ class StewardsCommand {
             StewardLookup.get().setArchitect(player, steward);
 
             settler.spawn();
-
-            steward.startFollowing(player);
         } catch (InvalidStewardException e) {
             throw new RuntimeException(e);
         }

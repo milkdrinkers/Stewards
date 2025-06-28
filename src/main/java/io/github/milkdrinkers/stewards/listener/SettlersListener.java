@@ -3,6 +3,7 @@ package io.github.milkdrinkers.stewards.listener;
 import com.palmergames.bukkit.towny.TownyAPI;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.settlers.api.enums.RemoveReason;
+import io.github.milkdrinkers.settlers.api.event.settler.lifecycle.SettlerCreateEvent;
 import io.github.milkdrinkers.settlers.api.event.settler.lifecycle.SettlerRemoveEvent;
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.spawning.SettlerSpawnEvent;
 import io.github.milkdrinkers.stewards.Stewards;
@@ -10,6 +11,7 @@ import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.trait.*;
+import net.citizensnpcs.api.event.SpawnReason;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -173,6 +175,17 @@ public class SettlersListener implements Listener {
 
         // Uncache the Steward. We don't delete the Settler or NPC objects, as this is handled by their respective plugins
         StewardLookup.get().unregisterSteward(StewardLookup.get().getSteward(e.getSettler()));
+    }
+
+    @EventHandler
+    public void onSettlerCreate(SettlerSpawnEvent e) {
+        if (!e.getSettler().getNpc().hasTrait(StewardTrait.class))
+            return;
+
+        if (e.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer() == null)
+            return;
+
+        StewardLookup.get().getSteward(e.getSettler()).startFollowing(e.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
     }
 
 }
