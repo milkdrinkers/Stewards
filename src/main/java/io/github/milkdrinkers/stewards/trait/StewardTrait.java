@@ -11,6 +11,8 @@ import io.github.milkdrinkers.stewards.hook.HookManager;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.utility.Logger;
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.persistence.Persist;
@@ -205,6 +207,20 @@ public class StewardTrait extends Trait {
         if (steward == null) return;
 
         StewardBaseGui.createBaseGui(steward, e.getClicker()).open(e.getClicker());
+    }
+
+    @EventHandler
+    public void onNavigationCancelled(NavigationCancelEvent e) {
+        if (e.getNPC() != this.getNPC()) return;
+
+        if (e.getCancelReason() == CancelReason.STUCK) {
+            Steward steward = StewardLookup.get().getSteward((e.getNPC()));
+            if (steward == null) return;
+
+            Player player = followingPlayer;
+            steward.stopFollowing(player);
+            steward.startFollowing(player);
+        }
     }
 
     @Override
