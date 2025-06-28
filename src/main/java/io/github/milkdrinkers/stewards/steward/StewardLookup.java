@@ -7,6 +7,7 @@ import io.github.milkdrinkers.stewards.Stewards;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +45,11 @@ public class StewardLookup implements Reloadable {
     }
 
     public void addStewardUuidToTown(UUID townUuid, UUID stewardUuid) {
-        List<UUID> uuids = townStewardUuidMap.get(townUuid);
+        List<UUID> uuids;
+        if (townStewardUuidMap.get(townUuid) != null)
+            uuids = townStewardUuidMap.get(townUuid);
+        else
+            uuids = new ArrayList<>();
         uuids.add(stewardUuid);
         townStewardUuidMap.put(townUuid, uuids);
     }
