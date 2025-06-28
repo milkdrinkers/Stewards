@@ -185,9 +185,18 @@ public class StewardTrait extends Trait {
             return;
         }
 
+        boolean isArchitect = this.getNPC().hasTrait(ArchitectTrait.class);
+        boolean isHired = this.hired;
         boolean isPortSteward = this.getNPC().hasTrait(PortmasterTrait.class) || this.getNPC().hasTrait(StablemasterTrait.class);
         boolean isMayor = resident.isMayor() || resident.getTownRanks().contains("co-mayor");
         boolean isAdmin = Hook.getVaultHook().isHookLoaded() && e.getClicker().hasPermission("stewards.admin");
+
+        if (isArchitect && !isHired) {
+            Steward steward = StewardLookup.get().getSteward((e.getNPC()));
+            if (steward == null) return;
+
+            StewardBaseGui.createBaseGui(steward, e.getClicker()).open(e.getClicker());
+        }
 
         if (!isPortSteward && !isMayor && !isAdmin) {
             e.getClicker().sendMessage(ColorParser.of("<red>You must be mayor or co-mayor to interact with stewards.").build());
