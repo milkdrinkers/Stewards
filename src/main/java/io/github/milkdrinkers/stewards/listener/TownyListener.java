@@ -73,6 +73,8 @@ public class TownyListener implements Listener {
 
         Steward steward = StewardLookup.get().getSteward(TownyDataUtil.getStewardUUID(town.getMayor().getUUID()));
 
+        steward.stopFollowing(town.getMayor().getPlayer(), true);
+
         StewardLookup.get().clearHasArchitect(steward.getSettler().getNpc().getOrAddTrait(ArchitectTrait.class).getSpawningPlayer());
 
         TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
@@ -84,6 +86,7 @@ public class TownyListener implements Listener {
         steward.setTownUUID(town.getUUID());
         steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).hire();
         steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setTownUUID(town.getUUID());
+
 
         try {
             steward.setTownBlock(town.getHomeBlock());
