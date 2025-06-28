@@ -35,7 +35,7 @@ public class Steward {
     public void startFollowing(Player player) {
         getSettler().getNpc().getNavigator().setTarget(player, false);
         getSettler().getNpc().getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
-        getSettler().getNpc().getNavigator().getDefaultParameters().speedModifier(2.f);
+        getSettler().getNpc().getNavigator().getDefaultParameters().speedModifier(1.5f);
         getSettler().getNpc().getNavigator().getDefaultParameters().distanceMargin(4.0);
         getSettler().getNpc().getTraitNullable(StewardTrait.class).setFollowing(true);
         getSettler().getNpc().getTraitNullable(StewardTrait.class).setFollowingPlayer(player);
