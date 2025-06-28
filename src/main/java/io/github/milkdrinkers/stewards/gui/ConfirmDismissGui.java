@@ -56,7 +56,7 @@ public class ConfirmDismissGui {
             steward.getSettler().getNpc().destroy();
 
             Resident resident = TownyAPI.getInstance().getResident(player);
-            if (resident != null) {
+            if (resident == null) {
                 Logger.get().error("Something went wrong: Resident returned null for " +  player.getName());
                 player.sendMessage(ColorParser.of(Translation.of("error.resident-null")).build());
             }
