@@ -49,6 +49,13 @@ public class Steward {
         StewardLookup.get().removeStewardFollowingPlayer(player);
     }
 
+    public void stopFollowing(Player player, boolean setAnchorLocation) {
+        stopFollowing(player);
+        if (setAnchorLocation && getSettler().isSpawned()) {
+            getSettler().getNpc().getTraitNullable(StewardTrait.class).setAnchorLocation(getSettler().getEntity().getLocation());
+        }
+    }
+
     public StewardType getStewardType() {
         return stewardType;
     }
