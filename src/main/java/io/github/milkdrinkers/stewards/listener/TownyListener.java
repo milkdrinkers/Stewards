@@ -87,14 +87,6 @@ public class TownyListener implements Listener {
         steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).hire();
         steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setTownUUID(town.getUUID());
 
-
-        try {
-            steward.setTownBlock(town.getHomeBlock());
-            steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setTownBlock(town.getHomeBlock());
-        } catch (TownyException ex) {
-            Logger.get().error("Couldn't set steward townblock when creating town: " + ex);
-        }
-
         if (TownyAPI.getInstance().getTown(steward.getSettler().getNpc().getEntity().getLocation()).getUUID() == null
             && TownyAPI.getInstance().getTown(steward.getSettler().getNpc().getEntity().getLocation()).getUUID() != steward.getTownUUID()) {
             try {
@@ -156,14 +148,20 @@ public class TownyListener implements Listener {
     @EventHandler
     public void onUnclaim(TownPreUnclaimEvent e) {
         if (TownMetaData.hasArchitect(e.getTown())) {
-            if (StewardLookup.get().getSteward(TownMetaData.getArchitect(e.getTown())).getTownBlock().getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
+            if (TownyAPI.getInstance().getTownBlock
+                (StewardLookup.get().getSteward(TownMetaData.getArchitect(e.getTown()))
+                    .getSettler().getNpc().getStoredLocation())
+                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
                 e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
                 e.setCancelled(true);
             }
         }
 
         if (TownMetaData.hasBailiff(e.getTown())) {
-            if (StewardLookup.get().getSteward(TownMetaData.getBailiff(e.getTown())).getTownBlock().getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
+            if (TownyAPI.getInstance().getTownBlock
+                    (StewardLookup.get().getSteward(TownMetaData.getBailiff(e.getTown()))
+                        .getSettler().getNpc().getStoredLocation())
+                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
                 e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
                 e.setCancelled(true);
             }
@@ -171,14 +169,20 @@ public class TownyListener implements Listener {
 
 
         if (TownMetaData.hasPortmaster(e.getTown())) {
-            if (StewardLookup.get().getSteward(TownMetaData.getPortmaster(e.getTown())).getTownBlock().getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
+            if (TownyAPI.getInstance().getTownBlock
+                    (StewardLookup.get().getSteward(TownMetaData.getPortmaster(e.getTown()))
+                        .getSettler().getNpc().getStoredLocation())
+                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
                 e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
                 e.setCancelled(true);
             }
         }
 
         if (TownMetaData.hasStablemaster(e.getTown())) {
-            if (StewardLookup.get().getSteward(TownMetaData.getStablemaster(e.getTown())).getTownBlock().getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
+            if (TownyAPI.getInstance().getTownBlock
+                    (StewardLookup.get().getSteward(TownMetaData.getStablemaster(e.getTown()))
+                        .getSettler().getNpc().getStoredLocation())
+                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
                 e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
                 e.setCancelled(true);
             }
@@ -186,7 +190,10 @@ public class TownyListener implements Listener {
 
 
         if (TownMetaData.hasTreasurer(e.getTown())) {
-            if (StewardLookup.get().getSteward(TownMetaData.getTreasurer(e.getTown())).getTownBlock().getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
+            if (TownyAPI.getInstance().getTownBlock
+                    (StewardLookup.get().getSteward(TownMetaData.getTreasurer(e.getTown()))
+                        .getSettler().getNpc().getStoredLocation())
+                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
                 e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
                 e.setCancelled(true);
             }

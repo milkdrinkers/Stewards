@@ -54,10 +54,11 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         populateButtons(gui, steward, player);
 
         if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(plugin.getStewardTypeHandler().ARCHITECT_ID)) {
-            if (steward.getTownUUID() == null)
-                populateArchitectNoTownButtons(gui, steward, player);
-            else
+            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired())
                 populateArchitectTownButtons(gui, steward, player);
+            else
+                populateArchitectNoTownButtons(gui, steward, player);
+
         }
 
         if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(plugin.getStewardTypeHandler().TREASURER_ID)) {

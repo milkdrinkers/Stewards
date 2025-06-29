@@ -14,17 +14,15 @@ import java.util.UUID;
 public class Steward {
     private final StewardType stewardType;
     private final AbstractSettler settler;
-    private TownBlock townBlock;
     private int level;
     private UUID townUUID;
     private final boolean isEnabled;
     private final boolean isHidden;
     private final double dailyUpkeepCost;
 
-    public Steward(StewardType stewardType, AbstractSettler settler, TownBlock townBlock, int level, UUID townUUID, boolean isEnabled, boolean isHidden, double dailyUpkeepCost) {
+    public Steward(StewardType stewardType, AbstractSettler settler, int level, UUID townUUID, boolean isEnabled, boolean isHidden, double dailyUpkeepCost) {
         this.stewardType = stewardType;
         this.settler = settler;
-        this.townBlock = townBlock;
         this.level = level;
         this.townUUID = townUUID;
         this.isEnabled = isEnabled;
@@ -62,14 +60,6 @@ public class Steward {
 
     public AbstractSettler getSettler() {
         return settler;
-    }
-
-    public TownBlock getTownBlock() {
-        return townBlock;
-    }
-
-    public void setTownBlock(TownBlock townBlock) {
-        this.townBlock = townBlock;
     }
 
     public int getLevel() {
@@ -111,7 +101,6 @@ public class Steward {
     public static class Builder {
         private StewardType stewardType;
         private AbstractSettler settler;
-        private TownBlock townBlock;
         private int level;
         private UUID townUUID;
         private boolean isEnabled;
@@ -125,11 +114,6 @@ public class Steward {
 
         public Builder setSettler(@NotNull AbstractSettler settler) {
             this.settler = settler;
-            return this;
-        }
-
-        public Builder setTownBlock(@NotNull TownBlock townBlock) {
-            this.townBlock = townBlock;
             return this;
         }
 
@@ -172,7 +156,7 @@ public class Steward {
             if (settler == null)
                 throw new InvalidStewardException("Settler is null");
 
-            return new Steward(stewardType, settler, townBlock, level, townUUID, isEnabled, isHidden, dailyUpkeepCost);
+            return new Steward(stewardType, settler, level, townUUID, isEnabled, isHidden, dailyUpkeepCost);
         }
     }
 }

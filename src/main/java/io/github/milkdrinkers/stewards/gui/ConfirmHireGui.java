@@ -71,11 +71,8 @@ public class ConfirmHireGui {
                     steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).hire();
                     steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
                     steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setLevel(1);
-                    steward.getSettler().getNpc().getTraitNullable(StewardTrait.class)
-                        .setTownBlock(TownyAPI.getInstance().getTownBlock(steward.getSettler().getNpc().getEntity().getLocation()));
 
                     steward.setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
-                    steward.setTownBlock(TownyAPI.getInstance().getTownBlock(steward.getSettler().getNpc().getEntity().getLocation()));
                     steward.setLevel(1);
 
                     TownMetaData.setUnhiredSteward(TownyAPI.getInstance().getTown(player), false);

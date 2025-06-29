@@ -40,20 +40,11 @@ public class StewardTrait extends Trait {
     int level;
     @Persist
     boolean hired = false;
-    @Persist
-    TownBlock townBlock;
-    @Persist
     UUID townUUID;
     @Persist
+    String townUUIDString;
+    @Persist
     boolean striking = false;
-
-    public TownBlock getTownBlock() {
-        return townBlock;
-    }
-
-    public void setTownBlock(TownBlock townBlock) {
-        this.townBlock = townBlock;
-    }
 
     public UUID getTownUUID() {
         return townUUID;
@@ -61,6 +52,7 @@ public class StewardTrait extends Trait {
 
     public void setTownUUID(UUID townUUID) {
         this.townUUID = townUUID;
+        this.townUUIDString =  townUUID.toString();
     }
 
     public boolean isFollowing() {
@@ -144,11 +136,10 @@ public class StewardTrait extends Trait {
 
         anchorLocation = (Location) key.getRaw("anchorlocation");
 
-        if (key.getRaw("townuuid") != null)
-            townUUID = (UUID) key.getRaw("townuuid");
-
-        if (key.getRaw("townblock") != null)
-            townBlock = (TownBlock) key.getRaw("townblock");
+        if (key.getString("townuuid") != null){
+            townUUID = UUID.fromString(key.getString("townuuid"));
+            townUUIDString = key.getString("townuuid");
+        }
     }
 
     public void save(DataKey key) {
@@ -160,10 +151,9 @@ public class StewardTrait extends Trait {
 
         key.setRaw("anchorlocation", anchorLocation);
 
-        if (townUUID != null)
-            key.setRaw("townuuid", townUUID);
-        if (townBlock != null)
-            key.setRaw("townblock", townBlock);
+        if (townUUID != null) {
+            key.setString("townuuid", townUUID.toString());
+        }
     }
 
     @EventHandler
@@ -240,8 +230,9 @@ public class StewardTrait extends Trait {
 
         if (TownyAPI.getInstance().getTown(npc.getEntity().getLocation()) == null
             || !TownyAPI.getInstance().getTown(npc.getEntity().getLocation()).getUUID().equals(townUUID) ) {
-            followingPlayer.sendMessage(ColorParser.of("<red>Stewards aren't allowed to move outside of their town.").build());
+            followingPlayer.sendMessage(ColorParser.of("<red>Stewards aren't allowed to move outside of their town.").build()); // TODO Translation
             StewardLookup.get().getSteward(npc).stopFollowing(followingPlayer);
+            npc.getNavigator().getDefaultParameters().distanceMargin(0.0);
             npc.getNavigator().setTarget(anchorLocation);
             return;
         }

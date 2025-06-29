@@ -52,7 +52,6 @@ public class SettlersListener implements Listener {
                         .setIsHidden(false)
                         .setLevel(stewardTrait.getLevel())
                         .setSettler(e.getSettler())
-                        .setTownBlock(stewardTrait.getTownBlock())
                         .build();
 
                     StewardLookup.get().registerSteward(steward);
@@ -74,7 +73,6 @@ public class SettlersListener implements Listener {
                         .setIsHidden(false)
                         .setLevel(stewardTrait.getLevel())
                         .setSettler(e.getSettler())
-                        .setTownBlock(stewardTrait.getTownBlock())
                         .build();
 
                     StewardLookup.get().registerSteward(steward);
@@ -95,7 +93,6 @@ public class SettlersListener implements Listener {
                         .setIsHidden(false)
                         .setLevel(stewardTrait.getLevel())
                         .setSettler(e.getSettler())
-                        .setTownBlock(stewardTrait.getTownBlock())
                         .build();
 
                     StewardLookup.get().registerSteward(steward);
@@ -116,7 +113,6 @@ public class SettlersListener implements Listener {
                         .setIsHidden(false)
                         .setLevel(stewardTrait.getLevel())
                         .setSettler(e.getSettler())
-                        .setTownBlock(stewardTrait.getTownBlock())
                         .build();
 
                     StewardLookup.get().registerSteward(steward);
@@ -137,7 +133,6 @@ public class SettlersListener implements Listener {
                         .setIsHidden(false)
                         .setLevel(stewardTrait.getLevel())
                         .setSettler(e.getSettler())
-                        .setTownBlock(stewardTrait.getTownBlock())
                         .build();
 
                     StewardLookup.get().registerSteward(steward);
