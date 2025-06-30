@@ -1,6 +1,5 @@
 package io.github.milkdrinkers.stewards;
 
-import io.github.milkdrinkers.colorparser.ColorParser;
 import io.github.milkdrinkers.stewards.command.CommandHandler;
 import io.github.milkdrinkers.stewards.config.ConfigHandler;
 import io.github.milkdrinkers.stewards.hook.HookManager;
@@ -9,13 +8,11 @@ import io.github.milkdrinkers.stewards.quest.BetonQuestHandler;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.threadutil.SchedulerHandler;
-import io.github.milkdrinkers.stewards.trait.*;
+import io.github.milkdrinkers.stewards.trait.traits.*;
 import io.github.milkdrinkers.stewards.translation.TranslationHandler;
 import io.github.milkdrinkers.stewards.updatechecker.UpdateHandler;
-import io.github.milkdrinkers.stewards.utility.Logger;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,13 +89,7 @@ public class Stewards extends JavaPlugin {
         for (Reloadable handler : handlers)
             handler.onEnable(instance);
 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StewardTrait.class).withName("steward"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ArchitectTrait.class).withName("architect"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BailiffTrait.class).withName("bailiff"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PortmasterTrait.class).withName("portmaster"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StablemasterTrait.class).withName("stablemaster"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TreasurerTrait.class).withName("treasurer"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ArchitectSpawnerTrait.class).withName("architectspawner"));
+
     }
 
     @Override

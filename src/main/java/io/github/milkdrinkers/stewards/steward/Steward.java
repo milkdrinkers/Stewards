@@ -4,7 +4,7 @@ import com.palmergames.bukkit.towny.object.TownBlock;
 import io.github.milkdrinkers.settlers.api.settler.AbstractSettler;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
+import io.github.milkdrinkers.stewards.trait.traits.StewardTrait;
 import net.citizensnpcs.api.ai.TeleportStuckAction;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

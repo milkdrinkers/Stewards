@@ -3,15 +3,13 @@ package io.github.milkdrinkers.stewards.listener;
 import com.palmergames.bukkit.towny.TownyAPI;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.settlers.api.enums.RemoveReason;
-import io.github.milkdrinkers.settlers.api.event.settler.lifecycle.SettlerCreateEvent;
 import io.github.milkdrinkers.settlers.api.event.settler.lifecycle.SettlerRemoveEvent;
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.spawning.SettlerSpawnEvent;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
-import io.github.milkdrinkers.stewards.trait.*;
-import net.citizensnpcs.api.event.SpawnReason;
+import io.github.milkdrinkers.stewards.trait.traits.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

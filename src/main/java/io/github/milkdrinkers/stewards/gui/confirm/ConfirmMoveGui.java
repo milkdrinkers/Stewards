@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.gui;
+package io.github.milkdrinkers.stewards.gui.confirm;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
@@ -6,9 +6,8 @@ import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
+import io.github.milkdrinkers.stewards.trait.traits.StewardTrait;
 import io.github.milkdrinkers.wordweaver.Translation;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

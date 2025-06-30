@@ -1,13 +1,11 @@
-package io.github.milkdrinkers.stewards.trait;
+package io.github.milkdrinkers.stewards.trait.traits;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.TownBlock;
 import io.github.milkdrinkers.colorparser.ColorParser;
-import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
 import io.github.milkdrinkers.stewards.hook.Hook;
-import io.github.milkdrinkers.stewards.hook.HookManager;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.utility.Logger;

@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.trait;
+package io.github.milkdrinkers.stewards.trait.traits;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;

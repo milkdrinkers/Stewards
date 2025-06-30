@@ -1,8 +1,6 @@
 package io.github.milkdrinkers.stewards.gui;
 
-import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyAPI;
-import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.object.Town;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -14,14 +12,14 @@ import io.github.milkdrinkers.settlers.api.settler.SettlerBuilder;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.conversation.CreateTownConversation;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
+import io.github.milkdrinkers.stewards.gui.confirm.*;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.trait.*;
+import io.github.milkdrinkers.stewards.trait.traits.*;
 import io.github.milkdrinkers.stewards.utility.Appearance;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.wordweaver.Translation;
-import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;

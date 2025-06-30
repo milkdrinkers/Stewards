@@ -4,7 +4,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
+import io.github.milkdrinkers.stewards.trait.traits.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Appearance;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;

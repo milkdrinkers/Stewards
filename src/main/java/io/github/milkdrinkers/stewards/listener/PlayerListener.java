@@ -1,16 +1,10 @@
 package io.github.milkdrinkers.stewards.listener;
 
-import com.palmergames.bukkit.towny.TownyAPI;
-import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
-import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.trait.ArchitectTrait;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
-import io.github.milkdrinkers.stewards.utility.Cfg;
+import io.github.milkdrinkers.stewards.trait.traits.ArchitectTrait;
+import io.github.milkdrinkers.stewards.trait.traits.StewardTrait;
 import io.github.milkdrinkers.threadutil.Scheduler;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
