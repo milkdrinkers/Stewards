@@ -22,6 +22,7 @@ commandapi-shade = { module = "dev.jorel:commandapi-bukkit-shade", version.ref =
 commandapi-annotations = { module = "dev.jorel:commandapi-annotations", version.ref = "commandapi" }
 triumph-gui = "dev.triumphteam:triumph-gui:3.1.11"
 betonquest = "org.betonquest:betonquest:3.0.0-SNAPSHOT"
+sentinel = "org.mcmonkey:sentinel:2.9.2-SNAPSHOT"
 
 # Plugin dependencies
 citizens = "net.citizensnpcs:citizens-main:2.0.38-SNAPSHOT"
