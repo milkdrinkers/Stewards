@@ -7,16 +7,20 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.colorparser.ColorParser;
-import io.github.milkdrinkers.settlers.api.settler.Companion;
+import io.github.milkdrinkers.settlers.api.enums.SettlerType;
+import io.github.milkdrinkers.settlers.api.settler.AbstractSettler;
 import io.github.milkdrinkers.settlers.api.settler.SettlerBuilder;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.conversation.CreateTownConversation;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
+import io.github.milkdrinkers.stewards.exception.InvalidStewardTypeException;
 import io.github.milkdrinkers.stewards.gui.confirm.*;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.traits.*;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
 import io.github.milkdrinkers.stewards.utility.Appearance;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.wordweaver.Translation;
@@ -29,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.mcmonkey.sentinel.SentinelTrait;
 
 import java.util.List;
 import java.util.Objects;
@@ -56,40 +61,13 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                 populateArchitectNoTownButtons(gui, steward, player);
             else
                 populateArchitectTownButtons(gui, steward, player);
-        }
-
-        if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(plugin.getStewardTypeHandler().TREASURER_ID)) {
+        } else {
             if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
                 populateHiredButtons(gui, steward, player);
             } else {
                 populateUnHiredButtons(gui, steward, player);
             }
         }
-
-        if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(plugin.getStewardTypeHandler().BAILIFF_ID)) {
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
-                populateHiredButtons(gui, steward, player);
-            } else {
-                populateUnHiredButtons(gui, steward, player);
-            }
-        }
-
-        if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(plugin.getStewardTypeHandler().PORTMASTER_ID)) {
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
-                populateHiredButtons(gui, steward, player);
-            } else {
-                populateUnHiredButtons(gui, steward, player);
-            }
-        }
-
-        if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(plugin.getStewardTypeHandler().STABLEMASTER_ID)) {
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
-                populateHiredButtons(gui, steward, player);
-            } else {
-                populateUnHiredButtons(gui, steward, player);
-            }
-        }
-
         return gui;
     }
 
@@ -273,6 +251,30 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                 PortsAPI.openTravelMenu(player, PortsAPI.getCarriageStationFromTown(TownyAPI.getInstance().getTown(steward.getTownUUID())));
             }));
 
+        } else if (steward.getStewardType() == Stewards.getInstance().getStewardTypeHandler().getStewardTypeRegistry().getType(Stewards.getInstance().getStewardTypeHandler().GUARDCAPTAIN_ID)) {
+            gui.setItem(3, 3, ItemBuilder.from(upgradeItem).asGuiItem(event -> {
+                if (steward.getLevel() < steward.getStewardType().getMaxLevel()) {
+                    ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
+                } else {
+                    gui.close(player);
+                    player.sendMessage(ColorParser.of(Translation.of("gui.general.upgrade.unclickable-message")).build().decoration(TextDecoration.ITALIC, false));
+                }
+            }));
+
+            gui.setItem(3, 7, ItemBuilder.from(fireItem).asGuiItem(event -> {
+                ConfirmFireGui.createGui(steward, player).open(player);
+            }));
+
+            ItemStack guardItem = new ItemStack(Material.LEATHER_CHESTPLATE);
+            ItemMeta guardMeta = guardItem.getItemMeta();
+            guardMeta.displayName(ColorParser.of(Translation.of("gui.general.guard.name")).build());
+            guardMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+            guardItem.setItemMeta(guardMeta);
+
+            gui.setItem(3, 5, ItemBuilder.from(guardItem).asGuiItem(event -> {
+                // TODO open gui
+            }));
+
         } else {
             gui.setItem(3, 3, ItemBuilder.from(upgradeItem).asGuiItem(event -> {
                 if (steward.getLevel() < steward.getStewardType().getMaxLevel()) {
@@ -421,7 +423,36 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         stablemasterMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         stablemasterItem.setItemMeta(stablemasterMeta);
 
-        gui.setItem(3, 2, ItemBuilder.from(treasurerItem).asGuiItem(e -> {
+        ItemStack guardcaptainItem = new ItemStack(Material.SADDLE);
+        ItemMeta guardcaptainMeta = guardcaptainItem.getItemMeta();
+
+
+        if (!TownMetaData.hasGuardcaptain(town)) {
+            guardcaptainMeta.displayName(ColorParser.of(Translation.of("gui.architect.guardcaptain.hire.name")).build().decoration(TextDecoration.ITALIC, false));
+            guardcaptainMeta.lore(List.of(
+                ColorParser.of(Translation.of("gui.architect.guardcaptain.hire.lore-1")).parseMinimessagePlaceholder("cost", String.valueOf(Cfg.get().getInt("stablemaster.upgrade-cost.level-1"))).build().decoration(TextDecoration.ITALIC, false),
+                ColorParser.of(Translation.of("gui.architect.guardcaptain.hire.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
+        } else {
+            if (StewardLookup.get().getSteward(TownMetaData.getGuardcaptain(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).isStriking()) {
+                guardcaptainMeta.displayName(ColorParser.of(Translation.of("gui.architect.guardcaptain.striking.name")).build().decoration(TextDecoration.ITALIC, false));
+                guardcaptainMeta.lore(List.of(
+                    ColorParser.of(Translation.of("gui.architect.guardcaptain.hire.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                    ColorParser.of(Translation.of("gui.architect.guardcaptain.hire.lore-2"))
+                        .parseMinimessagePlaceholder("cost",
+                            String.valueOf(Cfg.get().getInt("stablemaster.stipend.level-" +
+                                StewardLookup.get().getSteward(TownMetaData.getGuardcaptain(town)).getLevel())))
+                        .build().decoration(TextDecoration.ITALIC, false)));
+            } else {
+                guardcaptainMeta.displayName(ColorParser.of(Translation.of("gui.architect.guardcaptain.hired.name")).build().decoration(TextDecoration.ITALIC, false));
+                guardcaptainMeta.lore(List.of(
+                    ColorParser.of(Translation.of("gui.architect.guardcaptain.hired.lore-1")).build().decoration(TextDecoration.ITALIC, false),
+                    ColorParser.of(Translation.of("gui.architect.guardcaptain.hired.lore-2")).build().decoration(TextDecoration.ITALIC, false)));
+            }
+        }
+        guardcaptainMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+        guardcaptainItem.setItemMeta(guardcaptainMeta);
+
+        gui.setItem(3, 3, ItemBuilder.from(treasurerItem).asGuiItem(e -> {
             if (TownMetaData.hasTreasurer(town)) {
                 if (StewardLookup.get().getSteward(TownMetaData.getTreasurer(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).isStriking()) {
                     ConfirmStipendGui.createGui(steward, player, Cfg.get().getInt("treasurer.stipend.level-" +
@@ -453,7 +484,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             gui.close(player);
         }));
 
-        gui.setItem(3, 6, ItemBuilder.from(portmasterItem).asGuiItem(e -> {
+        gui.setItem(3, 5, ItemBuilder.from(portmasterItem).asGuiItem(e -> {
             if (TownMetaData.hasPortmaster(town)) {
                 if (StewardLookup.get().getSteward(TownMetaData.getPortmaster(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).isStriking()) {
                     ConfirmStipendGui.createGui(steward, player, Cfg.get().getInt("portmaster.stipend.level-" +
@@ -471,16 +502,34 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             }
         }));
 
-        gui.setItem(3, 8, ItemBuilder.from(stablemasterItem).asGuiItem(e -> {
+        gui.setItem(3, 6, ItemBuilder.from(stablemasterItem).asGuiItem(e -> {
             if (TownMetaData.hasStablemaster(town)) {
                 if (StewardLookup.get().getSteward(TownMetaData.getStablemaster(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).isStriking()) {
                     ConfirmStipendGui.createGui(steward, player, Cfg.get().getInt("stablemaster.stipend.level-" +
-                            StewardLookup.get().getSteward(TownMetaData.getPortmaster(town)).getLevel()))
+                            StewardLookup.get().getSteward(TownMetaData.getStablemaster(town)).getLevel()))
                         .open(player);
                 }
             } else {
                 if (!unhiredSteward) {
                     createSteward(Stewards.getInstance().getStewardTypeHandler().STABLEMASTER_ID, player);
+                    TownMetaData.setUnhiredSteward(town, true);
+                } else {
+                    player.sendMessage(ColorParser.of(Translation.of("error.dismiss")).build());
+                }
+                gui.close(player);
+            }
+        }));
+
+        gui.setItem(3, 7, ItemBuilder.from(guardcaptainItem).asGuiItem(e -> {
+            if (TownMetaData.hasGuardcaptain(town)) {
+                if (StewardLookup.get().getSteward(TownMetaData.getGuardcaptain(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).isStriking()) {
+                    ConfirmStipendGui.createGui(steward, player, Cfg.get().getInt("guardcaptain.stipend.level-" +
+                            StewardLookup.get().getSteward(TownMetaData.getGuardcaptain(town)).getLevel()))
+                        .open(player);
+                }
+            } else {
+                if (!unhiredSteward) {
+                    createSteward(Stewards.getInstance().getStewardTypeHandler().GUARDCAPTAIN_ID, player);
                     TownMetaData.setUnhiredSteward(town, true);
                 } else {
                     player.sendMessage(ColorParser.of(Translation.of("error.dismiss")).build());
@@ -497,10 +546,11 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             if (female)
                 name = Appearance.getFemaleName();
 
-            Companion settler = new SettlerBuilder()
+            AbstractSettler settler = new SettlerBuilder()
                 .setName(name)
-                .setLocation((player).getLocation().add(Appearance.randomInt(2), 0, Appearance.randomInt(2))) // TODO maybe change this
-                .createCompanion();
+                .setLocation((player).getLocation().add(1, 0, 0))
+                .setType(getType(stewardTypeId))
+                .create();
 
             Steward steward = Steward.builder()
                 .setStewardType(Stewards.getInstance().getStewardTypeHandler().getStewardTypeRegistry().getType(stewardTypeId))
@@ -516,24 +566,30 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             trait.setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
             trait.setFollowingPlayer(player);
 
-            HologramTrait hologramTrait = steward.getSettler().getNpc().getOrAddTrait(HologramTrait.class);
-            hologramTrait.clear();
-            hologramTrait.addLine("&7[&b" + steward.getStewardType().getName() + "&7]" + " &aLvl " + steward.getLevel());
-
-            if (female) {
-                Appearance.applyFemaleStewardSkin(steward);
-            } else {
-                Appearance.applyMaleStewardSkin(steward);
-            }
-
-            if (Objects.equals(stewardTypeId, Stewards.getInstance().getStewardTypeHandler().BAILIFF_ID)) {
-                steward.getSettler().getNpc().getOrAddTrait(BailiffTrait.class);
-            } else if (Objects.equals(stewardTypeId, Stewards.getInstance().getStewardTypeHandler().PORTMASTER_ID)) {
-                steward.getSettler().getNpc().getOrAddTrait(PortmasterTrait.class);
-            } else if (Objects.equals(stewardTypeId, Stewards.getInstance().getStewardTypeHandler().STABLEMASTER_ID)) {
-                steward.getSettler().getNpc().getOrAddTrait(StablemasterTrait.class);
-            } else if (Objects.equals(stewardTypeId, Stewards.getInstance().getStewardTypeHandler().TREASURER_ID)) {
-                steward.getSettler().getNpc().getOrAddTrait(TreasurerTrait.class);
+            if (stewardTypeId.equals(Stewards.getInstance().getStewardTypeHandler().BAILIFF_ID)) {
+                steward.getSettler().getNpc().addTrait(BailiffTrait.class);
+                applySkin(female, steward);
+                applyHologram(steward);
+            } else if (stewardTypeId.equals(Stewards.getInstance().getStewardTypeHandler().PORTMASTER_ID)) {
+                steward.getSettler().getNpc().addTrait(PortmasterTrait.class);
+                applySkin(female, steward);
+                applyHologram(steward);
+            } else if (stewardTypeId.equals(Stewards.getInstance().getStewardTypeHandler().STABLEMASTER_ID)) {
+                steward.getSettler().getNpc().addTrait(StablemasterTrait.class);
+                applySkin(female, steward);
+                applyHologram(steward);
+            } else if (stewardTypeId.equals(Stewards.getInstance().getStewardTypeHandler().TREASURER_ID)) {
+                steward.getSettler().getNpc().addTrait(TreasurerTrait.class);
+                applySkin(female, steward);
+                applyHologram(steward);
+            } else if (stewardTypeId.equals(Stewards.getInstance().getStewardTypeHandler().GUARDCAPTAIN_ID)) {
+                steward.getSettler().getNpc().addTrait(GuardCaptainTrait.class);
+                applySkin(female, steward);
+                applyHologram(steward);
+            } else if (stewardTypeId.equals(Stewards.getInstance().getStewardTypeHandler().GUARD_ID)) {
+                steward.getSettler().getNpc().addTrait(GuardTrait.class);
+                setupSentinelTrait(steward);
+                applyGuardSkin(female, steward);
             } else {
                 throw new InvalidStewardException("Invalid steward type: " + stewardTypeId);
             }
@@ -541,8 +597,50 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             StewardLookup.get().registerSteward(steward);
 
             settler.spawn();
-        } catch (InvalidStewardException e) {
+        } catch (InvalidStewardException | InvalidStewardTypeException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void setupSentinelTrait(Steward steward) {
+        SentinelTrait trait = steward.getSettler().getNpc().getOrAddTrait(SentinelTrait.class);
+        trait.setHealth(Cfg.get().getDouble("guard.health"));
+        trait.setInvincible(false);
+        trait.respawnTime = Cfg.get().getLong("guard.respawn-time");
+    }
+
+    private static void applySkin(boolean female, Steward steward) {
+        if (female) {
+            Appearance.applyFemaleStewardSkin(steward);
+        } else {
+            Appearance.applyMaleStewardSkin(steward);
+        }
+    }
+
+    private static void applyHologram(Steward steward) {
+        HologramTrait hologramTrait = steward.getSettler().getNpc().getOrAddTrait(HologramTrait.class);
+        hologramTrait.clear();
+        hologramTrait.addLine("&7[&b" + steward.getStewardType().getName() + "&7]" + " &aLvl " + steward.getLevel());
+    }
+
+    private static void applyGuardSkin(boolean female, Steward steward) {
+        if (female) {
+            Appearance.applyFemaleStewardSkin(steward); // TODO Proper skins for guards.
+        } else {
+            Appearance.applyMaleStewardSkin(steward);
+        }
+    }
+
+    private static SettlerType getType(String stewardTypeId) throws InvalidStewardTypeException {
+        return switch (stewardTypeId) {
+            case "architect",
+                 "treasurer",
+                 "bailiff",
+                 "portmaster",
+                 "stablemaster",
+                 "guardcaptain" -> SettlerType.TOWN;
+            case "guard" -> SettlerType.GUARD;
+            default -> throw new InvalidStewardTypeException(stewardTypeId + " is not a valid Steward Type.");
+        };
     }
 }

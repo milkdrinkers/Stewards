@@ -54,6 +54,9 @@
       },
       "travel": {
         "name": "<green>Open travel menu"
+      },
+      "guard": {
+        "name": "<green>Open Guards menu"
       }
     },
     "architect": {
@@ -125,6 +128,35 @@
           "name": "<green>Stable Master",
           "lore-1": "<grey>You've already hired the Stable Master.",
           "lore-2": "<grey>Talk to the Stable Master to upgrade your port."
+        }
+      },
+      "guardcaptain": {
+        "hire": {
+          "name": "<green>Hire the Guard Captain",
+          "lore-1": "<grey>The Guard Captain costs <cost>⊚ to hire.",
+          "lore-2": "<grey>The Guard Captain will allow you to create a port."
+        },
+        "striking": {
+          "name": "<green>Your Guard Captain is striking",
+          "lore-1": "<grey>You weren't able to pay your Guard Captain's wage, so they are now striking.",
+          "lore-2": "<grey>Getting your Guard Captain back costs <cost>⊚."
+        },
+        "hired": {
+          "name": "<green>Guard Captain",
+          "lore-1": "<grey>You've already hired the Guard Captain.",
+          "lore-2": "<grey>Talk to the Guard Captain to get more guards."
+        }
+      }
+    },
+    "guard": {
+      "captain": {
+        "title": "Manage Guards",
+        "guard": {
+          "name-1": "<green>Guard #<number>",
+          "lore-1": "<grey>Click to despawn this Guard.",
+          "name-2": "<green>Spawn Guard #<number>",
+          "name-3": "<red>Guard #<number>",
+          "lore-3": "<grey>Upgrade your Guard Captain to unlock this Guard."
         }
       }
     },

@@ -9,6 +9,9 @@ language: "en_US"
 architect:
   allowed-worlds:
     - "world"
+guard:
+  respawn-time: 12000 # In ticks.
+  health: 20.0
 bailiff:
   claims:
     level-1: 20 # Additional claims added by the bailiff.
@@ -81,3 +84,19 @@ stablemaster:
     level-1: 750
     level-2: 1100
     level-3: 2000
+guardcaptain:
+  upgrade-cost:
+    level-1: 12500
+    level-2: 25000
+    level-3: 50000
+    level-4: 100000
+  daily-cost:
+    level-1: 125
+    level-2: 250
+    level-3: 500
+    level-4: 1000
+  stipend:
+    level-1: 600
+    level-2: 1250
+    level-3: 2500
+    level-4: 5000

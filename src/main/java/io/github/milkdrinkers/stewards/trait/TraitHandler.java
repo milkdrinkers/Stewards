@@ -23,6 +23,8 @@ public class TraitHandler implements Reloadable {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StablemasterTrait.class).withName("stablemaster"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TreasurerTrait.class).withName("treasurer"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ArchitectSpawnerTrait.class).withName("architectspawner"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GuardTrait.class).withName("stewardsguard")); // Named "stewardsguard" as not to conflict with the GuardTrait in Settlers.
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GuardCaptainTrait.class).withName("guardcaptain"));
     }
 
     @Override

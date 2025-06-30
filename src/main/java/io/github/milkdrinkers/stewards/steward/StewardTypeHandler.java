@@ -13,6 +13,8 @@ public class StewardTypeHandler implements Reloadable {
     public String BAILIFF_ID = "bailiff";
     public String PORTMASTER_ID = "portmaster";
     public String STABLEMASTER_ID = "stablemaster";
+    public String GUARDCAPTAIN_ID = "guardcaptain";
+    public String GUARD_ID = "guard";
 
     @Override
     public void onLoad(Stewards plugin) {
@@ -90,6 +92,26 @@ public class StewardTypeHandler implements Reloadable {
                 .build();
 
             stewardTypeRegistry.register(stablemaster);
+
+            StewardType guardcaptain = StewardType.builder()
+                .setId(GUARDCAPTAIN_ID)
+                .setMaxLevel(4)
+                .setMinLevel(1)
+                .setName("Guard Captain")
+                .setStartingLevel(1)
+                .setSettlerPrefix("Guard Captain")
+                .build();
+
+            stewardTypeRegistry.register(guardcaptain);
+
+            StewardType guard = StewardType.builder()
+                .setId(GUARD_ID)
+                .setMaxLevel(1)
+                .setMinLevel(1)
+                .setName("Guard")
+                .setStartingLevel(1)
+                .setSettlerPrefix("Guard")
+                .build();
         } catch (InvalidStewardTypeException e) {
             throw new RuntimeException(e);
         }

@@ -23,6 +23,7 @@ public class TownMetaData {
     private static final String portmaster = "stewards_portmaster";
     private static final String stablemaster = "stewards_stablemaster";
     private static final String treasurer = "stewards_treasurer";
+    private static final String guardcaptain = "stewards_guardcaptain";
 
     private static final IntegerDataField bankLimitField = new IntegerDataField(bankLimit);
 
@@ -33,6 +34,7 @@ public class TownMetaData {
     private static final StringDataField portmasterField = new StringDataField(portmaster);
     private static final StringDataField stablemasterField = new StringDataField(stablemaster);
     private static final StringDataField treasurerField = new StringDataField(treasurer);
+    private static final StringDataField guardcaptainField = new StringDataField(guardcaptain);
 
     public static void removeBailiff(Town town) {
         MetaDataUtil.setString(town, bailiffField, null, true);
@@ -48,6 +50,10 @@ public class TownMetaData {
 
     public static void removeTreasurer(Town town) {
         MetaDataUtil.setString(town, treasurerField, null, true);
+    }
+
+    public static void removeGuardcaptain(Town town) {
+        MetaDataUtil.setString(town, guardcaptainField, null, true);
     }
 
     public static boolean hasArchitect(Town town) {
@@ -68,6 +74,10 @@ public class TownMetaData {
 
     public static boolean hasTreasurer(Town town) {
         return MetaDataUtil.getString(town, treasurerField) != null && !MetaDataUtil.getString(town, treasurerField).isEmpty();
+    }
+
+    public static boolean hasGuardcaptain(Town town) {
+        return MetaDataUtil.getString(town, guardcaptainField) != null && !MetaDataUtil.getString(town, guardcaptainField).isEmpty();
     }
 
     public static void setArchitect(Town town, UUID uuid) {
@@ -160,6 +170,24 @@ public class TownMetaData {
         setTreasurer(town, steward.getSettler());
     }
 
+    public static void setGuardcaptain(Town town, UUID uuid) {
+        if (!MetaDataUtil.hasMeta(town, guardcaptain))
+            MetaDataUtil.addNewStringMeta(town, guardcaptain, "", true);
+        MetaDataUtil.setString(town, guardcaptainField, uuid.toString(), true);
+    }
+
+    public static void setGuardcaptain(Town town, NPC npc) {
+        setGuardcaptain(town, npc.getUniqueId());
+    }
+
+    public static void setGuardcaptain(Town town, AbstractSettler settler) {
+        setGuardcaptain(town, settler.getNpc());
+    }
+
+    public static void setGuardcaptain(Town town, Steward steward) {
+        setGuardcaptain(town, steward.getSettler());
+    }
+
     public static @Nullable UUID getArchitect(Town town) {
         if (!MetaDataUtil.hasMeta(town, architect))
             return null;
@@ -188,6 +216,12 @@ public class TownMetaData {
         if (!MetaDataUtil.hasMeta(town, treasurer))
             return null;
         return UUID.fromString(MetaDataUtil.getString(town, treasurerField));
+    }
+
+    public static @Nullable UUID getGuardcaptain(Town town) {
+        if (!MetaDataUtil.hasMeta(town, guardcaptain))
+            return null;
+        return UUID.fromString(MetaDataUtil.getString(town, guardcaptainField));
     }
 
     public static boolean hasUnhiredSteward(Town town) {
@@ -220,5 +254,6 @@ public class TownMetaData {
         }
         MetaDataUtil.setInt(town, bankLimitField, limit, true);
     }
+
 
 }
