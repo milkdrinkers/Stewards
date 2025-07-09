@@ -68,9 +68,11 @@ public class ConfirmHireGui {
             if (checkTownBlock(steward, player)) {
                 if (checkTownBank(steward, player, cost)) {
                     player.sendMessage(ColorParser.of(Translation.of("gui.hire.hire-success")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build());
-                    steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).hire();
-                    steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
-                    steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setLevel(1);
+                    StewardTrait trait = steward.getSettler().getNpc().getTraitNullable(StewardTrait.class);
+
+                    trait.hire();
+                    trait.setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
+                    trait.setLevel(1);
 
                     steward.setTownUUID(TownyAPI.getInstance().getTown(player).getUUID());
                     steward.setLevel(1);
@@ -105,6 +107,10 @@ public class ConfirmHireGui {
                     } else { // This should never happen.
                         Logger.get().error("Something went wrong: No type-specific trait was found for " + steward.getSettler().getNpc());
                         player.sendMessage(ColorParser.of(Translation.of("error.improper-trait")).build());
+                    }
+
+                    if (trait.isFollowing()) {
+                        steward.stopFollowing(trait.getFollowingPlayer(), false);
                     }
 
                     StewardLookup.get().addStewardUuidToTown(town, steward);

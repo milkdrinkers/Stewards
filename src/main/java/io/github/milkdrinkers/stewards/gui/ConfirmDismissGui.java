@@ -60,6 +60,11 @@ public class ConfirmDismissGui {
             if (steward.getSettler().getNpc().hasTrait(ArchitectTrait.class) && !steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired())
                 StewardLookup.get().clearHasArchitect(player);
 
+            StewardTrait trait = steward.getSettler().getNpc().getTraitNullable(StewardTrait.class);
+            if (trait.isFollowing()) {
+                steward.stopFollowing(trait.getFollowingPlayer(), false);
+            }
+
             Resident resident = TownyAPI.getInstance().getResident(player);
             if (resident == null) {
                 Logger.get().error("Something went wrong: Resident returned null for " +  player.getName());

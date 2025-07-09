@@ -10,10 +10,7 @@ import io.github.milkdrinkers.colorparser.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.trait.BailiffTrait;
-import io.github.milkdrinkers.stewards.trait.PortmasterTrait;
-import io.github.milkdrinkers.stewards.trait.StablemasterTrait;
-import io.github.milkdrinkers.stewards.trait.TreasurerTrait;
+import io.github.milkdrinkers.stewards.trait.*;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import io.github.milkdrinkers.wordweaver.Translation;
@@ -66,6 +63,12 @@ public class ConfirmFireGui {
                 Logger.get().error("Something went wrong when checking town for {}. Town was null.", player.getName());
                 return;
             }
+
+            StewardTrait trait = steward.getSettler().getNpc().getTraitNullable(StewardTrait.class);
+            if (trait.isFollowing()) {
+                steward.stopFollowing(trait.getFollowingPlayer(), false);
+            }
+
             if (steward.getSettler().getNpc().hasTrait(BailiffTrait.class)) {
 
                 TownMetaData.removeBailiff(town);
