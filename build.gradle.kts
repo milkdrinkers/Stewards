@@ -172,7 +172,7 @@ tasks {
 //            url("https://download.luckperms.net/1515/bukkit/loader/LuckPerms-Bukkit-5.4.102.jar")
             github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
             github("retrooper", "packetevents", "v2.7.0", "packetevents-spigot-2.7.0.jar")
-            github("milkdrinkers", "Settlers", "0.0.9", "Settlers-0.0.9.jar")
+            github("milkdrinkers", "Settlers", "0.0.11", "Settlers-0.0.11.jar")
             hangar("PlaceholderAPI", "2.11.6")
             hangar("ViaVersion", "5.3.2")
             hangar("ViaBackwards", "5.3.2")
