@@ -110,7 +110,7 @@ public class ConfirmHireGui {
                     }
 
                     if (trait.isFollowing()) {
-                        steward.stopFollowing(trait.getFollowingPlayer(), false);
+                        steward.stopFollowing(trait.getFollowingPlayer(), true);
                     }
 
                     StewardLookup.get().addStewardUuidToTown(town, steward);
