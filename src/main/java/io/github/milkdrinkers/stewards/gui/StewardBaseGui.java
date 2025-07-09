@@ -188,11 +188,11 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         dismissMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         dismissItem.setItemMeta(dismissMeta);
 
-        gui.setItem(3, 4, ItemBuilder.from(hireItem).asGuiItem(event -> {
+        gui.setItem(3, 3, ItemBuilder.from(hireItem).asGuiItem(event -> {
             ConfirmHireGui.createGui(steward, player, cost).open(player);
         }));
 
-        gui.setItem(3, 6, ItemBuilder.from(dismissItem).asGuiItem(event -> {
+        gui.setItem(3, 7, ItemBuilder.from(dismissItem).asGuiItem(event -> {
             ConfirmDismissGui.createGui(steward, player).open(player);
         }));
     }
@@ -286,7 +286,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                 }
             }));
 
-            gui.setItem(3, 6, ItemBuilder.from(fireItem).asGuiItem(event -> {
+            gui.setItem(3, 7, ItemBuilder.from(fireItem).asGuiItem(event -> {
                 ConfirmFireGui.createGui(steward, player).open(player);
             }));
         }
