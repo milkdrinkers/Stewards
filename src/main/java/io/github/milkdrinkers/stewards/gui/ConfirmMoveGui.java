@@ -1,15 +1,23 @@
 package io.github.milkdrinkers.stewards.gui;
 
+import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.object.Town;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.ColorParser;
+import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
+import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
+import io.github.milkdrinkers.stewards.steward.StewardTypeRegistry;
+import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
+import io.github.milkdrinkers.stewards.utility.Logger;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -62,16 +70,52 @@ public class ConfirmMoveGui {
         }));
 
         gui.setItem(2, ItemBuilder.from(stayItem).asGuiItem(e -> {
-            steward.stopFollowing(player);
-            trait.setAnchorLocation(steward.getSettler().getNpc().getEntity().getLocation());
-            StewardLookup.get().removeStewardFollowingPlayer(player);
+            if (checkTownBlock(steward, player)) {
+                steward.stopFollowing(player, true);
+                gui.close(player);
+            }
 
-            gui.close(player);
         }));
 
         gui.setItem(4, ItemBuilder.from(continueItem).asGuiItem(e -> {
             gui.close(player);
         }));
+    }
+
+    private static boolean checkTownBlock(Steward steward, Player player) {
+        Town town = TownyAPI.getInstance().getTown(player);
+        if (town == null) { // Shouldn't be possible, considering the player was allowed to interact with the steward.
+            Logger.get().error("Something went wrong when checking town block for {}. Town was null.", player.getName());
+            return false;
+        }
+
+        Chunk chunk = steward.getSettler().getNpc().getEntity().getChunk();
+
+        if (TownMetaData.hasArchitect(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().ARCHITECT_ID)) {
+            if (StewardLookup.get().getSteward(TownMetaData.getArchitect(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
+                return false;
+        }
+
+        if (TownMetaData.hasBailiff(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().BAILIFF_ID)) {
+            if (StewardLookup.get().getSteward(TownMetaData.getBailiff(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
+                return false;
+        }
+
+        if (TownMetaData.hasPortmaster(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().PORTMASTER_ID)) {
+            if (StewardLookup.get().getSteward(TownMetaData.getPortmaster(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
+                return false;
+        }
+
+        if (TownMetaData.hasStablemaster(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().STABLEMASTER_ID)) {
+            if (StewardLookup.get().getSteward(TownMetaData.getStablemaster(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
+                return false;
+        }
+
+        if (TownMetaData.hasTreasurer(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().TREASURER_ID)) {
+            if (StewardLookup.get().getSteward(TownMetaData.getTreasurer(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
+                return false;
+        }
+        return true;
     }
 
 }
