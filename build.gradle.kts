@@ -82,7 +82,7 @@ dependencies {
         exclude("com.comphenix.packetwrapper", "PacketWrapper")
         exclude("de.themoep", "minedown-adventure")
     }
-    compileOnly(files("libs/AlathraPorts-1.0.1.jar"))
+    compileOnly(files("libs/AlathraPorts-1.0.2.jar"))
 
     // Testing - Core
     testImplementation(libs.annotations)
