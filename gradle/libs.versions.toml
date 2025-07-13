@@ -1,8 +1,6 @@
 [versions]
 crate = "4.0.0-RC.2"
-commandapi = "10.0.1"
-flyway = "11.7.2"
-jooq = "3.20.3"
+commandapi = "10.1.1"
 
 [libraries]
 # Core dependencies
@@ -16,15 +14,14 @@ versionwatch = "io.github.milkdrinkers:versionwatch:1.0.0"
 wordweaver = "io.github.milkdrinkers:wordweaver:0.0.5"
 crate-api = { module = "io.github.milkdrinkers:crate-api", version.ref = "crate" }
 crate-yaml = { module = "io.github.milkdrinkers:crate-yaml", version.ref = "crate" }
-colorparser = "io.github.milkdrinkers:colorparser:3.0.1"
-threadutil-bukkit = "io.github.milkdrinkers:threadutil-bukkit:1.0.0"
+colorparser = "io.github.milkdrinkers:colorparser-paper:4.0.0-RC.1"
+threadutil-bukkit = "io.github.milkdrinkers:threadutil-bukkit:1.2.0"
 commandapi-shade = { module = "dev.jorel:commandapi-bukkit-shade", version.ref = "commandapi" }
-commandapi-annotations = { module = "dev.jorel:commandapi-annotations", version.ref = "commandapi" }
-triumph-gui = "dev.triumphteam:triumph-gui:3.1.11"
+triumph-gui = "dev.triumphteam:triumph-gui:3.1.12"
 betonquest = "org.betonquest:betonquest:3.0.0-SNAPSHOT"
 
 # Plugin dependencies
-citizens = "net.citizensnpcs:citizens-main:2.0.38-SNAPSHOT"
+citizens = "net.citizensnpcs:citizens-main:2.0.39-SNAPSHOT"
 settlers = "io.github.milkdrinkers:settlers:0.0.11"
 bstats = "org.bstats:bstats-bukkit:3.1.0"
 vault = "com.github.MilkBowl:VaultAPI:1.7.1"
@@ -33,7 +30,7 @@ placeholderapi = "me.clip:placeholderapi:2.11.6"
 towny = "com.palmergames.bukkit.towny:towny:0.101.1.15"
 
 # Testing
-junit-bom = "org.junit:junit-bom:5.12.2"
+junit-bom = "org.junit:junit-bom:5.13.3"
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform = { module = "org.junit.platform:junit-platform-launcher" }
 slf4j = "org.slf4j:slf4j-simple:2.0.17"
@@ -45,6 +42,6 @@ junit = ["junit-jupiter", "junit-platform"]
 testcontainers = ["testcontainers-jupiter"]
 
 [plugins]
-shadow = "com.gradleup.shadow:8.3.6"
+shadow = "com.gradleup.shadow:8.3.8"
 run-paper = "xyz.jpenilla.run-paper:2.3.1"
 plugin-yml = "de.eldoria.plugin-yml.bukkit:0.7.1"

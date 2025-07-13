@@ -1,6 +1,6 @@
 package io.github.milkdrinkers.stewards;
 
-import io.github.milkdrinkers.colorparser.ColorParser;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.command.CommandHandler;
 import io.github.milkdrinkers.stewards.config.ConfigHandler;
 import io.github.milkdrinkers.stewards.hook.HookManager;

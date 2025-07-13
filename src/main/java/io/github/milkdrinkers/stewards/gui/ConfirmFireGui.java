@@ -6,7 +6,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.alathra.alathraports.api.PortsAPI;
-import io.github.milkdrinkers.colorparser.ColorParser;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
@@ -27,7 +27,7 @@ import java.util.List;
 public class ConfirmFireGui {
 
     public static Gui createGui(Steward steward, Player player) {
-        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.fire.title")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build())
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.fire.title")).with("type", steward.getStewardType().getName()).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -44,7 +44,7 @@ public class ConfirmFireGui {
     private static void populateButtons(Gui gui, Steward steward, Player player) {
         ItemStack fireItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta fireMeta = fireItem.getItemMeta();
-        fireMeta.displayName(ColorParser.of(Translation.of("gui.fire.fire")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+        fireMeta.displayName(ColorParser.of(Translation.of("gui.fire.fire")).with("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
         fireMeta.lore(List.of(ColorParser.of(Translation.of("gui.fire.fire-lore")).build().decoration(TextDecoration.ITALIC, false)));
         fireMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         fireItem.setItemMeta(fireMeta);
@@ -56,7 +56,7 @@ public class ConfirmFireGui {
         backItem.setItemMeta(backMeta);
 
         gui.setItem(1, 2, ItemBuilder.from(fireItem).asGuiItem(e -> {
-            player.sendMessage(ColorParser.of(Translation.of("gui.fire.fire-success")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+            player.sendMessage(ColorParser.of(Translation.of("gui.fire.fire-success")).with("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
 
             Town town = TownyAPI.getInstance().getTown(player);
             if (town == null) { // This should never happen, as player was allowed to interact with steward

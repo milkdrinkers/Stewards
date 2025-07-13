@@ -8,7 +8,7 @@ import dev.triumphteam.gui.guis.Gui;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
 import io.github.alathra.alathraports.core.ports.Port;
-import io.github.milkdrinkers.colorparser.ColorParser;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
@@ -30,7 +30,7 @@ import java.util.List;
 public class ConfirmUpgradeGui {
 
     public static Gui createGui(Steward steward, Player player, int cost) {
-        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.upgrade.title")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build())
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.upgrade.title")).with("type", steward.getStewardType().getName()).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -47,8 +47,8 @@ public class ConfirmUpgradeGui {
     private static void populateButtons(Gui gui, Steward steward, Player player, int cost) {
         ItemStack upgradeItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta upgradeMeta = upgradeItem.getItemMeta();
-        upgradeMeta.displayName(ColorParser.of(Translation.of("gui.upgrade.upgrade")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
-        upgradeMeta.lore(List.of(ColorParser.of(Translation.of("gui.upgrade.upgrade-lore")).parseMinimessagePlaceholder("cost", String.valueOf(cost)).build().decoration(TextDecoration.ITALIC, false)));
+        upgradeMeta.displayName(ColorParser.of(Translation.of("gui.upgrade.upgrade")).with("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+        upgradeMeta.lore(List.of(ColorParser.of(Translation.of("gui.upgrade.upgrade-lore")).with("cost", String.valueOf(cost)).build().decoration(TextDecoration.ITALIC, false)));
         upgradeMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         upgradeItem.setItemMeta(upgradeMeta);
 
@@ -75,7 +75,7 @@ public class ConfirmUpgradeGui {
 
             if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).levelUp()) {
                 steward.levelUp();
-                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.upgrade-success")).parseMinimessagePlaceholder("type", steward.getStewardType().getName()).build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.upgrade-success")).with("type", steward.getStewardType().getName()).build());
 
                 if (steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().BAILIFF_ID)) {
 

@@ -1,6 +1,6 @@
 package io.github.milkdrinkers.stewards.conversation;
 
-import io.github.milkdrinkers.colorparser.ColorParser;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.settlers.api.settler.SettlerBuilder;
 import io.github.milkdrinkers.settlers.api.settler.Townfolk;
 import io.github.milkdrinkers.stewards.Stewards;

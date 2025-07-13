@@ -53,7 +53,9 @@ dependencies {
     // API
     implementation(libs.javasemver) // Required by VersionWatch
     implementation(libs.versionwatch)
-    implementation(libs.wordweaver)
+    implementation(libs.wordweaver) {
+        exclude("com.google.code.gson") // Already ships with Paper
+    }
     implementation(libs.crate.api)
     implementation(libs.crate.yaml)
     implementation(libs.colorparser) {
@@ -61,9 +63,17 @@ dependencies {
     }
     implementation(libs.threadutil.bukkit)
     implementation(libs.commandapi.shade)
-    //annotationProcessor(libs.commandapi.annotations) // Uncomment if you want to use command annotations
     implementation(libs.triumph.gui) {
-        exclude("net.kyori")
+        // Already ships with Paper
+        exclude("net.kyori", "adventure-api")
+        exclude("net.kyori", "adventure-bom")
+        exclude("net.kyori", "adventure-key")
+        exclude("net.kyori", "examination-api")
+        exclude("net.kyori", "examination-string")
+        exclude("net.kyori", "adventure-text-serializer-gson")
+        exclude("net.kyori", "adventure-text-serializer-legacy")
+        exclude("net.kyori", "adventure-text-logger-slf4j")
+        exclude("com.google.code.gson")
     }
 
     // Plugin dependencies
@@ -94,11 +104,6 @@ dependencies {
 }
 
 tasks {
-    // NOTE: Use when developing plugins using Mojang mappings
-//    assemble {
-//        dependsOn(reobfJar)
-//    }
-
     build {
         dependsOn(shadowJar)
     }
@@ -138,12 +143,14 @@ tasks {
         reloc("space.arim.morepaperlib", "morepaperlib")
         reloc("io.github.milkdrinkers.javasemver", "javasemver")
         reloc("io.github.milkdrinkers.versionwatch", "versionwatch")
+        reloc("org.json", "json")
         reloc("io.github.milkdrinkers.wordweaver", "wordweaver")
         reloc("io.github.milkdrinkers.crate", "crate")
+        reloc("org.yaml.snakeyaml", "snakeyaml")
         reloc("io.github.milkdrinkers.colorparser", "colorparser")
         reloc("io.github.milkdrinkers.threadutil", "threadutil")
         reloc("dev.jorel.commandapi", "commandapi")
-        reloc("dev.triumphteam.gui", "gui")
+        reloc("dev.triumphteam.gui", "triumphgui")
         reloc("com.zaxxer.hikari", "hikaricp")
         reloc("org.bstats", "bstats")
 
@@ -157,7 +164,7 @@ tasks {
 
     runServer {
         // Configure the Minecraft version for our task.
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.5")
 
         // IntelliJ IDEA debugger setup: https://docs.papermc.io/paper/dev/debugging#using-a-remote-debugger
         jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true", "-DIReallyKnowWhatIAmDoingISwear", "-Dpaper.playerconnection.keepalive=6000")
@@ -200,7 +207,7 @@ bukkit { // Options: https://github.com/Minecrell/plugin-yml#bukkit
 
     // Misc properties
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD // STARTUP or POSTWORLD
-    depend = listOf("Towny", "BetonQuest")
+    depend = listOf("Citizens", "Settlers", "Towny", "BetonQuest")
     softDepend = listOf("PacketEvents", "Vault", "PlaceholderAPI")
     loadBefore = listOf()
     provides = listOf()

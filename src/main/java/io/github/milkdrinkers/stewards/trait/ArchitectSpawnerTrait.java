@@ -2,7 +2,7 @@ package io.github.milkdrinkers.stewards.trait;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownySettings;
-import io.github.milkdrinkers.colorparser.ColorParser;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.conversation.CreateTownConversation;
 import io.github.milkdrinkers.stewards.conversation.SpawnArchitectConversation;
