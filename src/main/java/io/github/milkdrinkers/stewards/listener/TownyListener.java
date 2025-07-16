@@ -4,30 +4,41 @@ import com.palmergames.adventure.text.Component;
 import com.palmergames.adventure.text.event.HoverEvent;
 import com.palmergames.adventure.text.format.NamedTextColor;
 import com.palmergames.bukkit.towny.TownyAPI;
-import com.palmergames.bukkit.towny.event.DeleteTownEvent;
 import com.palmergames.bukkit.towny.event.NewDayEvent;
 import com.palmergames.bukkit.towny.event.NewTownEvent;
 import com.palmergames.bukkit.towny.event.PreDeleteTownEvent;
 import com.palmergames.bukkit.towny.event.economy.TownPreTransactionEvent;
 import com.palmergames.bukkit.towny.event.statusscreen.TownStatusScreenEvent;
 import com.palmergames.bukkit.towny.event.town.TownPreUnclaimEvent;
-import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.economy.transaction.TransactionType;
 import io.github.alathra.alathraports.api.PortsAPI;
+import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
+import io.github.alathra.alathraports.core.ports.Port;
+import io.github.milkdrinkers.stewards.Stewards;
+import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.steward.Steward;
-import io.github.milkdrinkers.stewards.steward.StewardLookup;
+import io.github.milkdrinkers.stewards.steward.StewardType;
+import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
+import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.towny.TownyDataUtil;
-import io.github.milkdrinkers.stewards.trait.ArchitectTrait;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
-import io.github.milkdrinkers.stewards.utility.Logger;
+import io.github.milkdrinkers.stewards.utility.DeleteUtils;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class TownyListener implements Listener {
+    private final Stewards plugin;
+    private final @NotNull StewardLookup lookup;
+
+    public TownyListener(Stewards plugin) {
+        this.plugin = plugin;
+        this.lookup = plugin.getStewardLookup();
+    }
 
     @EventHandler
     public void onTownyDeposit(TownPreTransactionEvent e) {
@@ -35,7 +46,7 @@ public class TownyListener implements Listener {
 
         if (e.getTransaction().getSendingPlayer() == null) return;
 
-        Town town = e.getTown();
+        final Town town = e.getTown();
 
         if ((e.getTransaction().getReceivingAccount().getHoldingBalance() + e.getTransaction().getAmount()) > TownMetaData.getBankLimit(town)) {
             e.setCancelMessage("You can't transfer that much money into your town bank. Your town bank limit is: " + TownMetaData.getBankLimit(town));
@@ -47,81 +58,55 @@ public class TownyListener implements Listener {
     public void onTownStatusScreen(TownStatusScreenEvent e) {
         Component hoverComponent;
 
-        if (TownMetaData.hasTreasurer(e.getTown())) {
-            hoverComponent = Component.text("Your Treasurer is level "
-                + StewardLookup.get().getSteward(TownMetaData.getTreasurer(e.getTown())).getLevel()
-                + ". To increase this limit, upgrade your Treasurer.", NamedTextColor.GRAY);
+        final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.TREASURER_ID);
+        if (type == null)
+            throw new IllegalStateException("Steward type was null!");
+
+        if (TownMetaData.NPC.has(e.getTown(), type)) {
+            hoverComponent = Component.text("Your Treasurer is level " + TownMetaData.NPC.getStewardOptional(e.getTown(), type).map(Steward::getLevel).orElse(0) + ". To increase this limit, upgrade your Treasurer.", NamedTextColor.GRAY);
         } else {
             hoverComponent = Component.text("You don't have a Treasurer. To increase this limit, hire a Treasurer.", NamedTextColor.GRAY);
         }
 
-        Component bankLimit = Component.newline()
-            .append(Component.text("[", NamedTextColor.GRAY))
-            .append(Component.text("Stewards", NamedTextColor.DARK_GREEN))
-            .append(Component.text("] ", NamedTextColor.GRAY))
-            .append(Component.text("Town bank limit: %s⊚.".formatted(TownMetaData.getBankLimit(e.getTown())), NamedTextColor.WHITE))
-            .hoverEvent(HoverEvent.showText(hoverComponent));
+        Component bankLimit = Component.newline().append(Component.text("[", NamedTextColor.GRAY)).append(Component.text("Stewards", NamedTextColor.GREEN)).append(Component.text("] ", NamedTextColor.GRAY)).append(Component.text("Town bank limit: %s⊚.".formatted(TownMetaData.getBankLimit(e.getTown())), NamedTextColor.WHITE)).hoverEvent(HoverEvent.showText(hoverComponent));
 
         e.getStatusScreen().addComponentOf("Stewards", bankLimit);
     }
 
     @EventHandler
     public void onNewTown(NewTownEvent e) {
-        Town town = e.getTown();
-
-        if (!TownyDataUtil.isStewardCreatedTown(town.getMayor().getUUID())) return;
-
-        Steward steward = StewardLookup.get().getSteward(TownyDataUtil.getStewardUUID(town.getMayor().getUUID()));
-
-        steward.stopFollowing(town.getMayor().getPlayer(), true);
-
-        StewardLookup.get().clearHasArchitect(steward.getSettler().getNpc().getOrAddTrait(ArchitectTrait.class).getSpawningPlayer());
-
-        TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
-
-        TownMetaData.setArchitect(town, steward);
-
-        StewardLookup.get().addStewardUuidToTown(town, steward);
-
-        steward.setTownUUID(town.getUUID());
-        steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).hire();
-        steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setTownUUID(town.getUUID());
-
-        if (TownyAPI.getInstance().getTown(steward.getSettler().getNpc().getEntity().getLocation()).getUUID() == null
-            && TownyAPI.getInstance().getTown(steward.getSettler().getNpc().getEntity().getLocation()).getUUID() != steward.getTownUUID()) {
-            try {
-                steward.getSettler().getNpc().teleport(town.getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setAnchorLocation(steward.getSettler().getNpc().getEntity().getLocation());
-                steward.stopFollowing(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
-                steward.getSettler().getNpc().getNavigator().setTarget(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getAnchorLocation());
-            } catch (TownyException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-        TownyDataUtil.removePlayerAndSteward(town.getMayor().getUUID());
     }
 
-    @EventHandler
-    public void onTownRemoved(DeleteTownEvent e) {
-        StewardLookup.get().getTownStewardUuids(e.getTownUUID()).forEach(stewardUuid -> {
-            StewardLookup.get().getSteward(stewardUuid).getSettler().delete();
-            StewardLookup.get().unregisterSteward(stewardUuid);
-        });
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTownRemoved(PreDeleteTownEvent e) {
+        if (e.isCancelled())
+            return;
+
+        for (Steward steward : lookup.town().getTownStewards(e.getTown())) {
+            DeleteUtils.dismiss(steward, e.getTown(), null, false);
+        }
+        lookup.town().clear(e.getTown());
     }
 
     @EventHandler
     public void onNewDay(NewDayEvent e) {
+        final StewardType treasurerType = StewardsAPI.getRegistry().getType(StewardTypeHandler.TREASURER_ID);
+        final StewardType bailiffType = StewardsAPI.getRegistry().getType(StewardTypeHandler.BAILIFF_ID);
+        final StewardType portType = StewardsAPI.getRegistry().getType(StewardTypeHandler.PORTMASTER_ID);
+        final StewardType stableType = StewardsAPI.getRegistry().getType(StewardTypeHandler.STABLEMASTER_ID);
+        if (treasurerType == null || bailiffType == null || portType == null || stableType == null)
+            throw new IllegalStateException("Steward registry type was null");
+
         for (Town town : TownyAPI.getInstance().getTowns()) {
             int totalCost = 0;
-            if (TownMetaData.hasPortmaster(town)) {
-                totalCost += Cfg.get().getInt("portmaster.daily-cost.level-" + StewardLookup.get().getSteward(TownMetaData.getPortmaster(town)).getLevel());
+            if (TownMetaData.NPC.has(town, portType)) {
+                totalCost += Cfg.get().getInt("portmaster.daily-cost.level-" + TownMetaData.NPC.getStewardOptional(town, portType).map(Steward::getLevel).orElse(1));
             }
-            if (TownMetaData.hasStablemaster(town)) {
-                totalCost += Cfg.get().getInt("stablemaster.daily-cost.level-" + StewardLookup.get().getSteward(TownMetaData.getStablemaster(town)).getLevel());
+            if (TownMetaData.NPC.has(town, stableType)) {
+                totalCost += Cfg.get().getInt("stablemaster.daily-cost.level-" + TownMetaData.NPC.getStewardOptional(town, portType).map(Steward::getLevel).orElse(1));
             }
-            if (TownMetaData.hasTreasurer(town)) {
-                totalCost += Cfg.get().getInt("treasurer.daily-cost.level-" + StewardLookup.get().getSteward(TownMetaData.getTreasurer(town)).getLevel());
+            if (TownMetaData.NPC.has(town, treasurerType)) {
+                totalCost += Cfg.get().getInt("treasurer.daily-cost.level-" + TownMetaData.NPC.getStewardOptional(town, portType).map(Steward::getLevel).orElse(1));
             }
 
             if (totalCost == 0) return;
@@ -129,17 +114,27 @@ public class TownyListener implements Listener {
             if (town.getAccount().canPayFromHoldings(totalCost)) {
                 town.getAccount().withdraw(totalCost, "Stewards: Daily upkeep");
             } else {
-                if (TownMetaData.hasPortmaster(town)) {
-                    StewardLookup.get().getSteward(TownMetaData.getPortmaster(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).setStriking(true);
-                    PortsAPI.setBlockaded(PortsAPI.getPortFromTown(town), true);
+                if (TownMetaData.NPC.has(town, portType)) {
+                    TownMetaData.NPC.getStewardOptional(town, portType).ifPresent(steward -> {
+                        steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setStriking(true);
+                        final Port port = PortsAPI.getPortFromTown(town);
+                        if (port != null)
+                            PortsAPI.setBlockaded(port, true);
+                    });
                 }
-                if (TownMetaData.hasStablemaster(town)) {
-                    StewardLookup.get().getSteward(TownMetaData.getStablemaster(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).setStriking(true);
-                    PortsAPI.setBlockaded(PortsAPI.getCarriageStationFromTown(town), true);
+                if (TownMetaData.NPC.has(town, stableType)) {
+                    TownMetaData.NPC.getStewardOptional(town, stableType).ifPresent(steward -> {
+                        steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setStriking(true);
+                        final CarriageStation station = PortsAPI.getCarriageStationFromTown(town);
+                        if (station != null)
+                            PortsAPI.setBlockaded(station, true);
+                    });
                 }
-                if (TownMetaData.hasTreasurer(town)) {
-                    StewardLookup.get().getSteward(TownMetaData.getTreasurer(town)).getSettler().getNpc().getOrAddTrait(StewardTrait.class).setStriking(true);
-                    TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
+                if (TownMetaData.NPC.has(town, treasurerType)) {
+                    TownMetaData.NPC.getStewardOptional(town, treasurerType).ifPresent(steward -> {
+                        steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setStriking(true);
+                        TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
+                    });
                 }
             }
         }
@@ -147,55 +142,16 @@ public class TownyListener implements Listener {
 
     @EventHandler
     public void onUnclaim(TownPreUnclaimEvent e) {
-        if (TownMetaData.hasArchitect(e.getTown())) {
-            if (TownyAPI.getInstance().getTownBlock
-                (StewardLookup.get().getSteward(TownMetaData.getArchitect(e.getTown()))
-                    .getSettler().getNpc().getStoredLocation())
-                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
+        for (Steward steward : StewardsAPI.getStewards(e.getTown())) {
+            final TownBlock townBlock = steward.getTownBlock();
+
+            if (townBlock == null)
+                continue;
+
+            if (townBlock.equals(e.getTownBlock())) {
                 e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
                 e.setCancelled(true);
-            }
-        }
-
-        if (TownMetaData.hasBailiff(e.getTown())) {
-            if (TownyAPI.getInstance().getTownBlock
-                    (StewardLookup.get().getSteward(TownMetaData.getBailiff(e.getTown()))
-                        .getSettler().getNpc().getStoredLocation())
-                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
-                e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
-                e.setCancelled(true);
-            }
-        }
-
-
-        if (TownMetaData.hasPortmaster(e.getTown())) {
-            if (TownyAPI.getInstance().getTownBlock
-                    (StewardLookup.get().getSteward(TownMetaData.getPortmaster(e.getTown()))
-                        .getSettler().getNpc().getStoredLocation())
-                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
-                e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
-                e.setCancelled(true);
-            }
-        }
-
-        if (TownMetaData.hasStablemaster(e.getTown())) {
-            if (TownyAPI.getInstance().getTownBlock
-                    (StewardLookup.get().getSteward(TownMetaData.getStablemaster(e.getTown()))
-                        .getSettler().getNpc().getStoredLocation())
-                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
-                e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
-                e.setCancelled(true);
-            }
-        }
-
-
-        if (TownMetaData.hasTreasurer(e.getTown())) {
-            if (TownyAPI.getInstance().getTownBlock
-                    (StewardLookup.get().getSteward(TownMetaData.getTreasurer(e.getTown()))
-                        .getSettler().getNpc().getStoredLocation())
-                .getWorldCoord().equals(e.getTownBlock().getWorldCoord())) {
-                e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
-                e.setCancelled(true);
+                return;
             }
         }
     }

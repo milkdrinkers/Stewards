@@ -3,59 +3,73 @@ package io.github.milkdrinkers.stewards.listener;
 import com.palmergames.bukkit.towny.TownyAPI;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.steward.Steward;
-import io.github.milkdrinkers.stewards.steward.StewardLookup;
-import io.github.milkdrinkers.stewards.towny.TownMetaData;
+import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.trait.ArchitectTrait;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
-import io.github.milkdrinkers.stewards.utility.Cfg;
+import io.github.milkdrinkers.stewards.utility.DeleteUtils;
 import io.github.milkdrinkers.threadutil.Scheduler;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
+@SuppressWarnings("unused")
 public class PlayerListener implements Listener {
+    private final Stewards plugin;
+    private final @NotNull StewardLookup lookup;
+
+    public PlayerListener(Stewards plugin) {
+        this.plugin = plugin;
+        this.lookup = plugin.getStewardLookup();
+    }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
-        if (StewardLookup.get().isPlayerFollowed(e.getPlayer())) {
-            Steward steward = StewardLookup.get().getStewardFollowingPlayer(e.getPlayer());
+        final Optional<Steward> opt = lookup.follow().getFollower(e.getPlayer());
+        if (opt.isPresent()) {
+            final Steward steward = opt.get();
 
-            if (!steward.getSettler().getNpc().hasTrait(ArchitectTrait.class)) {
-                if (!steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).isHired()) {
-                    steward.getSettler().delete();
+            if (!steward.getNpc().hasTrait(ArchitectTrait.class)) {
+                if (!steward.getTrait().isHired()) {
+                    DeleteUtils.dismiss(
+                        steward,
+                        steward.getTownUUID() != null ? TownyAPI.getInstance().getTown(steward.getTownUUID()) : null,
+                        e.getPlayer(),
+                        false
+                    );
                     return;
                 }
             }
 
-            StewardTrait trait = steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class);
 
-            StewardLookup.get().removeStewardFollowingPlayer(e.getPlayer());
-            trait.setFollowing(false);
-            trait.setFollowingPlayer(null);
+            final StewardTrait trait = steward.getTrait();
+
+            steward.stopFollowing(e.getPlayer());
         }
     }
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        if (StewardLookup.get().isPlayerFollowed(e.getPlayer())) {
-            Steward steward = StewardLookup.get().getStewardFollowingPlayer(e.getPlayer());
-            if (!steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).isHired()) {
-                if (steward.getSettler().getNpc().hasTrait(ArchitectTrait.class)) {
-                    steward.getSettler().despawn();
-
-                    Scheduler.sync(() -> {
+        final Optional<Steward> opt = lookup.follow().getFollower(e.getPlayer());
+        if (opt.isPresent()) {
+            final Steward steward = opt.get();
+            // If unhired architect
+            if (
+                !steward.getTrait().isHired() &&
+                    steward.getSettler().getNpc().hasTrait(ArchitectTrait.class)
+            ) {
+                // Teleport along with player
+                Scheduler.sync(() -> {
                         steward.stopFollowing(e.getPlayer());
                         steward.getSettler().despawn();
                     }).delay(5)
-                        .sync(() -> steward.getSettler().spawn(e.getTo()))
-                        .delay(5).sync(() -> steward.startFollowing(e.getPlayer()))
-                        .execute();
-                } else {
-                    steward.stopFollowing(e.getPlayer());
-                }
+                    .sync(() -> steward.getSettler().spawn(e.getTo()))
+                    .delay(5)
+                    .sync(() -> steward.startFollowing(e.getPlayer()))
+                    .execute();
             } else {
                 steward.stopFollowing(e.getPlayer());
             }

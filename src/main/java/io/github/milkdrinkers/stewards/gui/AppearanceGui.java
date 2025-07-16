@@ -7,7 +7,6 @@ import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Appearance;
 import io.github.milkdrinkers.wordweaver.Translation;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,7 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class AppearanceGui {
 
     public static Gui createGui(Steward steward, Player player) {
-        Gui gui = Gui.gui().title(Component.text(Translation.of("gui.appearance.title")))
+        Gui gui = Gui.gui().title(Translation.as("gui.appearance.title"))
             .rows(1)
             .create();
 
@@ -95,7 +94,7 @@ public class AppearanceGui {
 
                 newName = Appearance.getFemaleName();
                 steward.getSettler().getNpc().setName(newName);
-                steward.getSettler().getNpc().getEntity().customName(Component.text(newName));
+                steward.getSettler().getNpc().getEntity().customName(ColorParser.of(newName).build());
                 steward.getSettler().getNpc().getEntity().setCustomNameVisible(true);
 
                 steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setFemale(true);
@@ -104,7 +103,7 @@ public class AppearanceGui {
 
                 newName = Appearance.getMaleName();
                 steward.getSettler().getNpc().setName(newName);
-                steward.getSettler().getNpc().getEntity().customName(Component.text(newName));
+                steward.getSettler().getNpc().getEntity().customName(ColorParser.of(newName).build());
                 steward.getSettler().getNpc().getEntity().setCustomNameVisible(true);
 
                 steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setFemale(false);

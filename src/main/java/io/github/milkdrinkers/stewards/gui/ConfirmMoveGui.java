@@ -1,28 +1,23 @@
 package io.github.milkdrinkers.stewards.gui;
 
-import com.palmergames.bukkit.towny.TownyAPI;
-import com.palmergames.bukkit.towny.object.Town;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
-import io.github.milkdrinkers.stewards.Stewards;
+import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.steward.Steward;
-import io.github.milkdrinkers.stewards.steward.StewardLookup;
-import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
-import io.github.milkdrinkers.stewards.steward.StewardTypeRegistry;
-import io.github.milkdrinkers.stewards.towny.TownMetaData;
+import io.github.milkdrinkers.stewards.steward.StewardType;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
-import io.github.milkdrinkers.stewards.utility.Logger;
+import io.github.milkdrinkers.stewards.utility.SpawnUtils;
 import io.github.milkdrinkers.wordweaver.Translation;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.ARCHITECT_ID;
 
 public class ConfirmMoveGui {
 
@@ -60,62 +55,48 @@ public class ConfirmMoveGui {
         continueMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         continueItem.setItemMeta(continueMeta);
 
-        StewardTrait trait = steward.getSettler().getNpc().getTraitNullable(StewardTrait.class);
-        if (trait == null) return;
+        final StewardTrait trait = steward.getTrait();
+        final StewardType architectType = StewardsAPI.getRegistry().getType(ARCHITECT_ID);
+        final boolean isArchitect = steward.getStewardType().equals(architectType);
 
-        gui.setItem(0, ItemBuilder.from(backItem).asGuiItem(e -> {
-            steward.stopFollowing(player);
-            steward.getSettler().getNpc().getNavigator().setTarget(trait.getAnchorLocation());
-            gui.close(player);
-        }));
-
-        gui.setItem(2, ItemBuilder.from(stayItem).asGuiItem(e -> {
-            if (checkTownBlock(steward, player)) {
-                steward.stopFollowing(player, true);
+        gui.setItem(0, ItemBuilder
+            .from(Material.RED_BED)
+            .name(ColorParser.of(Translation.of("gui.following.go-back")).build().decoration(TextDecoration.ITALIC, false))
+            .flags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
+            .asGuiItem(e -> {
+                if (steward.isFounder()) {
+                    steward.stopFollowing(player, true);
+                } else {
+                    steward.stopFollowing(player);
+                }
+                steward.getNpc().getNavigator().setTarget(trait.getAnchorLocation());
                 gui.close(player);
-            }
+            }));
 
-        }));
+        gui.setItem(2, ItemBuilder
+            .from(Material.GRASS_BLOCK)
+            .name(ColorParser.of(Translation.of("gui.following.stay")).build().decoration(TextDecoration.ITALIC, false))
+            .flags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
+            .asGuiItem(e -> {
+                gui.close(player);
+                if (!SpawnUtils.testPortMasterLocation().test(steward)) {
+                    player.sendMessage(ColorParser.of("<red>The Port Master needs to be closer to water.").build()); // TODO Translate
+                    return;
+                }
 
-        gui.setItem(4, ItemBuilder.from(continueItem).asGuiItem(e -> {
-            gui.close(player);
-        }));
+                if (SpawnUtils.testStewardLocationMove().test(steward)) {
+                    steward.stopFollowing(player, true);
+                } else {
+                    player.sendMessage(ColorParser.of(Translation.of("gui.hire.too-close")).build());
+                }
+            }));
+
+        gui.setItem(4, ItemBuilder
+            .from(Material.LEAD)
+            .name(ColorParser.of(Translation.of("gui.following.follow")).build().decoration(TextDecoration.ITALIC, false))
+            .flags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
+            .asGuiItem(e -> {
+                gui.close(player);
+            }));
     }
-
-    private static boolean checkTownBlock(Steward steward, Player player) {
-        Town town = TownyAPI.getInstance().getTown(player);
-        if (town == null) { // Shouldn't be possible, considering the player was allowed to interact with the steward.
-            Logger.get().error("Something went wrong when checking town block for {}. Town was null.", player.getName());
-            return false;
-        }
-
-        Chunk chunk = steward.getSettler().getNpc().getEntity().getChunk();
-
-        if (TownMetaData.hasArchitect(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().ARCHITECT_ID)) {
-            if (StewardLookup.get().getSteward(TownMetaData.getArchitect(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
-                return false;
-        }
-
-        if (TownMetaData.hasBailiff(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().BAILIFF_ID)) {
-            if (StewardLookup.get().getSteward(TownMetaData.getBailiff(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
-                return false;
-        }
-
-        if (TownMetaData.hasPortmaster(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().PORTMASTER_ID)) {
-            if (StewardLookup.get().getSteward(TownMetaData.getPortmaster(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
-                return false;
-        }
-
-        if (TownMetaData.hasStablemaster(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().STABLEMASTER_ID)) {
-            if (StewardLookup.get().getSteward(TownMetaData.getStablemaster(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
-                return false;
-        }
-
-        if (TownMetaData.hasTreasurer(town) && !steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().TREASURER_ID)) {
-            if (StewardLookup.get().getSteward(TownMetaData.getTreasurer(town)).getSettler().getNpc().getEntity().getChunk().getChunkKey() == chunk.getChunkKey())
-                return false;
-        }
-        return true;
-    }
-
 }

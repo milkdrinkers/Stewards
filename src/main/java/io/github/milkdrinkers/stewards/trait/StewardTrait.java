@@ -2,19 +2,19 @@ package io.github.milkdrinkers.stewards.trait;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.object.Town;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
-import io.github.milkdrinkers.stewards.Stewards;
+import io.github.milkdrinkers.settlers.api.enums.ClickType;
+import io.github.milkdrinkers.settlers.api.event.settler.lifetime.interact.SettlerClickedEvent;
+import io.github.milkdrinkers.settlers.api.event.settler.lifetime.spawning.SettlerSpawnEvent;
+import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
 import io.github.milkdrinkers.stewards.hook.Hook;
-import io.github.milkdrinkers.stewards.hook.HookManager;
 import io.github.milkdrinkers.stewards.steward.Steward;
-import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.event.NPCSpawnEvent;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
@@ -25,7 +25,6 @@ import org.bukkit.event.EventHandler;
 import java.util.UUID;
 
 public class StewardTrait extends Trait {
-
     protected StewardTrait() {
         super("steward");
     }
@@ -40,9 +39,8 @@ public class StewardTrait extends Trait {
     int level;
     @Persist
     boolean hired = false;
+    @Persist("townuuid")
     UUID townUUID;
-    @Persist
-    String townUUIDString;
     @Persist
     boolean striking = false;
 
@@ -52,7 +50,6 @@ public class StewardTrait extends Trait {
 
     public void setTownUUID(UUID townUUID) {
         this.townUUID = townUUID;
-        this.townUUIDString =  townUUID.toString();
     }
 
     public boolean isFollowing() {
@@ -121,71 +118,81 @@ public class StewardTrait extends Trait {
      * @return false if max level is reached and true if steward leveled up.
      */
     public boolean levelUp() {
-        if (StewardLookup.get().getSteward(this.getNPC()).getStewardType().getMaxLevel() == this.level)
+        if (StewardsAPI.getLookup().get(this.getNPC()).getStewardType().maxLevel() == this.level)
             return false;
         level++;
         return true;
     }
 
     public void load(DataKey key) {
-        female = key.getBoolean("female");
-        hired = key.getBoolean("hired");
-        striking = key.getBoolean("striking");
-
-        level = key.getInt("level");
-
-        anchorLocation = (Location) key.getRaw("anchorlocation");
-
-        if (key.getString("townuuid") != null){
-            townUUID = UUID.fromString(key.getString("townuuid"));
-            townUUIDString = key.getString("townuuid");
-        }
     }
 
     public void save(DataKey key) {
-        key.setBoolean("female", female);
-        key.setBoolean("hired", hired);
-        key.setBoolean("striking", striking);
-
-        key.setInt("level", level);
-
-        key.setRaw("anchorlocation", anchorLocation);
-
-        if (townUUID != null) {
-            key.setString("townuuid", townUUID.toString());
-        }
     }
 
     @EventHandler
-    public void onSpawn(NPCSpawnEvent e) {
-        if (e.getNPC() != this.getNPC()) return;
-        this.anchorLocation = e.getNPC().getEntity().getLocation();
+    public void onSpawn(SettlerSpawnEvent e) {
+        final NPC npc = e.getSettler().getNpc();
+        if (npc != this.getNPC())
+            return;
+
+        if (!npc.hasTrait(StewardTrait.class))
+            return;
+
+        if (anchorLocation == null && !npc.hasTrait(ArchitectTrait.class))
+            this.anchorLocation = npc.getEntity().getLocation();
     }
 
     @EventHandler
-    public void click(NPCRightClickEvent e) {
-        if (e.getNPC() != this.getNPC()) return;
+    public void click(SettlerClickedEvent e) {
+        final NPC npc = e.getSettler().getNpc();
+        if (npc != this.getNPC())
+            return;
 
-        if (e.getClicker().isSneaking()) return;
+        if (e.getClickType().equals(ClickType.SHIFT_LEFT) || e.getClickType().equals(ClickType.SHIFT_RIGHT))
+            return;
 
-        Resident resident = TownyAPI.getInstance().getResident(e.getClicker());
+        if (!npc.hasTrait(StewardTrait.class))
+            return;
 
+        final Resident resident = TownyAPI.getInstance().getResident(e.getClicker());
         if (resident == null) { // This shouldn't be possible.
             Logger.get().error("Resident was null when right clicking a steward.");
             return;
         }
 
-        boolean isArchitect = this.getNPC().hasTrait(ArchitectTrait.class);
-        boolean isHired = this.hired;
-        boolean isPortSteward = this.getNPC().hasTrait(PortmasterTrait.class) || this.getNPC().hasTrait(StablemasterTrait.class);
-        boolean isMayor = resident.isMayor() || resident.getTownRanks().contains("co-mayor");
-        boolean isAdmin = Hook.getVaultHook().isHookLoaded() && e.getClicker().hasPermission("stewards.admin");
+        final boolean isArchitect = this.getNPC().hasTrait(ArchitectTrait.class);
+        final boolean isHired = this.hired;
+        final boolean isPortSteward = this.getNPC().hasTrait(PortmasterTrait.class) || this.getNPC().hasTrait(StablemasterTrait.class);
+        final boolean isMayor = resident.isMayor() || resident.getTownRanks().contains("co-mayor");
+        final boolean isAdmin = Hook.getVaultHook().isHookLoaded() && e.getClicker().hasPermission("stewards.admin");
 
+        final Steward steward = StewardsAPI.getLookup().get(e.getSettler());
+        if (steward == null)
+            return;
+
+        // Allow menu for steward
         if (isArchitect && !isHired) {
-            Steward steward = StewardLookup.get().getSteward((e.getNPC()));
-            if (steward == null) return;
-
             StewardBaseGui.createBaseGui(steward, e.getClicker()).open(e.getClicker());
+            return;
+        }
+
+        final Town stewardTown = TownyAPI.getInstance().getTown(steward.getTownUUID());
+        final Town clickerTown = resident.getTownOrNull();
+
+        if (!isAdmin && clickerTown == null) {
+            e.getClicker().sendMessage(ColorParser.of("<red>You must be part of a town to interact with stewards.").build());
+            return;
+        }
+
+        if (!isAdmin && stewardTown == null) {
+            e.getClicker().sendMessage(ColorParser.of("<red>This steward must be part of a town to be interacted with.").build());
+            return;
+        }
+
+        if (!isAdmin && !stewardTown.equals(clickerTown)) {
+            e.getClicker().sendMessage(ColorParser.of("<red>You must be part of a town to interact with stewards.").build());
+            return;
         }
 
         if (!isPortSteward && !isMayor && !isAdmin) {
@@ -195,15 +202,12 @@ public class StewardTrait extends Trait {
 
         if (following && e.getClicker() != this.getFollowingPlayer()) return;
 
-        if (!following && StewardLookup.get().isPlayerFollowed(e.getClicker())) return;
+        if (!following && StewardsAPI.getLookupFollow().isFollowed(e.getClicker())) return;
 
         if (striking) {
             e.getClicker().sendMessage(ColorParser.of("<red>This steward is currently striking. Talk to your architect to get them back.").build());
             return;
         }
-
-        Steward steward = StewardLookup.get().getSteward((e.getNPC()));
-        if (steward == null) return;
 
         StewardBaseGui.createBaseGui(steward, e.getClicker()).open(e.getClicker());
     }
@@ -212,9 +216,13 @@ public class StewardTrait extends Trait {
     public void onNavigationCancelled(NavigationCancelEvent e) {
         if (e.getNPC() != this.getNPC()) return;
 
+        if (!npc.hasTrait(StewardTrait.class))
+            return;
+
         if (e.getCancelReason() == CancelReason.STUCK) {
-            Steward steward = StewardLookup.get().getSteward((e.getNPC()));
-            if (steward == null) return;
+            Steward steward = StewardsAPI.getLookup().get((e.getNPC()));
+            if (steward == null)
+                return;
 
             Player player = followingPlayer;
             steward.stopFollowing(player);
@@ -228,13 +236,13 @@ public class StewardTrait extends Trait {
         if (npc.getEntity().getLocation() == anchorLocation) return;
         if (npc.hasTrait(ArchitectTrait.class) && !hired) return;
 
+        // TODO Perf, this doesn't need to run every tick
         if (TownyAPI.getInstance().getTown(npc.getEntity().getLocation()) == null
-            || !TownyAPI.getInstance().getTown(npc.getEntity().getLocation()).getUUID().equals(townUUID) ) {
+            || !TownyAPI.getInstance().getTown(npc.getEntity().getLocation()).getUUID().equals(townUUID)) {
             followingPlayer.sendMessage(ColorParser.of("<red>Stewards aren't allowed to move outside of their town.").build()); // TODO Translation
-            StewardLookup.get().getSteward(npc).stopFollowing(followingPlayer);
+            StewardsAPI.getLookup().get(npc).stopFollowing(followingPlayer);
             npc.getNavigator().getDefaultParameters().distanceMargin(0.0);
             npc.getNavigator().setTarget(anchorLocation);
-            return;
         }
     }
 

@@ -2,223 +2,180 @@ package io.github.milkdrinkers.stewards.towny;
 
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.metadata.BooleanDataField;
-import com.palmergames.bukkit.towny.object.metadata.IntegerDataField;
+import com.palmergames.bukkit.towny.object.metadata.LongDataField;
 import com.palmergames.bukkit.towny.object.metadata.StringDataField;
 import com.palmergames.bukkit.towny.utils.MetaDataUtil;
-import io.github.milkdrinkers.settlers.api.settler.AbstractSettler;
+import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.steward.Steward;
-import io.github.milkdrinkers.stewards.steward.StewardLookup;
+import io.github.milkdrinkers.stewards.steward.StewardType;
+import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.utility.Cfg;
-import net.citizensnpcs.api.npc.NPC;
 
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.*;
 
 public class TownMetaData {
+    public static final String FIELD_PREFIX = "stewards_";
 
-    private static final String bankLimit = "stewards_bank_limit";
-    private static final String unhiredSteward = "stewards_unhired_steward";
-    private static final String architect = "stewards_architect";
-    private static final String bailiff = "stewards_bailiff";
-    private static final String portmaster = "stewards_portmaster";
-    private static final String stablemaster = "stewards_stablemaster";
-    private static final String treasurer = "stewards_treasurer";
+    private static final String BANK_LIMIT = FIELD_PREFIX + "treasurer_bank_limit";
+    private static final String HIRING_STEWARD = FIELD_PREFIX + "unhired_steward";
 
-    private static final IntegerDataField bankLimitField = new IntegerDataField(bankLimit);
+    private static final String ARCHITECT = FIELD_PREFIX + ARCHITECT_ID;
+    private static final String BAILIFF = FIELD_PREFIX + BAILIFF_ID;
+    private static final String PORTMASTER = FIELD_PREFIX + PORTMASTER_ID;
+    private static final String STABLEMASTER = FIELD_PREFIX + STABLEMASTER_ID;
+    private static final String TREASURER = FIELD_PREFIX + TREASURER_ID;
 
-    private static final BooleanDataField unhiredStewardField = new BooleanDataField(unhiredSteward);
+    private static final LongDataField BANK_LIMIT_FIELD = new LongDataField(BANK_LIMIT);
+    private static final BooleanDataField HIRING_STEWARD_FIELD = new BooleanDataField(HIRING_STEWARD);
 
-    private static final StringDataField architectField = new StringDataField(architect);
-    private static final StringDataField bailiffField = new StringDataField(bailiff);
-    private static final StringDataField portmasterField = new StringDataField(portmaster);
-    private static final StringDataField stablemasterField = new StringDataField(stablemaster);
-    private static final StringDataField treasurerField = new StringDataField(treasurer);
+    // Steward tracking
+    private static final StringDataField ARCHITECT_FIELD = new StringDataField(ARCHITECT);
+    private static final StringDataField BAILIFF_FIELD = new StringDataField(BAILIFF);
+    private static final StringDataField PORTMASTER_FIELD = new StringDataField(PORTMASTER);
+    private static final StringDataField STABLEMASTER_FIELD = new StringDataField(STABLEMASTER);
+    private static final StringDataField TREASURER_FIELD = new StringDataField(TREASURER);
 
-    public static void removeBailiff(Town town) {
-        MetaDataUtil.setString(town, bailiffField, null, true);
+    private static final Map<String, StringDataField> STEWARD_FIELDS = Map.of(
+        ARCHITECT, ARCHITECT_FIELD,
+        BAILIFF, BAILIFF_FIELD,
+        PORTMASTER, PORTMASTER_FIELD,
+        STABLEMASTER, STABLEMASTER_FIELD,
+        TREASURER, TREASURER_FIELD
+    );
+
+    public static class NPC {
+        // Has methods
+
+        /**
+         * Check whether a town has any type of steward
+         *
+         * @param town town
+         * @return true if any single type of steward exists, otherwise false
+         */
+        public static boolean hasSteward(Town town) {
+            for (StewardType type : StewardsAPI.getRegistry().getValues()) {
+                if (has(town, type))
+                    return true;
+            }
+            return false;
+        }
+
+        private static StringDataField getFieldFromKey(String key) {
+            return STEWARD_FIELDS.get(key);
+        }
+
+        public static boolean has(Town town, StewardType type) {
+            final StringDataField field = getFieldFromKey(type.dataFieldKey());
+            return MetaUtil.hasUUID(town, field);
+        }
+
+        // Get methods
+
+        /**
+         * Get a set containing the UUIDs of all stewards in this town.
+         *
+         * @param town the town
+         * @return set of steward UUIDs
+         */
+        public static Set<UUID> getStewards(Town town) {
+            return StewardsAPI.getRegistry().getValues().stream()
+                .filter(type -> has(town, type))
+                .map(type -> get(town, type))
+                .collect(Collectors.toSet());
+        }
+
+        public static @Nullable UUID get(Town town, StewardType type) {
+            final StringDataField field = getFieldFromKey(type.dataFieldKey());
+            return MetaUtil.getUUID(town, field);
+        }
+
+        public static @Nullable Steward getSteward(Town town, StewardType type) {
+            final StringDataField field = getFieldFromKey(type.dataFieldKey());
+            final UUID uuid = MetaUtil.getUUID(town, field);
+            if (uuid == null)
+                return null;
+
+            return StewardsAPI.getLookup().get(uuid);
+        }
+
+        public static Optional<Steward> getStewardOptional(Town town, StewardType type) {
+            return Optional.ofNullable(getSteward(town, type));
+        }
+
+        // Set methods
+
+        public static void set(Town town, UUID uuid, StewardType type) {
+            final StringDataField field = getFieldFromKey(type.dataFieldKey());
+            MetaUtil.putUUID(town, field, uuid, true);
+        }
+
+        public static void set(Town town, Steward steward) {
+            set(town, steward.getUniqueId(), steward.getStewardType());
+        }
+
+        // Remove methods
+
+        public static void remove(Town town, StewardType type) {
+            final StringDataField field = getFieldFromKey(type.dataFieldKey());
+            MetaUtil.removeUUID(town, field, true);
+        }
+
+        public static void remove(Town town, Steward steward) {
+            remove(town, steward.getStewardType());
+        }
     }
 
-    public static void removePortmaster(Town town) {
-        MetaDataUtil.setString(town, portmasterField, null, true);
+    /**
+     * Whether this town is actively trying to hire a new steward (Have a unhired one spawned)
+     *
+     * @param town the town
+     * @return is hiring
+     */
+    public static boolean isHiringSteward(Town town) {
+        if (!MetaDataUtil.hasMeta(town, HIRING_STEWARD))
+            MetaDataUtil.addNewBooleanMeta(town, HIRING_STEWARD, false, true);
+        return MetaDataUtil.getBoolean(town, HIRING_STEWARD_FIELD);
     }
 
-    public static void removeStablemaster(Town town) {
-        MetaDataUtil.setString(town, stablemasterField, null, true);
+    /**
+     * Set whether this town is actively trying to hire a new steward (Have a unhired one spawned)
+     *
+     * @param town  the town
+     * @param value the state
+     */
+    public static void setHiringSteward(Town town, boolean value) {
+        if (!MetaDataUtil.hasMeta(town, HIRING_STEWARD))
+            MetaDataUtil.addNewBooleanMeta(town, HIRING_STEWARD, false, true);
+        MetaDataUtil.setBoolean(town, HIRING_STEWARD_FIELD, value, true);
     }
 
-    public static void removeTreasurer(Town town) {
-        MetaDataUtil.setString(town, treasurerField, null, true);
-    }
+    public static long getBankLimit(Town town) {
+        final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.TREASURER_ID);
+        if (type == null)
+            throw new IllegalStateException("Steward type was null");
 
-    public static boolean hasArchitect(Town town) {
-        return MetaDataUtil.getString(town, architectField) != null && !MetaDataUtil.getString(town, architectField).isEmpty();
-    }
-
-    public static boolean hasBailiff(Town town) {
-        return MetaDataUtil.getString(town, bailiffField) != null && !MetaDataUtil.getString(town, bailiffField).isEmpty();
-    }
-
-    public static boolean hasPortmaster(Town town) {
-        return MetaDataUtil.getString(town, portmasterField) != null && !MetaDataUtil.getString(town, portmasterField).isEmpty();
-    }
-
-    public static boolean hasStablemaster(Town town) {
-        return MetaDataUtil.getString(town, stablemasterField) != null && !MetaDataUtil.getString(town, stablemasterField).isEmpty();
-    }
-
-    public static boolean hasTreasurer(Town town) {
-        return MetaDataUtil.getString(town, treasurerField) != null && !MetaDataUtil.getString(town, treasurerField).isEmpty();
-    }
-
-    public static void setArchitect(Town town, UUID uuid) {
-        if (!MetaDataUtil.hasMeta(town, architect))
-            MetaDataUtil.addNewStringMeta(town, architect, "", true);
-        MetaDataUtil.setString(town, architectField, uuid.toString(), true);
-    }
-
-    public static void setArchitect(Town town, NPC npc) {
-        setArchitect(town, npc.getUniqueId());
-    }
-
-    public static void setArchitect(Town town, AbstractSettler settler) {
-        setArchitect(town, settler.getNpc());
-    }
-
-    public static void setArchitect(Town town, Steward steward) {
-        setArchitect(town, steward.getSettler());
-    }
-
-    public static void setBailiff(Town town, UUID uuid) {
-        if (!MetaDataUtil.hasMeta(town, bailiff))
-            MetaDataUtil.addNewStringMeta(town, bailiff, "", true);
-        MetaDataUtil.setString(town, bailiffField, uuid.toString(), true);
-    }
-
-    public static void setBailiff(Town town, NPC npc) {
-        setBailiff(town, npc.getUniqueId());
-    }
-
-    public static void setBailiff(Town town, AbstractSettler settler) {
-        setBailiff(town, settler.getNpc());
-    }
-
-    public static void setBailiff(Town town, Steward steward) {
-        setBailiff(town, steward.getSettler());
-    }
-
-    public static void setPortmaster(Town town, UUID uuid) {
-        if (!MetaDataUtil.hasMeta(town, portmaster))
-            MetaDataUtil.addNewStringMeta(town, portmaster, "", true);
-        MetaDataUtil.setString(town, portmasterField, uuid.toString(), true);
-    }
-
-    public static void setPortmaster(Town town, NPC npc) {
-        setPortmaster(town, npc.getUniqueId());
-    }
-
-    public static void setPortmaster(Town town, AbstractSettler settler) {
-        setPortmaster(town, settler.getNpc());
-    }
-
-    public static void setPortmaster(Town town, Steward steward) {
-        setPortmaster(town, steward.getSettler());
-    }
-
-    public static void setStablemaster(Town town, UUID uuid) {
-        if (!MetaDataUtil.hasMeta(town, stablemaster))
-            MetaDataUtil.addNewStringMeta(town, stablemaster, "", true);
-        MetaDataUtil.setString(town, stablemasterField, uuid.toString(), true);
-    }
-
-    public static void setStablemaster(Town town, NPC npc) {
-        setStablemaster(town, npc.getUniqueId());
-    }
-
-    public static void setStablemaster(Town town, AbstractSettler settler) {
-        setStablemaster(town, settler.getNpc());
-    }
-
-    public static void setStablemaster(Town town, Steward steward) {
-        setStablemaster(town, steward.getSettler());
-    }
-
-    public static void setTreasurer(Town town, UUID uuid) {
-        if (!MetaDataUtil.hasMeta(town, treasurer))
-            MetaDataUtil.addNewStringMeta(town, treasurer, "", true);
-        MetaDataUtil.setString(town, treasurerField, uuid.toString(), true);
-    }
-
-    public static void setTreasurer(Town town, NPC npc) {
-        setTreasurer(town, npc.getUniqueId());
-    }
-
-    public static void setTreasurer(Town town, AbstractSettler settler) {
-        setTreasurer(town, settler.getNpc());
-    }
-
-    public static void setTreasurer(Town town, Steward steward) {
-        setTreasurer(town, steward.getSettler());
-    }
-
-    public static @Nullable UUID getArchitect(Town town) {
-        if (!MetaDataUtil.hasMeta(town, architect))
-            return null;
-        return UUID.fromString(MetaDataUtil.getString(town, architectField));
-    }
-
-    public static @Nullable UUID getBailiff(Town town) {
-        if (!MetaDataUtil.hasMeta(town, bailiff))
-            return null;
-        return UUID.fromString(MetaDataUtil.getString(town, bailiffField));
-    }
-
-    public static @Nullable UUID getPortmaster(Town town) {
-        if (!MetaDataUtil.hasMeta(town, portmaster))
-            return null;
-        return UUID.fromString(MetaDataUtil.getString(town, portmasterField));
-    }
-
-    public static @Nullable UUID getStablemaster(Town town) {
-        if (!MetaDataUtil.hasMeta(town, stablemaster))
-            return null;
-        return UUID.fromString(MetaDataUtil.getString(town, stablemasterField));
-    }
-
-    public static @Nullable UUID getTreasurer(Town town) {
-        if (!MetaDataUtil.hasMeta(town, treasurer))
-            return null;
-        return UUID.fromString(MetaDataUtil.getString(town, treasurerField));
-    }
-
-    public static boolean hasUnhiredSteward(Town town) {
-        if (!MetaDataUtil.hasMeta(town, unhiredSteward))
-            MetaDataUtil.addNewBooleanMeta(town, unhiredSteward, false, true);
-        return MetaDataUtil.getBoolean(town, unhiredStewardField);
-    }
-
-    public static void setUnhiredSteward(Town town, boolean value) {
-        if (!MetaDataUtil.hasMeta(town, unhiredSteward))
-            MetaDataUtil.addNewBooleanMeta(town, unhiredSteward, false, true);
-        MetaDataUtil.setBoolean(town, unhiredStewardField, value, true);
-    }
-
-    public static int getBankLimit(Town town) {
-        if (!MetaDataUtil.hasMeta(town, bankLimit)) {
-            if (hasTreasurer(town)) {
-                MetaDataUtil.addNewIntegerMeta(town, bankLimit, Cfg.get().getInt("treasurer.limit.level-" + StewardLookup.get().getSteward(getTreasurer(town)).getLevel()), true);
+        if (!MetaDataUtil.hasMeta(town, BANK_LIMIT_FIELD)) {
+            if (NPC.has(town, type)) {
+                setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-" + NPC.getStewardOptional(town, type).map(Steward::getLevel).orElse(1)));
             } else {
-                MetaDataUtil.addNewIntegerMeta(town, bankLimit, Cfg.get().getInt("treasurer.limit.level-0"), true);
+                setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
             }
         }
-        return MetaDataUtil.getInt(town, bankLimitField);
+        return MetaDataUtil.getLong(town, BANK_LIMIT_FIELD);
     }
 
-    public static void setBankLimit(Town town, int limit) {
-        if (!MetaDataUtil.hasMeta(town, bankLimit)) {
-            MetaDataUtil.addNewIntegerMeta(town, bankLimit, Cfg.get().getInt("treasurer.limit.level-0"), true);
-            return;
+    public static void setBankLimit(Town town, long limit) {
+        if (!MetaDataUtil.hasMeta(town, BANK_LIMIT_FIELD)) {
+            MetaDataUtil.addNewLongMeta(town, BANK_LIMIT_FIELD.getKey(), limit, true);
+        } else {
+            MetaDataUtil.setLong(town, BANK_LIMIT_FIELD, limit, true);
         }
-        MetaDataUtil.setInt(town, bankLimitField, limit, true);
     }
-
 }

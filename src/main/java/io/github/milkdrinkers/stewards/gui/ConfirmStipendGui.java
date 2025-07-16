@@ -16,7 +16,6 @@ import io.github.milkdrinkers.stewards.trait.TreasurerTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import io.github.milkdrinkers.wordweaver.Translation;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,7 +28,7 @@ import java.util.List;
 public class ConfirmStipendGui {
 
     public static Gui createGui(Steward steward, Player player, int cost) {
-        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.stipend.title")).with("type", steward.getStewardType().getName()).build())
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.stipend.title")).with("type", steward.getStewardType().name()).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -46,7 +45,7 @@ public class ConfirmStipendGui {
     private static void populateButtons(Gui gui, Steward steward, Player player, int cost) {
         ItemStack upgradeItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta upgradeMeta = upgradeItem.getItemMeta();
-        upgradeMeta.displayName(ColorParser.of(Translation.of("gui.stipend.pay")).with("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+        upgradeMeta.displayName(ColorParser.of(Translation.of("gui.stipend.pay")).with("type", steward.getStewardType().name()).build().decoration(TextDecoration.ITALIC, false));
         upgradeMeta.lore(List.of(ColorParser.of(Translation.of("gui.stipend.pay-lore")).with("price", String.valueOf(cost)).build().decoration(TextDecoration.ITALIC, false)));
         upgradeMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         upgradeItem.setItemMeta(upgradeMeta);
@@ -59,7 +58,7 @@ public class ConfirmStipendGui {
 
         gui.setItem(1, 2, ItemBuilder.from(upgradeItem).asGuiItem(e -> {
             if (checkTownBank(player, cost)) {
-                player.sendMessage(ColorParser.of(Translation.of("gui.stipend.pay-success")).with("type", steward.getStewardType().getName()).build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.stipend.pay-success")).with("type", steward.getStewardType().name()).build());
                 steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setStriking(false);
 
                 Town town = TownyAPI.getInstance().getTown(player);
@@ -68,17 +67,15 @@ public class ConfirmStipendGui {
                     return;
                 }
 
+                TownMetaData.NPC.set(TownyAPI.getInstance().getTown(player), steward);
                 if (steward.getSettler().getNpc().hasTrait(PortmasterTrait.class)) {
-                    town.getAccount().withdraw(cost, "Stewards: Paid " + steward.getStewardType().getName());
-                    TownMetaData.setPortmaster(TownyAPI.getInstance().getTown(player), steward);
+                    town.getAccount().withdraw(cost, "Stewards: Paid " + steward.getStewardType().name());
                     PortsAPI.setBlockaded(PortsAPI.getPortFromTown(town), false);
                 } else if (steward.getSettler().getNpc().hasTrait(StablemasterTrait.class)) {
-                    town.getAccount().withdraw(cost, "Stewards: Paid " + steward.getStewardType().getName());
-                    TownMetaData.setStablemaster(TownyAPI.getInstance().getTown(player), steward);
+                    town.getAccount().withdraw(cost, "Stewards: Paid " + steward.getStewardType().name());
                     PortsAPI.setBlockaded(PortsAPI.getCarriageStationFromTown(town), false);
                 } else if (steward.getSettler().getNpc().hasTrait(TreasurerTrait.class)) {
-                    town.getAccount().withdraw(cost, "Stewards: Paid " + steward.getStewardType().getName());
-                    TownMetaData.setTreasurer(TownyAPI.getInstance().getTown(player), steward);
+                    town.getAccount().withdraw(cost, "Stewards: Paid " + steward.getStewardType().name());
                     TownMetaData.setBankLimit(TownyAPI.getInstance().getTown(player), Cfg.get().getInt("treasurer.limit.level-" + steward.getLevel()));
                 } else { // This should never happen.
                     Logger.get().error("Something went wrong: No type-specific trait was found for " + steward.getSettler().getNpc());

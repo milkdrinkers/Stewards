@@ -9,15 +9,14 @@ import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
 import io.github.alathra.alathraports.core.ports.Port;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
-import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.steward.Steward;
+import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.citizensnpcs.trait.HologramTrait;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,7 +29,7 @@ import java.util.List;
 public class ConfirmUpgradeGui {
 
     public static Gui createGui(Steward steward, Player player, int cost) {
-        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.upgrade.title")).with("type", steward.getStewardType().getName()).build())
+        Gui gui = Gui.gui().title(ColorParser.of(Translation.of("gui.upgrade.title")).with("type", steward.getStewardType().name()).build())
             .type(GuiType.HOPPER)
             .create();
 
@@ -47,7 +46,7 @@ public class ConfirmUpgradeGui {
     private static void populateButtons(Gui gui, Steward steward, Player player, int cost) {
         ItemStack upgradeItem = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta upgradeMeta = upgradeItem.getItemMeta();
-        upgradeMeta.displayName(ColorParser.of(Translation.of("gui.upgrade.upgrade")).with("type", steward.getStewardType().getName()).build().decoration(TextDecoration.ITALIC, false));
+        upgradeMeta.displayName(ColorParser.of(Translation.of("gui.upgrade.upgrade")).with("type", steward.getStewardType().name()).build().decoration(TextDecoration.ITALIC, false));
         upgradeMeta.lore(List.of(ColorParser.of(Translation.of("gui.upgrade.upgrade-lore")).with("cost", String.valueOf(cost)).build().decoration(TextDecoration.ITALIC, false)));
         upgradeMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         upgradeItem.setItemMeta(upgradeMeta);
@@ -75,14 +74,14 @@ public class ConfirmUpgradeGui {
 
             if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).levelUp()) {
                 steward.levelUp();
-                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.upgrade-success")).with("type", steward.getStewardType().getName()).build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.upgrade-success")).with("type", steward.getStewardType().name()).build());
 
-                if (steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().BAILIFF_ID)) {
+                if (steward.getStewardType().id().equals(StewardTypeHandler.BAILIFF_ID)) {
 
                     town.addBonusBlocks((Cfg.get().getInt("bailiff.claims.level-" + steward.getLevel()) -
                         Cfg.get().getInt("bailiff.claims.level-" + (steward.getLevel() - 1))));
 
-                } else if (steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().PORTMASTER_ID)) {
+                } else if (steward.getStewardType().id().equals(StewardTypeHandler.PORTMASTER_ID)) {
 
                     Port port = PortsAPI.getPortFromTown(town);
                     if (port == null) { // This shouldn't be possible
@@ -93,7 +92,7 @@ public class ConfirmUpgradeGui {
                     }
                     PortsAPI.upgradePort(port);
 
-                } else if (steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().STABLEMASTER_ID)) {
+                } else if (steward.getStewardType().id().equals(StewardTypeHandler.STABLEMASTER_ID)) {
 
                     CarriageStation station = PortsAPI.getCarriageStationFromTown(town);
                     if (station == null) {
@@ -104,17 +103,17 @@ public class ConfirmUpgradeGui {
                     }
                     PortsAPI.upgradeCarriageStation(station);
 
-                } else if (steward.getStewardType().getId().equals(Stewards.getInstance().getStewardTypeHandler().TREASURER_ID)) {
+                } else if (steward.getStewardType().id().equals(StewardTypeHandler.TREASURER_ID)) {
 
                     TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-" + steward.getLevel()));
 
                 }
 
-                town.getAccount().withdraw(cost, "Stewards: Upgraded " + steward.getStewardType().getName());
+                town.getAccount().withdraw(cost, "Stewards: Upgraded " + steward.getStewardType().name());
 
                 HologramTrait hologramTrait = steward.getSettler().getNpc().getOrAddTrait(HologramTrait.class);
                 hologramTrait.clear();
-                hologramTrait.addLine("&7[&b" + steward.getStewardType().getName() + "&7]" + " &aLvl " + steward.getLevel());
+                hologramTrait.addLine("&7[&b" + steward.getStewardType().name() + "&7]" + " &aLvl " + steward.getLevel());
 
             } else {
                 Logger.get().error("Something went wrong when upgrading steward {}. Level was not upgraded.", steward.getSettler().getNpc().getName());
