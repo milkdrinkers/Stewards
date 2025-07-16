@@ -9,7 +9,6 @@ import io.github.milkdrinkers.stewards.command.CommandHandler;
 import io.github.milkdrinkers.stewards.config.ConfigHandler;
 import io.github.milkdrinkers.stewards.hook.HookManager;
 import io.github.milkdrinkers.stewards.listener.ListenerHandler;
-import io.github.milkdrinkers.stewards.persister.PersistenceHandler;
 import io.github.milkdrinkers.stewards.quest.BetonQuestHandler;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
@@ -64,7 +63,6 @@ public class Stewards extends JavaPlugin {
     public void onLoad() {
         instance = this;
 
-        new PersistenceHandler();
         configHandler = new ConfigHandler(this);
         translationHandler = new TranslationHandler(configHandler);
         hookManager = new HookManager(this);
