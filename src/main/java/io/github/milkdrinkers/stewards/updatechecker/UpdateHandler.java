@@ -19,8 +19,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
  * Run update checks against your release platform.
  */
 public class UpdateHandler implements Reloadable {
-    private final static String GITHUB_USER = "Alathra"; // The GitHub user/organization name
-    private final static String GITHUB_REPO = "Template-Gradle-Plugin"; // The GitHub repository
+    private final static String GITHUB_USER = "milkdrinkers"; // The GitHub user/organization name
+    private final static String GITHUB_REPO = "Stewards"; // The GitHub repository
 
     private final VersionWatcher watcher;
 

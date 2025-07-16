@@ -1,19 +1,13 @@
 package io.github.milkdrinkers.stewards.gui;
 
 import com.palmergames.bukkit.towny.TownyAPI;
-import com.palmergames.bukkit.towny.object.Resident;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
-import io.github.milkdrinkers.stewards.steward.StewardLookup;
-import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.trait.ArchitectTrait;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
-import io.github.milkdrinkers.stewards.utility.Logger;
+import io.github.milkdrinkers.stewards.utility.DeleteUtils;
 import io.github.milkdrinkers.wordweaver.Translation;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,7 +20,7 @@ import java.util.List;
 public class ConfirmDismissGui {
 
     public static Gui createGui(Steward steward, Player player) {
-        Gui gui = Gui.gui().title(Component.text(Translation.of("gui.dismiss.title")))
+        Gui gui = Gui.gui().title(Translation.as("gui.dismiss.title"))
             .type(GuiType.HOPPER)
             .create();
 
@@ -56,25 +50,7 @@ public class ConfirmDismissGui {
 
         gui.setItem(1, 2, ItemBuilder.from(dismissItem).asGuiItem(e -> {
             gui.close(player);
-
-            if (steward.getSettler().getNpc().hasTrait(ArchitectTrait.class) && !steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired())
-                StewardLookup.get().clearHasArchitect(player);
-
-            StewardTrait trait = steward.getSettler().getNpc().getTraitNullable(StewardTrait.class);
-            if (trait.isFollowing()) {
-                steward.stopFollowing(trait.getFollowingPlayer(), false);
-            }
-
-            Resident resident = TownyAPI.getInstance().getResident(player);
-            if (resident == null) {
-                Logger.get().error("Something went wrong: Resident returned null for " +  player.getName());
-                player.sendMessage(ColorParser.of(Translation.of("error.resident-null")).build());
-            }
-            if (resident.hasTown()) {
-                TownMetaData.setUnhiredSteward(TownyAPI.getInstance().getTown(player), false);
-            }
-            steward.getSettler().getNpc().destroy();
-
+            DeleteUtils.dismiss(steward, TownyAPI.getInstance().getTown(player), player, true);
         }));
 
         gui.setItem(1, 4, ItemBuilder.from(backItem).asGuiItem(e -> {
