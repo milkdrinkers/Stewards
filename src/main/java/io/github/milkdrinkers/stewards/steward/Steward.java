@@ -47,12 +47,11 @@ public class Steward {
         if (getTrait().isFollowing())
             StewardsAPI.getLookupFollow().getFollowee(this).ifPresent(this::stopFollowing);
 
-        // TODO Following is broken, the distance margin is not respected, UNLESS the steward skin gets re-rolled.
         StewardsAPI.getLookupFollow().add(player, this);
         getNpc().getNavigator().setTarget(player, false);
-        getNpc().getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
-        getNpc().getNavigator().getDefaultParameters().speedModifier(1.5f);
-        getNpc().getNavigator().getDefaultParameters().distanceMargin(4.0);
+        getNpc().getNavigator().getLocalParameters().stuckAction(TeleportStuckAction.INSTANCE);
+        getNpc().getNavigator().getLocalParameters().speedModifier(1.5f);
+        getNpc().getNavigator().getLocalParameters().distanceMargin(4.0);
         getTrait().setFollowing(true);
         getTrait().setFollowingPlayer(player);
     }
@@ -78,6 +77,10 @@ public class Steward {
         getTrait().setFollowingPlayer(null);
         if (setAnchorLocation && getSettler().isSpawned() && getSettler().getEntity() != null)
             getTrait().setAnchorLocation(getSettler().getEntity().getLocation());
+        getNpc().getNavigator().setTarget(getTrait().getAnchorLocation());
+        getNpc().getNavigator().getLocalParameters().stuckAction(TeleportStuckAction.INSTANCE);
+        getNpc().getNavigator().getLocalParameters().speedModifier(1.5f);
+        getNpc().getNavigator().getLocalParameters().distanceMargin(0.0);
         StewardsAPI.getLookupFollow().remove(player);
     }
 
