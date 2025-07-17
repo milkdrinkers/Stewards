@@ -174,4 +174,8 @@ public class StewardLookup implements Reloadable {
     public void remove(Steward steward) {
         remove(steward.getSettler());
     }
+
+    public void clear() {
+        settlerStewardHashmap.clear();
+    }
 }

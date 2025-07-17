@@ -9,6 +9,7 @@ import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,15 +27,19 @@ public class Steward {
     private final double dailyUpkeepCost;
     private final StewardType architectType = StewardsAPI.getRegistry().getType(ARCHITECT_ID);
 
-    public Steward(StewardType stewardType, AbstractSettler settler, int level, UUID townUUID, boolean isEnabled, boolean isHidden, double dailyUpkeepCost) {
+    public Steward(StewardType stewardType, AbstractSettler settler, @Nullable Integer level, @Nullable UUID townUUID, boolean isEnabled, boolean isHidden, double dailyUpkeepCost) {
         this.stewardType = stewardType;
         this.settler = settler;
-        setLevel(level);
-        setTownUUID(townUUID);
         this.isEnabled = isEnabled;
         this.isHidden = isHidden;
         this.dailyUpkeepCost = dailyUpkeepCost;
         this.settler.getNpc().getOrAddTrait(StewardTrait.class);
+
+        // Only set if overrides provided by builder (otherwise we'd override trait values with null)
+        if (level != null)
+            setLevel(level);
+        if (townUUID != null)
+            setTownUUID(townUUID);
     }
 
     /**
@@ -47,12 +52,11 @@ public class Steward {
         if (getTrait().isFollowing())
             StewardsAPI.getLookupFollow().getFollowee(this).ifPresent(this::stopFollowing);
 
-        // TODO Following is broken, the distance margin is not respected, UNLESS the steward skin gets re-rolled.
         StewardsAPI.getLookupFollow().add(player, this);
         getNpc().getNavigator().setTarget(player, false);
-        getNpc().getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
-        getNpc().getNavigator().getDefaultParameters().speedModifier(1.5f);
-        getNpc().getNavigator().getDefaultParameters().distanceMargin(4.0);
+        getNpc().getNavigator().getLocalParameters().stuckAction(TeleportStuckAction.INSTANCE);
+        getNpc().getNavigator().getLocalParameters().speedModifier(1.5f);
+        getNpc().getNavigator().getLocalParameters().distanceMargin(4.0);
         getTrait().setFollowing(true);
         getTrait().setFollowingPlayer(player);
     }
@@ -78,7 +82,22 @@ public class Steward {
         getTrait().setFollowingPlayer(null);
         if (setAnchorLocation && getSettler().isSpawned() && getSettler().getEntity() != null)
             getTrait().setAnchorLocation(getSettler().getEntity().getLocation());
+        getNpc().getNavigator().setTarget(getTrait().getAnchorLocation());
+        getNpc().getNavigator().getLocalParameters().stuckAction(TeleportStuckAction.INSTANCE);
+        getNpc().getNavigator().getLocalParameters().speedModifier(1.5f);
+        getNpc().getNavigator().getLocalParameters().distanceMargin(0.0);
         StewardsAPI.getLookupFollow().remove(player);
+    }
+
+    public void walkToAnchor(Location location) {
+        getNpc().getNavigator().cancelNavigation();
+        getTrait().setFollowing(false);
+        getTrait().setFollowingPlayer(null);
+        getTrait().setAnchorLocation(location);
+        getNpc().getNavigator().setTarget(getTrait().getAnchorLocation());
+        getNpc().getNavigator().getLocalParameters().stuckAction(TeleportStuckAction.INSTANCE);
+        getNpc().getNavigator().getLocalParameters().speedModifier(1.5f);
+        getNpc().getNavigator().getLocalParameters().distanceMargin(0.0);
     }
 
     public StewardType getStewardType() {

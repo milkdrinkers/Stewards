@@ -16,11 +16,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.ARCHITECT_ID;
 
 public final class DeleteUtils {
     public static void dismiss(Steward steward, @Nullable Town town, @Nullable Player player, boolean message) {
+        dismiss(steward, town != null ? town.getUUID() : null, player, message);
+    }
+
+    public static void dismiss(Steward steward, @Nullable UUID townUUID, @Nullable Player player, boolean message) {
         Objects.requireNonNull(steward, "Steward cannot be null");
 
         final StewardType architectType = Objects.requireNonNull(StewardsAPI.getRegistry().getType(ARCHITECT_ID), "Architect type not found in registry");
@@ -29,6 +34,8 @@ public final class DeleteUtils {
         final StewardTrait trait = steward.getTrait();
         if (trait.isFollowing())
             steward.stopFollowing(trait.getFollowingPlayer(), false);
+
+        final Town town = townUUID != null ? TownyAPI.getInstance().getTown(townUUID) : null;
 
         if (trait.isHired() && town != null) {
             if (steward.getNpc().hasTrait(BailiffTrait.class)) {
@@ -56,9 +63,10 @@ public final class DeleteUtils {
         if (player != null && message)
             player.sendMessage(ColorParser.of(Translation.of("gui.fire.fire-success")).with("type", steward.getStewardType().name()).build().decoration(TextDecoration.ITALIC, false));
 
-        if (town != null) {
-            TownMetaData.NPC.remove(town, steward);
-            StewardsAPI.getLookupTown().remove(town, steward);
+        if (townUUID != null) {
+            if (town != null)
+                TownMetaData.NPC.remove(town, steward);
+            StewardsAPI.getLookupTown().remove(townUUID, steward.getUniqueId());
         }
         if (isArchitect && player != null)
             StewardsAPI.getLookupArchitect().clearHasArchitect(player);

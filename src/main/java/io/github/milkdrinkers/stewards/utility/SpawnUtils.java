@@ -179,9 +179,10 @@ public final class SpawnUtils {
      *
      * @param location the location to check
      * @param town the town this steward already belongs to
+     * @param movingSteward the steward being moved (if any)
      * @return true if town block can be occupied by a steward
      */
-    private static boolean isValidTownBlock(Location location, @Nullable Town town) {
+    private static boolean isValidTownBlock(Location location, @Nullable Town town, @Nullable Steward movingSteward) {
         Objects.requireNonNull(location, "Location is null");
         if (town == null)
             return false;
@@ -192,7 +193,12 @@ public final class SpawnUtils {
         for (StewardType type : StewardsAPI.getRegistry()) {
             if (TownMetaData.NPC.has(town, type) && TownMetaData.NPC.getStewardOptional(town, type).isPresent()) {
                 final Steward otherSteward = TownMetaData.NPC.getStewardOptional(town, type).get();
-                final Chunk otherChunk = otherSteward.getNpc().getEntity().getChunk();
+
+                // Skip check if the steward being moved is the same
+                if (movingSteward != null && movingSteward.equals(otherSteward))
+                    continue;
+
+                final Chunk otherChunk = otherSteward.getTrait().getAnchorLocation().getChunk();
 
                 if (otherSteward.getNpc().isSpawned() && otherChunk.isLoaded() && otherChunk.getChunkKey() == chunk.getChunkKey()) {
                     return false;
@@ -203,7 +209,7 @@ public final class SpawnUtils {
     }
 
     /**
-     * Test if this steward can be placed in this chunk.
+     * Test if this steward can be placed/moved in this chunk.
      *
      * @return if not portmaster or if portmaster and in ocean
      */
@@ -216,7 +222,7 @@ public final class SpawnUtils {
             if (town == null)
                 return true;
 
-            return testStewardLocationCreation(town).test(steward.getNpc().getEntity().getLocation());
+            return isValidTownBlock(steward.getNpc().getEntity().getLocation(), town, steward);
         };
     }
 
@@ -226,7 +232,7 @@ public final class SpawnUtils {
      * @return if not valid location
      */
     public static Predicate<Location> testStewardLocationCreation(@Nullable Town town) {
-        return location -> isValidTownBlock(location, town);
+        return location -> isValidTownBlock(location, town, null);
     }
 
     /**

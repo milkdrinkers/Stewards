@@ -8,6 +8,7 @@ import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,7 @@ public class StewardsAPIProvider extends StewardsAPI implements Reloadable {
         return TownMetaData.NPC.getStewards(town)
             .stream()
             .map(uuid -> plugin.getStewardLookup().get(uuid))
+            .filter(Objects::nonNull)
             .collect(Collectors.toSet());
     }
 }

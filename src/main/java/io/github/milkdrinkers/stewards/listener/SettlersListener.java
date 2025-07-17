@@ -2,15 +2,21 @@ package io.github.milkdrinkers.stewards.listener;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import io.github.alathra.alathraports.api.PortsAPI;
+import io.github.milkdrinkers.settlers.api.SettlersAPI;
 import io.github.milkdrinkers.settlers.api.enums.RemoveReason;
 import io.github.milkdrinkers.settlers.api.event.settler.lifecycle.SettlerRemoveEvent;
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.spawning.SettlerSpawnEvent;
+import io.github.milkdrinkers.settlers.api.event.settlersapi.lifecycle.SettlersAPILoadedEvent;
+import io.github.milkdrinkers.settlers.api.event.settlersapi.lifecycle.SettlersAPIUnloadedEvent;
+import io.github.milkdrinkers.settlers.api.settler.AbstractSettler;
 import io.github.milkdrinkers.stewards.Stewards;
+import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.trait.*;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
 
 public class SettlersListener implements Listener {
     private final Stewards plugin;
@@ -26,6 +33,106 @@ public class SettlersListener implements Listener {
     public SettlersListener(Stewards plugin) {
         this.plugin = plugin;
         this.lookup = plugin.getStewardLookup();
+    }
+
+    @EventHandler
+    public void onSettlerLoad(SettlersAPILoadedEvent e) {
+        for (NPC npc : SettlersAPI.getRegistryTown()) {
+            final AbstractSettler settler = SettlersAPI.getSettler(npc);
+            if (settler == null)
+                continue;
+
+            if (!settler.getNpc().hasTrait(StewardTrait.class))
+                continue;
+
+            if (lookup.get(settler) != null)
+                continue;
+
+            final StewardTrait stewardTrait = settler.getNpc().getOrAddTrait(StewardTrait.class);
+
+            try {
+                Steward steward = null;
+
+                // If the Steward doesn't have at least one of these traits, something is wrong.
+                if (settler.getNpc().hasTrait(ArchitectTrait.class)) {
+                    // If the architect is not hired, i.e. town is not created, and more than 7 days have passed since the architect was first spawned, delete the architect
+                    final Instant creationTime = settler.getNpc().getOrAddTrait(ArchitectTrait.class).getCreateTime();
+                    final Instant deleteTime = creationTime.plus(Duration.ofDays(7));
+
+                    if (!stewardTrait.isHired() && Instant.now().isAfter(deleteTime)) {
+                        settler.delete();
+                    } else {
+                        steward = Steward.builder()
+                            .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
+                                StewardTypeHandler.ARCHITECT_ID)))
+                            .setDailyUpkeepCost(0)
+                            .setIsEnabled(true)
+                            .setIsHidden(false)
+                            .setSettler(settler)
+                            .build();
+
+                        lookup.architect().setArchitect(steward.getNpc().getOrAddTrait(ArchitectTrait.class).getSpawningPlayer(), steward);
+                    }
+                } else if (!stewardTrait.isHired()) { // For town stewards, if not hired delete
+                    settler.delete();
+                    if (stewardTrait.getTownUUID() != null)
+                        lookup.town().remove(stewardTrait.getTownUUID(), settler.getNpc().getUniqueId());
+                } else if (settler.getNpc().hasTrait(BailiffTrait.class)) {
+                    steward = Steward.builder()
+                        .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
+                            StewardTypeHandler.BAILIFF_ID)))
+                        .setDailyUpkeepCost(0)
+                        .setIsEnabled(true)
+                        .setIsHidden(false)
+                        .setSettler(settler)
+                        .build();
+                } else if (settler.getNpc().hasTrait(PortmasterTrait.class)) {
+                    steward = Steward.builder()
+                        .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
+                            StewardTypeHandler.PORTMASTER_ID)))
+                        .setDailyUpkeepCost(0)
+                        .setIsEnabled(true)
+                        .setIsHidden(false)
+                        .setSettler(settler)
+                        .build();
+                } else if (settler.getNpc().hasTrait(StablemasterTrait.class)) {
+                    steward = Steward.builder()
+                        .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
+                            StewardTypeHandler.STABLEMASTER_ID)))
+                        .setDailyUpkeepCost(0)
+                        .setIsEnabled(true)
+                        .setIsHidden(false)
+                        .setSettler(settler)
+                        .build();
+                } else if (settler.getNpc().hasTrait(TreasurerTrait.class)) {
+                    steward = Steward.builder()
+                        .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
+                            StewardTypeHandler.TREASURER_ID)))
+                        .setDailyUpkeepCost(0)
+                        .setIsEnabled(true)
+                        .setIsHidden(false)
+                        .setSettler(settler)
+                        .build();
+                }
+
+                if (steward != null) {
+                    lookup.add(steward);
+                    final UUID town = steward.getTrait().getTownUUID();
+                    if (town != null)
+                        lookup.town().add(town, steward.getUniqueId());
+                }
+            } catch (InvalidStewardException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onSettlerUnload(SettlersAPIUnloadedEvent e) {
+        lookup.architect().clear();
+        lookup.town().clear();
+        lookup.follow().clear();
+        lookup.clear();
     }
 
     @EventHandler
@@ -110,7 +217,12 @@ public class SettlersListener implements Listener {
                     .setSettler(e.getSettler())
                     .build();
             }
-            lookup.add(steward);
+
+            if (steward != null) {
+                lookup.add(steward);
+                if (steward.getTrait().getTownUUID() != null)
+                    lookup.town().add(steward.getTrait().getTownUUID(), steward.getUniqueId());
+            }
         } catch (InvalidStewardException ex) {
             throw new RuntimeException(ex);
         }

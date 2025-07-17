@@ -133,4 +133,9 @@ public final class StewardFollowLookup implements Reloadable {
     public Optional<Player> getFollowee(Steward steward) {
         return getFollowee(steward.getUniqueId());
     }
+
+    public void clear() {
+        playerFolloweByStewardHashmap.clear();
+        stewardFollowingPlayerHashmap.clear();
+    }
 }

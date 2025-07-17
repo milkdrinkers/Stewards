@@ -62,4 +62,8 @@ public final class ArchitectLookup implements Reloadable {
     public Steward getArchitect(Player player) {
         return getArchitect(player.getUniqueId());
     }
+
+    public void clear() {
+        architectMap.clear();
+    }
 }
