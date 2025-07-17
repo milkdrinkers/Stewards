@@ -73,4 +73,8 @@ public final class StewardTownLookup implements Reloadable {
     public void clear(Town town) {
         clear(town.getUUID());
     }
+
+    public void clear() {
+        townStewardUuidMap.clear();
+    }
 }

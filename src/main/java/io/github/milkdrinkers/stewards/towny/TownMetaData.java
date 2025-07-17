@@ -158,8 +158,6 @@ public class TownMetaData {
 
     public static long getBankLimit(Town town) {
         final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.TREASURER_ID);
-        if (type == null)
-            throw new IllegalStateException("Steward type was null");
 
         if (!MetaDataUtil.hasMeta(town, BANK_LIMIT_FIELD)) {
             if (NPC.has(town, type)) {
