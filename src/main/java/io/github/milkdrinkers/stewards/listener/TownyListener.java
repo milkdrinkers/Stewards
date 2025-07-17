@@ -4,6 +4,7 @@ import com.palmergames.adventure.text.Component;
 import com.palmergames.adventure.text.event.HoverEvent;
 import com.palmergames.adventure.text.format.NamedTextColor;
 import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.event.DeleteTownEvent;
 import com.palmergames.bukkit.towny.event.NewDayEvent;
 import com.palmergames.bukkit.towny.event.NewTownEvent;
 import com.palmergames.bukkit.towny.event.PreDeleteTownEvent;
@@ -59,8 +60,6 @@ public class TownyListener implements Listener {
         Component hoverComponent;
 
         final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.TREASURER_ID);
-        if (type == null)
-            throw new IllegalStateException("Steward type was null!");
 
         if (TownMetaData.NPC.has(e.getTown(), type)) {
             hoverComponent = Component.text("Your Treasurer is level " + TownMetaData.NPC.getStewardOptional(e.getTown(), type).map(Steward::getLevel).orElse(0) + ". To increase this limit, upgrade your Treasurer.", NamedTextColor.GRAY);
@@ -73,19 +72,12 @@ public class TownyListener implements Listener {
         e.getStatusScreen().addComponentOf("Stewards", bankLimit);
     }
 
-    @EventHandler
-    public void onNewTown(NewTownEvent e) {
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onTownRemoved(PreDeleteTownEvent e) {
-        if (e.isCancelled())
-            return;
-
-        for (Steward steward : lookup.town().getTownStewards(e.getTown())) {
-            DeleteUtils.dismiss(steward, e.getTown(), null, false);
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onTownRemoved(DeleteTownEvent e) {
+        for (Steward steward : lookup.town().getTownStewards(e.getTownUUID())) {
+            DeleteUtils.dismiss(steward, e.getTownUUID(), null, false);
         }
-        lookup.town().clear(e.getTown());
+        lookup.town().clear(e.getTownUUID());
     }
 
     @EventHandler
@@ -142,6 +134,9 @@ public class TownyListener implements Listener {
 
     @EventHandler
     public void onUnclaim(TownPreUnclaimEvent e) {
+        if (e.getTown() == null)
+            return;
+
         for (Steward steward : StewardsAPI.getStewards(e.getTown())) {
             final TownBlock townBlock = steward.getTownBlock();
 
