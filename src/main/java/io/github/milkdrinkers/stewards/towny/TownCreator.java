@@ -11,14 +11,12 @@ import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.trait.ArchitectTrait;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 public final class TownCreator {
     public static void create(
@@ -32,6 +30,7 @@ public final class TownCreator {
 
         // Use one time event listener to reacto to town creation using architects
         final Listener listener = new Listener() {
+            @SuppressWarnings("unused")
             @EventHandler
             public void onNewTown(NewTownEvent e) {
                 if (e.getTown().getMayor().equals(resident)) {
@@ -62,18 +61,7 @@ public final class TownCreator {
         TownMetaData.NPC.set(town, steward);
         lookup.town().add(town, steward);
 
-        steward.setTownUUID(town.getUUID());
-        steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).hire();
-        steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setTownUUID(town.getUUID());
-
-        if (TownyAPI.getInstance().getTown(steward.getSettler().getNpc().getEntity().getLocation()).getUUID() == null && TownyAPI.getInstance().getTown(steward.getSettler().getNpc().getEntity().getLocation()).getUUID() != steward.getTownUUID()) {
-            try {
-                steward.getSettler().getNpc().teleport(town.getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setAnchorLocation(steward.getSettler().getNpc().getEntity().getLocation());
-                steward.stopFollowing(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
-            } catch (TownyException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        steward.getTrait().setTownUUID(town.getUUID());
+        steward.getTrait().hire();
     }
 }
