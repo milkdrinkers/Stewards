@@ -60,7 +60,6 @@ public final class TownCreator {
         TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
 
         TownMetaData.NPC.set(town, steward);
-
         lookup.town().add(town, steward);
 
         steward.setTownUUID(town.getUUID());
@@ -72,7 +71,6 @@ public final class TownCreator {
                 steward.getSettler().getNpc().teleport(town.getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).setAnchorLocation(steward.getSettler().getNpc().getEntity().getLocation());
                 steward.stopFollowing(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
-                steward.getSettler().getNpc().getNavigator().setTarget(steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).getAnchorLocation());
             } catch (TownyException ex) {
                 throw new RuntimeException(ex);
             }
