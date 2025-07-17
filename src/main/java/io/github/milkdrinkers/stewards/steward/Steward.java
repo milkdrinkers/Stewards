@@ -26,15 +26,19 @@ public class Steward {
     private final double dailyUpkeepCost;
     private final StewardType architectType = StewardsAPI.getRegistry().getType(ARCHITECT_ID);
 
-    public Steward(StewardType stewardType, AbstractSettler settler, int level, UUID townUUID, boolean isEnabled, boolean isHidden, double dailyUpkeepCost) {
+    public Steward(StewardType stewardType, AbstractSettler settler, @Nullable Integer level, @Nullable UUID townUUID, boolean isEnabled, boolean isHidden, double dailyUpkeepCost) {
         this.stewardType = stewardType;
         this.settler = settler;
-        setLevel(level);
-        setTownUUID(townUUID);
         this.isEnabled = isEnabled;
         this.isHidden = isHidden;
         this.dailyUpkeepCost = dailyUpkeepCost;
         this.settler.getNpc().getOrAddTrait(StewardTrait.class);
+
+        // Only set if overrides provided by builder (otherwise we'd override trait values with null)
+        if (level != null)
+            setLevel(level);
+        if (townUUID != null)
+            setTownUUID(townUUID);
     }
 
     /**
