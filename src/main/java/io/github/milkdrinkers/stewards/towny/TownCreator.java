@@ -13,6 +13,7 @@ import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.trait.ArchitectTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -63,5 +64,15 @@ public final class TownCreator {
 
         steward.getTrait().setTownUUID(town.getUUID());
         steward.getTrait().hire();
+
+        // If architect is outside claimed chunk, walk to town spawn (Which will be inside town)
+        final Location architectLoc = steward.getTrait().getAnchorLocation();
+        final Location townSpawnLoc = town.getSpawnOrNull();
+        if (townSpawnLoc == null)
+            return;
+
+        if (!architectLoc.getChunk().equals(townSpawnLoc.getChunk())) {
+            steward.walkToAnchor(townSpawnLoc);
+        }
     }
 }

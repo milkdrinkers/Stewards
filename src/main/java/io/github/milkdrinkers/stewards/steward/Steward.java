@@ -9,6 +9,7 @@ import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +87,17 @@ public class Steward {
         getNpc().getNavigator().getLocalParameters().speedModifier(1.5f);
         getNpc().getNavigator().getLocalParameters().distanceMargin(0.0);
         StewardsAPI.getLookupFollow().remove(player);
+    }
+
+    public void walkToAnchor(Location location) {
+        getNpc().getNavigator().cancelNavigation();
+        getTrait().setFollowing(false);
+        getTrait().setFollowingPlayer(null);
+        getTrait().setAnchorLocation(location);
+        getNpc().getNavigator().setTarget(getTrait().getAnchorLocation());
+        getNpc().getNavigator().getLocalParameters().stuckAction(TeleportStuckAction.INSTANCE);
+        getNpc().getNavigator().getLocalParameters().speedModifier(1.5f);
+        getNpc().getNavigator().getLocalParameters().distanceMargin(0.0);
     }
 
     public StewardType getStewardType() {
