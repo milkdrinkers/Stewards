@@ -177,15 +177,32 @@ public class StewardTrait extends Trait {
         }
 
         final Town stewardTown = TownyAPI.getInstance().getTown(steward.getTownUUID());
-        final Town clickerTown = resident.getTownOrNull();
 
-        if (!isAdmin && clickerTown == null) {
-            e.getClicker().sendMessage(ColorParser.of("<red>You must be part of a town to interact with stewards.").build());
+        if (stewardTown == null) {
+            e.getClicker().sendMessage(ColorParser.of("<red>This steward must be part of a town to be interacted with.").build()); // TODO Translate
             return;
         }
 
-        if (!isAdmin && stewardTown == null) {
-            e.getClicker().sendMessage(ColorParser.of("<red>This steward must be part of a town to be interacted with.").build());
+        if (!isAdmin && (!isMayor || !CheckUtils.isSameTown(e.getClicker(), steward)) && steward.getTrait().isHired()) {
+            if (steward.hasTrait(PortmasterTrait.class)) {
+                final Port port = PortsAPI.getPortFromTown(stewardTown);
+                if (port != null) {
+                    PortsAPI.openTravelMenu(e.getClicker(), port);
+                    return;
+                }
+            } else if (steward.hasTrait(StablemasterTrait.class)) {
+                final CarriageStation station = PortsAPI.getCarriageStationFromTown(stewardTown);
+                if (station != null) {
+                    PortsAPI.openTravelMenu(e.getClicker(), station);
+                    return;
+                }
+            }
+        }
+
+        final Town clickerTown = resident.getTownOrNull();
+
+        if (!isAdmin && clickerTown == null) {
+            e.getClicker().sendMessage(ColorParser.of("<red>You must be part of a town to interact with stewards.").build()); // TODO Translate
             return;
         }
 
