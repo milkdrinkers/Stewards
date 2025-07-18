@@ -171,7 +171,7 @@ public class StewardTrait extends Trait {
             return;
 
         // Allow menu for steward
-        if (isArchitect && !isHired) {
+        if (steward.isFounder() && steward.getNpc().getOrAddTrait(ArchitectTrait.class).getSpawningPlayer().equals(e.getClicker().getUniqueId())) {
             StewardBaseGui.createBaseGui(steward, e.getClicker()).open(e.getClicker());
             return;
         }
