@@ -3,6 +3,9 @@ package io.github.milkdrinkers.stewards.trait;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import io.github.alathra.alathraports.api.PortsAPI;
+import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
+import io.github.alathra.alathraports.core.ports.Port;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.settlers.api.enums.ClickType;
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.interact.SettlerClickedEvent;
@@ -11,6 +14,7 @@ import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
 import io.github.milkdrinkers.stewards.hook.Hook;
 import io.github.milkdrinkers.stewards.steward.Steward;
+import io.github.milkdrinkers.stewards.utility.CheckUtils;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
@@ -156,16 +160,11 @@ public class StewardTrait extends Trait {
             return;
 
         final Resident resident = TownyAPI.getInstance().getResident(e.getClicker());
-        if (resident == null) { // This shouldn't be possible.
-            Logger.get().error("Resident was null when right clicking a steward.");
+        if (resident == null)
             return;
-        }
 
-        final boolean isArchitect = this.getNPC().hasTrait(ArchitectTrait.class);
-        final boolean isHired = this.hired;
-        final boolean isPortSteward = this.getNPC().hasTrait(PortmasterTrait.class) || this.getNPC().hasTrait(StablemasterTrait.class);
-        final boolean isMayor = resident.isMayor() || resident.getTownRanks().contains("co-mayor");
-        final boolean isAdmin = Hook.getVaultHook().isHookLoaded() && e.getClicker().hasPermission("stewards.admin");
+        final boolean isMayor = CheckUtils.isMayor(e.getClicker());
+        final boolean isAdmin = CheckUtils.isAdmin(e.getClicker());
 
         final Steward steward = StewardsAPI.getLookup().get(e.getSettler());
         if (steward == null)
@@ -190,13 +189,13 @@ public class StewardTrait extends Trait {
             return;
         }
 
-        if (!isAdmin && !stewardTown.equals(clickerTown)) {
-            e.getClicker().sendMessage(ColorParser.of("<red>You must be part of a town to interact with stewards.").build());
+        if (!isAdmin && !CheckUtils.isSameTown(stewardTown, clickerTown)) {
+            e.getClicker().sendMessage(ColorParser.of("<red>You must be part of a town to interact with stewards.").build()); // TODO Translate
             return;
         }
 
-        if (!isPortSteward && !isMayor && !isAdmin) {
-            e.getClicker().sendMessage(ColorParser.of("<red>You must be mayor or co-mayor to interact with stewards.").build());
+        if (!isMayor && !isAdmin) {
+            e.getClicker().sendMessage(ColorParser.of("<red>You must be mayor or co-mayor to interact with stewards.").build()); // TODO Translate
             return;
         }
 
