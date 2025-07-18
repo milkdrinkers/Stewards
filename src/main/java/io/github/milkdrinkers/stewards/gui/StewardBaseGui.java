@@ -39,7 +39,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
         Gui gui = Gui.gui()
             .title(ColorParser.of(steward.getStewardType().settlerPrefix()
-                + " " + steward.getSettler().getNpc().getName()).build())
+                + " " + steward.getNpc().getName()).build())
             .rows(5).create();
 
         gui.disableItemDrop()
@@ -51,15 +51,15 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         populateButtons(gui, steward, player);
 
         if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.ARCHITECT_ID)) {
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired())
+            if (steward.getTrait().isHired()) {
                 populateArchitectTownButtons(gui, steward, player);
-            else
+            }else {
                 populateArchitectNoTownButtons(gui, steward, player);
-
+            }
         }
 
         if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.TREASURER_ID)) {
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
+            if (steward.getTrait().isHired()) {
                 populateHiredButtons(gui, steward, player);
             } else {
                 populateUnHiredButtons(gui, steward, player);
@@ -67,7 +67,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         }
 
         if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.BAILIFF_ID)) {
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
+            if (steward.getTrait().isHired()) {
                 populateHiredButtons(gui, steward, player);
             } else {
                 populateUnHiredButtons(gui, steward, player);
@@ -75,7 +75,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         }
 
         if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.PORTMASTER_ID)) {
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
+            if (steward.getTrait().isHired()) {
                 populateHiredButtons(gui, steward, player);
             } else {
                 populateUnHiredButtons(gui, steward, player);
@@ -83,7 +83,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         }
 
         if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.STABLEMASTER_ID)) {
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
+            if (steward.getTrait().isHired()) {
                 populateHiredButtons(gui, steward, player);
             } else {
                 populateUnHiredButtons(gui, steward, player);
@@ -125,7 +125,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         ItemMeta followMeta = followItem.getItemMeta();
 
 
-        if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isFollowing()) {
+        if (steward.getTrait().isFollowing()) {
             followMeta.displayName(ColorParser.of(Translation.of("gui.general.stop-following")).build().decoration(TextDecoration.ITALIC, false));
         } else {
             followMeta.displayName(ColorParser.of(Translation.of("gui.general.follow")).build().decoration(TextDecoration.ITALIC, false));
@@ -135,7 +135,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         followItem.setItemMeta(followMeta);
 
         gui.setItem(5, 5, ItemBuilder.from(followItem).asGuiItem(event -> {
-            StewardTrait trait = steward.getSettler().getNpc().getTraitNullable(StewardTrait.class);
+            StewardTrait trait = steward.getTrait();
             if (trait == null) return;
 
             if (trait.isFollowing()) {
@@ -148,15 +148,15 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
 
         ItemStack infoItem = new ItemStack(Material.BOOK);
         ItemMeta infoMeta = infoItem.getItemMeta();
-        infoMeta.displayName(ColorParser.of(Translation.of("gui.general.info.name")).with("name", steward.getSettler().getNpc().getName()).build().decoration(TextDecoration.ITALIC, false));
+        infoMeta.displayName(ColorParser.of(Translation.of("gui.general.info.name")).with("name", steward.getNpc().getName()).build().decoration(TextDecoration.ITALIC, false));
         infoMeta.lore(List.of(
             ColorParser.of(Translation.of("gui.general.info.lore-1")).with("type", steward.getStewardType().name()).build().decoration(TextDecoration.ITALIC, false)
         ));
 
-        if (!steward.getSettler().getNpc().hasTrait(ArchitectTrait.class)) {
+        if (!steward.getNpc().hasTrait(ArchitectTrait.class)) {
             infoMeta.lore().add(ColorParser.of(Translation.of("gui.general.info.lore-2")).with("level", String.valueOf(steward.getLevel())).build().decoration(TextDecoration.ITALIC, false));
 
-            if (!steward.getSettler().getNpc().hasTrait(BailiffTrait.class) && steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).isHired()) {
+            if (!steward.getNpc().hasTrait(BailiffTrait.class) && steward.getTrait().isHired()) {
                 infoMeta.lore().add(ColorParser.of(Translation.of("gui.general.info.lore-3")).with("cost", String.valueOf(Cfg.get().getInt(steward.getStewardType().name().toLowerCase().replace(" ", "-")
                     + ".daily-cost.level-" + steward.getLevel()))).build().decoration(TextDecoration.ITALIC, false));
             }
