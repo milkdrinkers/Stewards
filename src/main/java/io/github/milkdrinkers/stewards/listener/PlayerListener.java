@@ -32,21 +32,21 @@ public class PlayerListener implements Listener {
         if (opt.isPresent()) {
             final Steward steward = opt.get();
 
-            if (!steward.getNpc().hasTrait(ArchitectTrait.class)) {
-                if (!steward.getTrait().isHired()) {
-                    DeleteUtils.dismiss(
-                        steward,
-                        steward.getTownUUID() != null ? TownyAPI.getInstance().getTown(steward.getTownUUID()) : null,
-                        e.getPlayer(),
-                        false
-                    );
-                    return;
-                }
+            // Founders have their own separate lifecycle logic
+            if (steward.isFounder())
+                return;
+
+            if (!steward.getTrait().isHired()) {
+                DeleteUtils.dismiss(
+                    steward,
+                    steward.getTownUUID() != null ? TownyAPI.getInstance().getTown(steward.getTownUUID()) : null,
+                    e.getPlayer(),
+                    false
+                );
+                return;
             }
 
-
             final StewardTrait trait = steward.getTrait();
-
             steward.stopFollowing(e.getPlayer());
         }
     }

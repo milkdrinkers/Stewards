@@ -10,7 +10,6 @@ import io.github.milkdrinkers.settlers.api.event.settlersapi.lifecycle.SettlersA
 import io.github.milkdrinkers.settlers.api.event.settlersapi.lifecycle.SettlersAPIUnloadedEvent;
 import io.github.milkdrinkers.settlers.api.settler.AbstractSettler;
 import io.github.milkdrinkers.stewards.Stewards;
-import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
@@ -117,7 +116,8 @@ public class SettlersListener implements Listener {
 
                 if (steward != null) {
                     lookup.add(steward);
-                    final UUID town = steward.getTrait().getTownUUID();
+
+                    final UUID town = stewardTrait.getTownUUID();
                     if (town != null)
                         lookup.town().add(town, steward.getUniqueId());
                 }
@@ -220,8 +220,10 @@ public class SettlersListener implements Listener {
 
             if (steward != null) {
                 lookup.add(steward);
-                if (steward.getTrait().getTownUUID() != null)
-                    lookup.town().add(steward.getTrait().getTownUUID(), steward.getUniqueId());
+
+                final UUID town = stewardTrait.getTownUUID();
+                if (town != null)
+                    lookup.town().add(town, steward.getUniqueId());
             }
         } catch (InvalidStewardException ex) {
             throw new RuntimeException(ex);
@@ -255,6 +257,10 @@ public class SettlersListener implements Listener {
         lookup.remove(e.getSettler());
     }
 
+    /**
+     * Makes stewards follow the player that spawned them. (excludes architects as they are handled separately)
+     * @param e event
+     */
     @EventHandler
     public void onSettlerCreate(SettlerSpawnEvent e) {
         if (!e.getSettler().getNpc().hasTrait(StewardTrait.class))
@@ -263,7 +269,14 @@ public class SettlersListener implements Listener {
         if (e.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer() == null)
             return;
 
-        lookup.get(e.getSettler()).startFollowing(e.getSettler().getNpc().getTraitNullable(StewardTrait.class).getFollowingPlayer());
-    }
+        // Exclude architects as they have their own following logic
+        if (e.getSettler().getNpc().hasTrait(ArchitectTrait.class))
+            return;
 
+        final Steward steward = lookup.get(e.getSettler());
+        if (steward == null)
+            return;
+
+        steward.startFollowing(steward.getTrait().getFollowingPlayer());
+    }
 }
