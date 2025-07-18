@@ -10,9 +10,11 @@ import com.palmergames.bukkit.towny.event.NewTownEvent;
 import com.palmergames.bukkit.towny.event.PreDeleteTownEvent;
 import com.palmergames.bukkit.towny.event.economy.TownPreTransactionEvent;
 import com.palmergames.bukkit.towny.event.statusscreen.TownStatusScreenEvent;
+import com.palmergames.bukkit.towny.event.town.TownPreUnclaimCmdEvent;
 import com.palmergames.bukkit.towny.event.town.TownPreUnclaimEvent;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.object.economy.transaction.TransactionType;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
@@ -74,7 +76,7 @@ public class TownyListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTownRemoved(DeleteTownEvent e) {
-        for (Steward steward : lookup.town().getTownStewards(e.getTownUUID())) {
+        for (final Steward steward : lookup.town().getTownStewards(e.getTownUUID())) {
             DeleteUtils.dismiss(steward, e.getTownUUID(), null, false);
         }
         lookup.town().clear(e.getTownUUID());
@@ -133,20 +135,24 @@ public class TownyListener implements Listener {
     }
 
     @EventHandler
-    public void onUnclaim(TownPreUnclaimEvent e) {
+    public void onUnclaim(TownPreUnclaimCmdEvent e) {
         if (e.getTown() == null)
             return;
 
-        for (Steward steward : StewardsAPI.getStewards(e.getTown())) {
+        for (final Steward steward : StewardsAPI.getStewards(e.getTown())) {
             final TownBlock townBlock = steward.getTownBlock();
 
             if (townBlock == null)
                 continue;
 
-            if (townBlock.equals(e.getTownBlock())) {
-                e.setCancelMessage("There is a steward in this chunk. Move them to another chunk to unclaim this chunk.");
-                e.setCancelled(true);
-                return;
+            final WorldCoord wc = townBlock.getWorldCoord();
+
+            for (WorldCoord worldCoord : e.getUnclaimSelection()) {
+                if (wc.equals(worldCoord)) {
+                    e.setCancelMessage("There is a steward in one of the chunks you are trying to unclaim. Move them to another chunk to unclaim.");
+                    e.setCancelled(true);
+                    return;
+                }
             }
         }
     }
