@@ -74,7 +74,11 @@ public class ConfirmUpgradeGui {
 
             if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).levelUp()) {
                 steward.levelUp();
-                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.upgrade-success")).with("type", steward.getStewardType().name()).build());
+                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.upgrade-success"))
+                    .with("type", steward.getStewardType().name())
+                    .with("level", String.valueOf(steward.getLevel()))
+                    .build()
+                );
 
                 if (steward.getStewardType().id().equals(StewardTypeHandler.BAILIFF_ID)) {
 
