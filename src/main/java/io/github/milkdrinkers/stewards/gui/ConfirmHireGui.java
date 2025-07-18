@@ -7,6 +7,7 @@ import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
+import io.github.milkdrinkers.stewards.utility.CheckUtils;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import io.github.milkdrinkers.stewards.utility.SpawnUtils;
 import io.github.milkdrinkers.wordweaver.Translation;
@@ -64,6 +65,13 @@ public class ConfirmHireGui {
                 return;
             }
 
+            if (!CheckUtils.canAfford(town, cost)) {
+                player.sendMessage(ColorParser.of("<red>You cannot afford to hire this steward!").build()); // TODO Translate
+                gui.close(player);
+                return;
+            }
+
+            CheckUtils.pay(town, cost, "Stewards: Hired " + steward.getStewardType().name());
             SpawnUtils.hireSteward(steward, town, player, cost, true);
             gui.close(player);
         }));
