@@ -37,19 +37,15 @@ public final class DeleteUtils {
 
         final Town town = townUUID != null ? TownyAPI.getInstance().getTown(townUUID) : null;
 
-        if (trait.isHired() && town != null) {
-            if (steward.getNpc().hasTrait(BailiffTrait.class)) {
+        if (trait.isHired()) {
+            if (steward.getNpc().hasTrait(BailiffTrait.class) && town != null) {
                 town.addBonusBlocks(-1 * Cfg.get().getInt("bailiff.claims.level-" + steward.getLevel()));
             } else if (steward.getNpc().hasTrait(PortmasterTrait.class)) {
-                PortsAPI.deleteAbstractPort(PortsAPI.getPortFromTown(town));
+                PortsAPI.deleteAbstractPort(PortsAPI.getPortFromTownUUID(townUUID));
             } else if (steward.getNpc().hasTrait(StablemasterTrait.class)) {
-                PortsAPI.deleteAbstractCarriageStation(PortsAPI.getCarriageStationFromTown(town));
-            } else if (steward.getNpc().hasTrait(TreasurerTrait.class)) {
+                PortsAPI.deleteAbstractCarriageStation(PortsAPI.getCarriageStationFromTownUUID(townUUID));
+            } else if (steward.getNpc().hasTrait(TreasurerTrait.class) && town != null) {
                 TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
-            } else {
-                if (player != null && message)
-                    player.sendMessage(ColorParser.of(Translation.of("error.improper-trait")).build());
-                Logger.get().error("Something went wrong, the steward didn't have a type-trait. Steward: {}", steward.getUniqueId());
             }
         } else {
             // If the steward is not hired then clear town key
