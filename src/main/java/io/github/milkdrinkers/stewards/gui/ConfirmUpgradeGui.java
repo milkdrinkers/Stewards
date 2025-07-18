@@ -14,6 +14,7 @@ import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
+import io.github.milkdrinkers.stewards.utility.CheckUtils;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.citizensnpcs.trait.HologramTrait;
@@ -58,16 +59,16 @@ public class ConfirmUpgradeGui {
         backItem.setItemMeta(backMeta);
 
         gui.setItem(1, 2, ItemBuilder.from(upgradeItem).asGuiItem(e -> {
-            if (!checkTownBank(steward, player, cost)) {
-                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.not-enough-funds")).build());
+            final Town town = TownyAPI.getInstance().getTown(player);
+            if (town == null) {
+                player.sendMessage(ColorParser.of(Translation.of("error.towny-exception")).build());
+                Logger.get().error("Something went wrong when checking town for {}. Town was null.", player.getName());
                 gui.close(player);
                 return;
             }
 
-            Town town = TownyAPI.getInstance().getTown(player);
-            if (town == null) {
-                player.sendMessage(ColorParser.of(Translation.of("error.towny-exception")).build());
-                Logger.get().error("Something went wrong when checking town for {}. Town was null.", player.getName());
+            if (!CheckUtils.canAfford(town, cost)) {
+                player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.not-enough-funds")).build());
                 gui.close(player);
                 return;
             }
@@ -112,9 +113,9 @@ public class ConfirmUpgradeGui {
 
                 }
 
-                town.getAccount().withdraw(cost, "Stewards: Upgraded " + steward.getStewardType().name());
+                CheckUtils.pay(town, cost, "Stewards: Upgraded " + steward.getStewardType().name());
 
-                HologramTrait hologramTrait = steward.getSettler().getNpc().getOrAddTrait(HologramTrait.class);
+                final HologramTrait hologramTrait = steward.getSettler().getNpc().getOrAddTrait(HologramTrait.class);
                 hologramTrait.clear();
                 hologramTrait.addLine("&7[&b" + steward.getStewardType().name() + "&7]" + " &aLvl " + steward.getLevel());
 
@@ -128,16 +129,6 @@ public class ConfirmUpgradeGui {
         gui.setItem(1, 4, ItemBuilder.from(backItem).asGuiItem(e -> {
             StewardBaseGui.createBaseGui(steward, player).open(player);
         }));
-    }
-
-    private static boolean checkTownBank(Steward steward, Player player, int cost) {
-        Town town = TownyAPI.getInstance().getTown(player);
-        if (town == null) { // Shouldn't be possible, considering the player was allowed to interact with the steward.
-            Logger.get().error("Something went wrong when checking town bank for {}. Town was null.", player.getName());
-            return false;
-        }
-
-        return town.getAccount().canPayFromHoldings(cost);
     }
 
 }
