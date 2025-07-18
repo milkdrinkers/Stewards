@@ -72,8 +72,7 @@ public class ConfirmUpgradeGui {
                 return;
             }
 
-            if (steward.getSettler().getNpc().getTraitNullable(StewardTrait.class).levelUp()) {
-                steward.levelUp();
+            if (steward.getTrait().levelUp()) {
                 player.sendMessage(ColorParser.of(Translation.of("gui.upgrade.upgrade-success"))
                     .with("type", steward.getStewardType().name())
                     .with("level", String.valueOf(steward.getLevel()))
