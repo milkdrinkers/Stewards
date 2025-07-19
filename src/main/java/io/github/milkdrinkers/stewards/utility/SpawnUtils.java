@@ -123,7 +123,7 @@ public final class SpawnUtils {
     }
 
     public static void hireSteward(Steward steward, Town town, Player player, int cost, boolean checkChunk) {
-        final boolean hasCost = cost <= 0;
+        final boolean hasCost = cost > 0;
         final StewardTrait trait = steward.getTrait();
 
         if (town == null) { // This should never happen, as player was allowed to interact with steward
@@ -136,7 +136,7 @@ public final class SpawnUtils {
             return;
         }
 
-        if (hasCost && !testCanAfford(cost).test(town)) {
+        if (hasCost && !CheckUtils.canAfford(town, cost)) {
             player.sendMessage(ColorParser.of(Translation.of("gui.hire.not-enough-funds")).build());
             return;
         }
@@ -148,7 +148,7 @@ public final class SpawnUtils {
 
         player.sendMessage(ColorParser.of(Translation.of("gui.hire.hire-success")).with("type", steward.getStewardType().name()).build());
         if (hasCost)
-            town.getAccount().withdraw(cost, "Stewards: Hired " + steward.getStewardType().name());
+            CheckUtils.pay(town, cost, "Stewards: Hired " + steward.getStewardType().name());
         trait.hire();
 
         steward.setTownUUID(town.getUUID());
@@ -233,16 +233,6 @@ public final class SpawnUtils {
      */
     public static Predicate<Location> testStewardLocationCreation(@Nullable Town town) {
         return location -> isValidTownBlock(location, town, null);
-    }
-
-    /**
-     * Check if the town can afford this price.
-     *
-     * @param cost the cost
-     * @return if can afford
-     */
-    private static Predicate<Town> testCanAfford(int cost) {
-        return town -> town.getAccount().canPayFromHoldings(cost);
     }
 
     /**

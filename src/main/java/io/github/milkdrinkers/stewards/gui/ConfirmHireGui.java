@@ -71,7 +71,6 @@ public class ConfirmHireGui {
                 return;
             }
 
-            CheckUtils.pay(town, cost, "Stewards: Hired " + steward.getStewardType().name());
             SpawnUtils.hireSteward(steward, town, player, cost, true);
             gui.close(player);
         }));
