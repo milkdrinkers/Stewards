@@ -1,5 +1,5 @@
 [versions]
-paper-api = "1.21.5-R0.1-SNAPSHOT"
+paper-api = "1.21.8-R0.1-SNAPSHOT"
 paper-run = "1.21.7"
 crate = "4.0.0-RC.2"
 commandapi = "10.1.1"
