@@ -167,7 +167,7 @@ tasks {
 
     runServer {
         // Configure the Minecraft version for our task.
-        minecraftVersion("1.21.5")
+        minecraftVersion(libs.versions.paper.run.get())
 
         // IntelliJ IDEA debugger setup: https://docs.papermc.io/paper/dev/debugging#using-a-remote-debugger
         jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true", "-DIReallyKnowWhatIAmDoingISwear", "-Dpaper.playerconnection.keepalive=6000")
@@ -205,7 +205,7 @@ bukkit { // Options: https://github.com/eldoriarpg/plugin-yml/wiki/Bukkit
     description = "${project.description}"
     authors = listOf("rooooose-b", "darksaid98", "ShermansWorld")
     contributors = listOf()
-    apiVersion = "1.21"
+    apiVersion = libs.versions.paper.api.get().substringBefore("-R")
     foliaSupported = false
 
     // Dependencies
@@ -228,7 +228,7 @@ paper { // Options: https://github.com/eldoriarpg/plugin-yml/wiki/Paper
     description = "${project.description}"
     authors = listOf("rooooose-b", "darksaid98", "ShermansWorld")
     contributors = listOf()
-    apiVersion = "1.21"
+    apiVersion = libs.versions.paper.api.get().substringBefore("-R")
     foliaSupported = false
 
     // Dependencies
