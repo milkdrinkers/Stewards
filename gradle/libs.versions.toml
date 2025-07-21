@@ -32,7 +32,7 @@ placeholderapi = "me.clip:placeholderapi:2.11.6"
 towny = "com.palmergames.bukkit.towny:towny:0.101.1.15"
 
 # Testing
-junit-bom = "org.junit:junit-bom:5.13.3"
+junit-bom = "org.junit:junit-bom:5.13.4"
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform = { module = "org.junit.platform:junit-platform-launcher" }
 slf4j = "org.slf4j:slf4j-simple:2.0.17"
