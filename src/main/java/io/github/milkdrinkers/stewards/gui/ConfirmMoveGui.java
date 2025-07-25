@@ -1,6 +1,6 @@
 package io.github.milkdrinkers.stewards.gui;
 
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
@@ -59,7 +59,7 @@ public class ConfirmMoveGui {
         final StewardType architectType = StewardsAPI.getRegistry().getType(ARCHITECT_ID);
         final boolean isArchitect = steward.getStewardType().equals(architectType);
 
-        gui.setItem(0, ItemBuilder
+        gui.setItem(0, PaperItemBuilder
             .from(Material.RED_BED)
             .name(ColorParser.of(Translation.of("gui.following.go-back")).build().decoration(TextDecoration.ITALIC, false))
             .flags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
@@ -73,7 +73,7 @@ public class ConfirmMoveGui {
                 gui.close(player);
             }));
 
-        gui.setItem(2, ItemBuilder
+        gui.setItem(2, PaperItemBuilder
             .from(Material.GRASS_BLOCK)
             .name(ColorParser.of(Translation.of("gui.following.stay")).build().decoration(TextDecoration.ITALIC, false))
             .flags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
@@ -91,7 +91,7 @@ public class ConfirmMoveGui {
                 }
             }));
 
-        gui.setItem(4, ItemBuilder
+        gui.setItem(4, PaperItemBuilder
             .from(Material.LEAD)
             .name(ColorParser.of(Translation.of("gui.following.follow")).build().decoration(TextDecoration.ITALIC, false))
             .flags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)

@@ -1,7 +1,7 @@
 package io.github.milkdrinkers.stewards.gui;
 
 import com.palmergames.bukkit.towny.TownyAPI;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
@@ -48,12 +48,12 @@ public class ConfirmDismissGui {
         backMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         backItem.setItemMeta(backMeta);
 
-        gui.setItem(1, 2, ItemBuilder.from(dismissItem).asGuiItem(e -> {
+        gui.setItem(1, 2, PaperItemBuilder.from(dismissItem).asGuiItem(e -> {
             gui.close(player);
             DeleteUtils.dismiss(steward, TownyAPI.getInstance().getTown(player), player, true);
         }));
 
-        gui.setItem(1, 4, ItemBuilder.from(backItem).asGuiItem(e -> {
+        gui.setItem(1, 4, PaperItemBuilder.from(backItem).asGuiItem(e -> {
             StewardBaseGui.createBaseGui(steward, player).open(player);
         }));
     }

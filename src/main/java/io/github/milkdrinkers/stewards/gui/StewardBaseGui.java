@@ -3,7 +3,7 @@ package io.github.milkdrinkers.stewards.gui;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.object.Town;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
@@ -100,7 +100,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         borderItem.setItemMeta(meta);
 
-        gui.getFiller().fillBorder(ItemBuilder.from(borderItem).asGuiItem());
+        gui.getFiller().fillBorder(PaperItemBuilder.from(borderItem).asGuiItem());
     }
 
     private static void populateButtons(Gui gui, Steward steward, Player player) {
@@ -110,7 +110,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         exitMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         exitItem.setItemMeta(exitMeta);
 
-        gui.setItem(5, 9, ItemBuilder.from(exitItem).asGuiItem(event -> gui.close(player)));
+        gui.setItem(5, 9, PaperItemBuilder.from(exitItem).asGuiItem(event -> gui.close(player)));
 
         ItemStack appearanceItem = new ItemStack(Material.PLAYER_HEAD);
         ItemMeta appearanceMeta = appearanceItem.getItemMeta();
@@ -118,7 +118,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         appearanceMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         appearanceItem.setItemMeta(appearanceMeta);
 
-        gui.setItem(5, 1, ItemBuilder.from(appearanceItem).asGuiItem(event -> AppearanceGui.createGui(steward, player).open(player)));
+        gui.setItem(5, 1, PaperItemBuilder.from(appearanceItem).asGuiItem(event -> AppearanceGui.createGui(steward, player).open(player)));
 
 
         ItemStack followItem = new ItemStack(Material.LEAD);
@@ -134,7 +134,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         followMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         followItem.setItemMeta(followMeta);
 
-        gui.setItem(5, 5, ItemBuilder.from(followItem).asGuiItem(event -> {
+        gui.setItem(5, 5, PaperItemBuilder.from(followItem).asGuiItem(event -> {
             StewardTrait trait = steward.getTrait();
             if (trait == null) return;
 
@@ -165,7 +165,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         infoMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         infoItem.setItemMeta(infoMeta);
 
-        gui.setItem(1, 5, ItemBuilder.from(infoItem).asGuiItem());
+        gui.setItem(1, 5, PaperItemBuilder.from(infoItem).asGuiItem());
     }
 
     private static void populateUnHiredButtons(Gui gui, Steward steward, Player player) {
@@ -185,11 +185,11 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         dismissMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         dismissItem.setItemMeta(dismissMeta);
 
-        gui.setItem(3, 3, ItemBuilder.from(hireItem).asGuiItem(event -> {
+        gui.setItem(3, 3, PaperItemBuilder.from(hireItem).asGuiItem(event -> {
             ConfirmHireGui.createGui(steward, player, cost).open(player);
         }));
 
-        gui.setItem(3, 7, ItemBuilder.from(dismissItem).asGuiItem(event -> {
+        gui.setItem(3, 7, PaperItemBuilder.from(dismissItem).asGuiItem(event -> {
             ConfirmDismissGui.createGui(steward, player).open(player);
         }));
     }
@@ -223,7 +223,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         if (steward.getStewardType() == Stewards.getInstance().getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.PORTMASTER_ID)) {
 
             if (TownyAPI.getInstance().getResident(player).isMayor()) {
-                gui.setItem(3, 3, ItemBuilder.from(upgradeItem).asGuiItem(event -> {
+                gui.setItem(3, 3, PaperItemBuilder.from(upgradeItem).asGuiItem(event -> {
                     if (steward.getLevel() < steward.getStewardType().maxLevel()) {
                         ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
                     } else {
@@ -232,7 +232,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                     }
                 }));
 
-                gui.setItem(3, 7, ItemBuilder.from(fireItem).asGuiItem(event -> {
+                gui.setItem(3, 7, PaperItemBuilder.from(fireItem).asGuiItem(event -> {
                     ConfirmFireGui.createGui(steward, player).open(player);
                 }));
             }
@@ -242,14 +242,14 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             portMeta.displayName(ColorParser.of(Translation.of("gui.general.travel.name")).build().decoration(TextDecoration.ITALIC, false));
             portMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             portItem.setItemMeta(portMeta);
-            gui.setItem(3, 5, ItemBuilder.from(portItem).asGuiItem(event -> {
+            gui.setItem(3, 5, PaperItemBuilder.from(portItem).asGuiItem(event -> {
                 PortsAPI.openTravelMenu(player, PortsAPI.getPortFromTown(TownyAPI.getInstance().getTown(steward.getTownUUID())));
             }));
 
         } else if (steward.getStewardType() == Stewards.getInstance().getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.STABLEMASTER_ID)) {
 
             if (TownyAPI.getInstance().getResident(player).isMayor()) {
-                gui.setItem(3, 3, ItemBuilder.from(upgradeItem).asGuiItem(event -> {
+                gui.setItem(3, 3, PaperItemBuilder.from(upgradeItem).asGuiItem(event -> {
                     if (steward.getLevel() < steward.getStewardType().maxLevel()) {
                         ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
                     } else {
@@ -258,7 +258,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                     }
                 }));
 
-                gui.setItem(3, 7, ItemBuilder.from(fireItem).asGuiItem(event -> {
+                gui.setItem(3, 7, PaperItemBuilder.from(fireItem).asGuiItem(event -> {
                     ConfirmFireGui.createGui(steward, player).open(player);
                 }));
             }
@@ -269,12 +269,12 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             stationMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             stationItem.setItemMeta(stationMeta);
 
-            gui.setItem(3, 5, ItemBuilder.from(stationItem).asGuiItem(event -> {
+            gui.setItem(3, 5, PaperItemBuilder.from(stationItem).asGuiItem(event -> {
                 PortsAPI.openTravelMenu(player, PortsAPI.getCarriageStationFromTown(TownyAPI.getInstance().getTown(steward.getTownUUID())));
             }));
 
         } else {
-            gui.setItem(3, 3, ItemBuilder.from(upgradeItem).asGuiItem(event -> {
+            gui.setItem(3, 3, PaperItemBuilder.from(upgradeItem).asGuiItem(event -> {
                 if (steward.getLevel() < steward.getStewardType().maxLevel()) {
                     ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
                 } else {
@@ -283,7 +283,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                 }
             }));
 
-            gui.setItem(3, 7, ItemBuilder.from(fireItem).asGuiItem(event -> {
+            gui.setItem(3, 7, PaperItemBuilder.from(fireItem).asGuiItem(event -> {
                 ConfirmFireGui.createGui(steward, player).open(player);
             }));
         }
@@ -303,13 +303,13 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         dismissMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         dismissItem.setItemMeta(dismissMeta);
 
-        gui.setItem(3, 4, ItemBuilder.from(townItem).asGuiItem(event -> {
+        gui.setItem(3, 4, PaperItemBuilder.from(townItem).asGuiItem(event -> {
             gui.close(player);
             ConversationFactory factory = new ConversationFactory(Stewards.getInstance()).withPrefix(CreateTownConversation.getPrefix).withLocalEcho(false);
             factory.withFirstPrompt(CreateTownConversation.getNewTownPrompt(steward)).buildConversation(player).begin();
         }));
 
-        gui.setItem(3, 6, ItemBuilder.from(dismissItem).asGuiItem(event -> {
+        gui.setItem(3, 6, PaperItemBuilder.from(dismissItem).asGuiItem(event -> {
             ConfirmDismissGui.createGui(steward, player).open(player);
         }));
     }
@@ -431,7 +431,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         stablemasterMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         stablemasterItem.setItemMeta(stablemasterMeta);
 
-        gui.setItem(3, 2, ItemBuilder.from(treasurerItem).asGuiItem(e -> {
+        gui.setItem(3, 2, PaperItemBuilder.from(treasurerItem).asGuiItem(e -> {
             final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.TREASURER_ID);
             final Optional<Steward> stewardOptional = TownMetaData.NPC.getStewardOptional(town, type);
 
@@ -449,7 +449,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             }
         }));
 
-        gui.setItem(3, 4, ItemBuilder.from(bailiffItem).asGuiItem(e -> {
+        gui.setItem(3, 4, PaperItemBuilder.from(bailiffItem).asGuiItem(e -> {
             final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.BAILIFF_ID);
             final Optional<Steward> stewardOptional = TownMetaData.NPC.getStewardOptional(town, type);
 
@@ -463,7 +463,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             gui.close(player);
         }));
 
-        gui.setItem(3, 6, ItemBuilder.from(portmasterItem).asGuiItem(e -> {
+        gui.setItem(3, 6, PaperItemBuilder.from(portmasterItem).asGuiItem(e -> {
             final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.PORTMASTER_ID);
             final Optional<Steward> stewardOptional = TownMetaData.NPC.getStewardOptional(town, type);
 
@@ -481,7 +481,7 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             }
         }));
 
-        gui.setItem(3, 8, ItemBuilder.from(stablemasterItem).asGuiItem(e -> {
+        gui.setItem(3, 8, PaperItemBuilder.from(stablemasterItem).asGuiItem(e -> {
             final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.STABLEMASTER_ID);
             final Optional<Steward> stewardOptional = TownMetaData.NPC.getStewardOptional(town, type);
 

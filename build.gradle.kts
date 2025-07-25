@@ -44,6 +44,8 @@ repositories {
         content { includeGroup("com.palmergames.bukkit.towny") }
     }
     maven("https://nexus.betonquest.org/repository/betonquest/") // BetonQuest
+
+    maven("https://repo.triumphteam.dev/snapshots/")
 }
 
 dependencies {
@@ -66,18 +68,7 @@ dependencies {
     }
     implementation(libs.threadutil.bukkit)
     implementation(libs.commandapi.shade)
-    implementation(libs.triumph.gui) {
-        // Already ships with Paper
-        exclude("net.kyori", "adventure-api")
-        exclude("net.kyori", "adventure-bom")
-        exclude("net.kyori", "adventure-key")
-        exclude("net.kyori", "examination-api")
-        exclude("net.kyori", "examination-string")
-        exclude("net.kyori", "adventure-text-serializer-gson")
-        exclude("net.kyori", "adventure-text-serializer-legacy")
-        exclude("net.kyori", "adventure-text-logger-slf4j")
-        exclude("com.google.code.gson")
-    }
+    implementation(libs.triumph.gui)
 
     // Plugin dependencies
     compileOnly(libs.citizens) {

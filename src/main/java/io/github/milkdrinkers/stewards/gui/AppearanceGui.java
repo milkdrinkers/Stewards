@@ -1,6 +1,6 @@
 package io.github.milkdrinkers.stewards.gui;
 
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
@@ -40,7 +40,7 @@ public class AppearanceGui {
         exitMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         exitItem.setItemMeta(exitMeta);
 
-        gui.setItem(1, 9, ItemBuilder.from(exitItem).asGuiItem(event -> StewardBaseGui.createBaseGui(steward, player).open(player)));
+        gui.setItem(1, 9, PaperItemBuilder.from(exitItem).asGuiItem(event -> StewardBaseGui.createBaseGui(steward, player).open(player)));
 
         ItemStack nameItem = new ItemStack(Material.NAME_TAG);
         ItemMeta nameMeta = nameItem.getItemMeta();
@@ -60,7 +60,7 @@ public class AppearanceGui {
         nameAndSkinMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         nameAndSkinItem.setItemMeta(nameAndSkinMeta);
 
-        gui.setItem(1, 2, ItemBuilder.from(nameItem).asGuiItem(e -> {
+        gui.setItem(1, 2, PaperItemBuilder.from(nameItem).asGuiItem(e -> {
             String newName;
             if (female) {
                 newName = Appearance.getFemaleName();
@@ -76,7 +76,7 @@ public class AppearanceGui {
             gui.close(player);
         }));
 
-        gui.setItem(1, 4, ItemBuilder.from(skinItem).asGuiItem(e -> {
+        gui.setItem(1, 4, PaperItemBuilder.from(skinItem).asGuiItem(e -> {
             if (female) {
                 Appearance.applyFemaleStewardSkin(steward);
             } else {
@@ -85,7 +85,7 @@ public class AppearanceGui {
             gui.close(player);
         }));
 
-        gui.setItem(1, 6, ItemBuilder.from(nameAndSkinItem).asGuiItem(e -> {
+        gui.setItem(1, 6, PaperItemBuilder.from(nameAndSkinItem).asGuiItem(e -> {
             boolean femaleNew = Math.random() > 0.5;
             String newName;
 

@@ -2,7 +2,7 @@ package io.github.milkdrinkers.stewards.gui;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.alathra.alathraports.api.PortsAPI;
@@ -58,7 +58,7 @@ public class ConfirmUpgradeGui {
         backMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         backItem.setItemMeta(backMeta);
 
-        gui.setItem(1, 2, ItemBuilder.from(upgradeItem).asGuiItem(e -> {
+        gui.setItem(1, 2, PaperItemBuilder.from(upgradeItem).asGuiItem(e -> {
             final Town town = TownyAPI.getInstance().getTown(player);
             if (town == null) {
                 player.sendMessage(ColorParser.of(Translation.of("error.towny-exception")).build());
@@ -126,7 +126,7 @@ public class ConfirmUpgradeGui {
             gui.close(player);
         }));
 
-        gui.setItem(1, 4, ItemBuilder.from(backItem).asGuiItem(e -> {
+        gui.setItem(1, 4, PaperItemBuilder.from(backItem).asGuiItem(e -> {
             StewardBaseGui.createBaseGui(steward, player).open(player);
         }));
     }
