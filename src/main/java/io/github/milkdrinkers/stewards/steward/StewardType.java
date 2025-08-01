@@ -1,52 +1,29 @@
 package io.github.milkdrinkers.stewards.steward;
 
 import io.github.milkdrinkers.stewards.exception.InvalidStewardTypeException;
+import net.citizensnpcs.api.trait.Trait;
 import org.jetbrains.annotations.NotNull;
 
-public class StewardType {
+import java.util.Objects;
 
-    private final String id;
-    private final String name;
-    private final int maxLevel;
-    private final int minLevel;
-    private final int startingLevel;
-    private final String settlerPrefix;
+import static io.github.milkdrinkers.stewards.towny.TownMetaData.FIELD_PREFIX;
 
-    public StewardType(String id, String name, int maxLevel, int minLevel, int startingLevel, String settlerPrefix) {
-        this.id = id;
-        this.name = name;
-        this.maxLevel = maxLevel;
-        this.minLevel = minLevel;
-        this.startingLevel = startingLevel;
-        this.settlerPrefix = settlerPrefix;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getMaxLevel() {
-        return maxLevel;
-    }
-
-    public int getMinLevel() {
-        return minLevel;
-    }
-
-    public int getStartingLevel() {
-        return startingLevel;
-    }
-
-    public String getSettlerPrefix() {
-        return settlerPrefix;
-    }
-
+public record StewardType(@NotNull String id, @NotNull String dataFieldKey, @NotNull String name, int maxLevel,
+                          int minLevel, int startingLevel, @NotNull String settlerPrefix,
+                          Class<? extends Trait> trait) {
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StewardType that)) return false;
+        return Objects.equals(id(), that.id());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id());
     }
 
     public static class Builder {
@@ -56,6 +33,7 @@ public class StewardType {
         private int minLevel;
         private int startingLevel;
         private String settlerPrefix;
+        private Class<? extends Trait> trait;
 
         public Builder setId(@NotNull String id) {
             this.id = id;
@@ -87,21 +65,21 @@ public class StewardType {
             return this;
         }
 
-        public StewardType build() throws InvalidStewardTypeException {
+        public Builder setTrait(@NotNull Class<? extends Trait> trait) {
+            this.trait = trait;
+            return this;
+        }
 
+        public StewardType build() throws InvalidStewardTypeException {
             // Check for levels less than 1
             if (maxLevel <= 0)
                 maxLevel = 1;
             if (minLevel <= 0)
                 minLevel = 1;
-            if (startingLevel <= 0)
-                startingLevel = 1;
-
-            // Check for exceeding max level or below min level
             if (minLevel > maxLevel)
                 minLevel = maxLevel;
-            if (startingLevel > maxLevel)
-                startingLevel = maxLevel;
+            if (startingLevel <= minLevel || startingLevel > maxLevel)
+                startingLevel = 1;
 
             if (id == null)
                 throw new InvalidStewardTypeException("StewardType Id is null");
@@ -109,8 +87,10 @@ public class StewardType {
                 throw new InvalidStewardTypeException("StewardType Name is null");
             if (settlerPrefix == null)
                 throw new InvalidStewardTypeException("StewardType Settler Prefix is null");
+            if (trait == null)
+                throw new InvalidStewardTypeException("StewardType Trait is null");
 
-            return new StewardType(id, name, maxLevel, minLevel, startingLevel, settlerPrefix);
+            return new StewardType(id, FIELD_PREFIX + id, name, maxLevel, minLevel, startingLevel, settlerPrefix, trait);
         }
     }
 }

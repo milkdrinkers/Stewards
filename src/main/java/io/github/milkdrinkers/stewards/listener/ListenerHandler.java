@@ -30,9 +30,9 @@ public class ListenerHandler implements Reloadable {
     @Override
     public void onEnable(Stewards plugin) {
         listeners.clear(); // Clear the list to avoid duplicate listeners when reloading the plugin
-        listeners.add(new TownyListener());
-        listeners.add(new SettlersListener());
-        listeners.add(new PlayerListener());
+        listeners.add(new TownyListener(plugin));
+        listeners.add(new SettlersListener(plugin));
+        listeners.add(new PlayerListener(plugin));
 
         // Register listeners here
         for (Listener listener : listeners) {

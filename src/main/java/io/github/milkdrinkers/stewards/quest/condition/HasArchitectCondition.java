@@ -1,6 +1,6 @@
 package io.github.milkdrinkers.stewards.quest.condition;
 
-import io.github.milkdrinkers.stewards.steward.StewardLookup;
+import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import org.betonquest.betonquest.api.profile.OnlineProfile;
 import org.betonquest.betonquest.api.quest.QuestException;
 import org.betonquest.betonquest.api.quest.condition.online.OnlineCondition;
@@ -14,6 +14,6 @@ public class HasArchitectCondition implements OnlineCondition {
         if (player == null)
             throw new QuestException("Player is null.");
 
-        return StewardLookup.get().hasArchitect(player);
+        return StewardsAPI.getLookupArchitect().hasArchitect(player);
     }
 }

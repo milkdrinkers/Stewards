@@ -1,13 +1,12 @@
 package io.github.milkdrinkers.stewards.gui;
 
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
-import io.github.milkdrinkers.colorparser.ColorParser;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.trait.traits.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Appearance;
 import io.github.milkdrinkers.wordweaver.Translation;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,7 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class AppearanceGui {
 
     public static Gui createGui(Steward steward, Player player) {
-        Gui gui = Gui.gui().title(Component.text(Translation.of("gui.appearance.title")))
+        Gui gui = Gui.gui().title(Translation.as("gui.appearance.title"))
             .rows(1)
             .create();
 
@@ -41,7 +40,7 @@ public class AppearanceGui {
         exitMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         exitItem.setItemMeta(exitMeta);
 
-        gui.setItem(1, 9, ItemBuilder.from(exitItem).asGuiItem(event -> StewardBaseGui.createBaseGui(steward, player).open(player)));
+        gui.setItem(1, 9, PaperItemBuilder.from(exitItem).asGuiItem(event -> StewardBaseGui.createBaseGui(steward, player).open(player)));
 
         ItemStack nameItem = new ItemStack(Material.NAME_TAG);
         ItemMeta nameMeta = nameItem.getItemMeta();
@@ -61,7 +60,7 @@ public class AppearanceGui {
         nameAndSkinMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         nameAndSkinItem.setItemMeta(nameAndSkinMeta);
 
-        gui.setItem(1, 2, ItemBuilder.from(nameItem).asGuiItem(e -> {
+        gui.setItem(1, 2, PaperItemBuilder.from(nameItem).asGuiItem(e -> {
             String newName;
             if (female) {
                 newName = Appearance.getFemaleName();
@@ -77,7 +76,7 @@ public class AppearanceGui {
             gui.close(player);
         }));
 
-        gui.setItem(1, 4, ItemBuilder.from(skinItem).asGuiItem(e -> {
+        gui.setItem(1, 4, PaperItemBuilder.from(skinItem).asGuiItem(e -> {
             if (female) {
                 Appearance.applyFemaleStewardSkin(steward);
             } else {
@@ -86,7 +85,7 @@ public class AppearanceGui {
             gui.close(player);
         }));
 
-        gui.setItem(1, 6, ItemBuilder.from(nameAndSkinItem).asGuiItem(e -> {
+        gui.setItem(1, 6, PaperItemBuilder.from(nameAndSkinItem).asGuiItem(e -> {
             boolean femaleNew = Math.random() > 0.5;
             String newName;
 
@@ -95,7 +94,7 @@ public class AppearanceGui {
 
                 newName = Appearance.getFemaleName();
                 steward.getSettler().getNpc().setName(newName);
-                steward.getSettler().getNpc().getEntity().customName(Component.text(newName));
+                steward.getSettler().getNpc().getEntity().customName(ColorParser.of(newName).build());
                 steward.getSettler().getNpc().getEntity().setCustomNameVisible(true);
 
                 steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setFemale(true);
@@ -104,7 +103,7 @@ public class AppearanceGui {
 
                 newName = Appearance.getMaleName();
                 steward.getSettler().getNpc().setName(newName);
-                steward.getSettler().getNpc().getEntity().customName(Component.text(newName));
+                steward.getSettler().getNpc().getEntity().customName(ColorParser.of(newName).build());
                 steward.getSettler().getNpc().getEntity().setCustomNameVisible(true);
 
                 steward.getSettler().getNpc().getOrAddTrait(StewardTrait.class).setFemale(false);

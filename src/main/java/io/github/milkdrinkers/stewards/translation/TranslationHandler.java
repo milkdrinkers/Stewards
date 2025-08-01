@@ -1,6 +1,6 @@
 package io.github.milkdrinkers.stewards.translation;
 
-import io.github.milkdrinkers.colorparser.ColorParser;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.Reloadable;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.config.ConfigHandler;
@@ -33,7 +33,7 @@ public class TranslationHandler implements Reloadable {
             .updateLanguages(true)
             .language(configHandler.getConfig().get("language", "en_US"))
             .defaultLanguage("en_US")
-            .componentConverter(s -> ColorParser.of(s).parseLegacy().build()) // Use color parser for components by default
+            .componentConverter(s -> ColorParser.of(s).legacy().papi().mini().build()) // Use color parser for components by default
             .build()
         );
     }

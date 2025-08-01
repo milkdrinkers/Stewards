@@ -3,28 +3,30 @@ package io.github.milkdrinkers.stewards.steward;
 import io.github.milkdrinkers.stewards.Reloadable;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardTypeException;
+import io.github.milkdrinkers.stewards.trait.*;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
 
 public class StewardTypeHandler implements Reloadable {
-
     private StewardTypeRegistry stewardTypeRegistry;
 
-    public String ARCHITECT_ID = "architect";
-    public String TREASURER_ID = "treasurer";
-    public String BAILIFF_ID = "bailiff";
-    public String PORTMASTER_ID = "portmaster";
-    public String STABLEMASTER_ID = "stablemaster";
-    public String GUARDCAPTAIN_ID = "guardcaptain";
-    public String GUARD_ID = "guard";
+    public final String ARCHITECT_ID = "architect";
+    public final String TREASURER_ID = "treasurer";
+    public final String BAILIFF_ID = "bailiff";
+    public final String PORTMASTER_ID = "portmaster";
+    public final String STABLEMASTER_ID = "stablemaster";
+    public final String GUARDCAPTAIN_ID = "guardcaptain";
+    public final String GUARD_ID = "guard";
 
     @Override
     public void onLoad(Stewards plugin) {
         stewardTypeRegistry = new StewardTypeRegistry();
+        registerStewardTypes();
     }
 
     @Override
     public void onEnable(Stewards plugin) {
-        stewardTypeRegistry.clear();
-        registerStewardTypes();
+
     }
 
     @Override
@@ -45,6 +47,7 @@ public class StewardTypeHandler implements Reloadable {
                 .setName("Architect")
                 .setStartingLevel(1)
                 .setSettlerPrefix("Architect") // TODO Translations
+                .setTrait(ArchitectTrait.class)
                 .build();
 
             stewardTypeRegistry.register(architect);
@@ -56,6 +59,7 @@ public class StewardTypeHandler implements Reloadable {
                 .setName("Treasurer")
                 .setStartingLevel(1)
                 .setSettlerPrefix("Treasurer") // TODO Translations
+                .setTrait(TreasurerTrait.class)
                 .build();
 
             stewardTypeRegistry.register(treasurer);
@@ -67,6 +71,7 @@ public class StewardTypeHandler implements Reloadable {
                 .setName("Bailiff")
                 .setStartingLevel(1)
                 .setSettlerPrefix("Bailiff") // TODO Translations
+                .setTrait(BailiffTrait.class)
                 .build();
 
             stewardTypeRegistry.register(bailiff);
@@ -78,6 +83,7 @@ public class StewardTypeHandler implements Reloadable {
                 .setName("Port Master")
                 .setStartingLevel(1)
                 .setSettlerPrefix("Port Master") // TODO Translations
+                .setTrait(PortmasterTrait.class)
                 .build();
 
             stewardTypeRegistry.register(portmaster);
@@ -89,6 +95,7 @@ public class StewardTypeHandler implements Reloadable {
                 .setName("Stable Master")
                 .setStartingLevel(1)
                 .setSettlerPrefix("Stable Master") // TODO Translations
+                .setTrait(StablemasterTrait.class)
                 .build();
 
             stewardTypeRegistry.register(stablemaster);
@@ -100,6 +107,7 @@ public class StewardTypeHandler implements Reloadable {
                 .setName("Guard Captain")
                 .setStartingLevel(1)
                 .setSettlerPrefix("Guard Captain")
+                .setTrait(GuardCaptainTrait.class)
                 .build();
 
             stewardTypeRegistry.register(guardcaptain);
@@ -111,6 +119,7 @@ public class StewardTypeHandler implements Reloadable {
                 .setName("Guard")
                 .setStartingLevel(1)
                 .setSettlerPrefix("Guard")
+                .setTrait(GuardTrait.class)
                 .build();
         } catch (InvalidStewardTypeException e) {
             throw new RuntimeException(e);

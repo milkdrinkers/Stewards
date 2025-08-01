@@ -1,14 +1,20 @@
 package io.github.milkdrinkers.stewards;
 
+import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.metadata.IntegerDataField;
+import com.palmergames.bukkit.towny.object.metadata.StringDataField;
+import com.palmergames.bukkit.towny.utils.MetaDataUtil;
 import io.github.milkdrinkers.stewards.command.CommandHandler;
 import io.github.milkdrinkers.stewards.config.ConfigHandler;
 import io.github.milkdrinkers.stewards.hook.HookManager;
 import io.github.milkdrinkers.stewards.listener.ListenerHandler;
 import io.github.milkdrinkers.stewards.quest.BetonQuestHandler;
-import io.github.milkdrinkers.stewards.steward.StewardLookup;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
+import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.threadutil.SchedulerHandler;
-import io.github.milkdrinkers.stewards.trait.traits.*;
+import io.github.milkdrinkers.stewards.towny.TownMetaData;
+import io.github.milkdrinkers.stewards.trait.*;
 import io.github.milkdrinkers.stewards.translation.TranslationHandler;
 import io.github.milkdrinkers.stewards.updatechecker.UpdateHandler;
 import net.citizensnpcs.api.CitizensAPI;
@@ -33,6 +39,8 @@ public class Stewards extends JavaPlugin {
     private ListenerHandler listenerHandler;
     private UpdateHandler updateHandler;
     private SchedulerHandler schedulerHandler;
+    private StewardsAPIProvider apiProvider;
+
     // Steward handlers
     private StewardTypeHandler stewardTypeHandler;
     private StewardLookup stewardLookup;
@@ -55,7 +63,6 @@ public class Stewards extends JavaPlugin {
     public void onLoad() {
         instance = this;
 
-
         configHandler = new ConfigHandler(this);
         translationHandler = new TranslationHandler(configHandler);
         hookManager = new HookManager(this);
@@ -65,6 +72,7 @@ public class Stewards extends JavaPlugin {
         listenerHandler = new ListenerHandler(this);
         updateHandler = new UpdateHandler(this);
         schedulerHandler = new SchedulerHandler();
+        apiProvider = new StewardsAPIProvider(this);
         betonQuestHandler = new BetonQuestHandler();
 
         handlers = List.of(
@@ -77,6 +85,7 @@ public class Stewards extends JavaPlugin {
             listenerHandler,
             updateHandler,
             schedulerHandler,
+            apiProvider,
             betonQuestHandler
         );
 
@@ -86,10 +95,16 @@ public class Stewards extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StewardTrait.class).withName("steward"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ArchitectTrait.class).withName("architect"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BailiffTrait.class).withName("bailiff"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PortmasterTrait.class).withName("portmaster"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StablemasterTrait.class).withName("stablemaster"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TreasurerTrait.class).withName("treasurer"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ArchitectSpawnerTrait.class).withName("architectspawner"));
+
         for (Reloadable handler : handlers)
             handler.onEnable(instance);
-
-
     }
 
     @Override
@@ -153,5 +168,40 @@ public class Stewards extends JavaPlugin {
     @NotNull
     public StewardLookup getStewardLookup() {
         return stewardLookup;
+    }
+
+    @SuppressWarnings("ExtractMethodRecommender")
+    private void migrateOldData() {
+        // Cleanup & migrate old/outdated metadata
+        final IntegerDataField oldBankField = new IntegerDataField("stewards_bank_limit");
+        final StringDataField architectField = new StringDataField("stewards_architect");
+        final StringDataField bailiffField = new StringDataField("stewards_bailiff");
+        final StringDataField portmasterField = new StringDataField("stewards_portmaster");
+        final StringDataField stablemasterField = new StringDataField("stewards_stablemaster");
+        final StringDataField treasurerField = new StringDataField("stewards_treasurer");
+        final List<StringDataField> oldList = List.of(
+            architectField,
+            bailiffField,
+            portmasterField,
+            stablemasterField,
+            treasurerField
+        );
+        for (Town town : TownyAPI.getInstance().getTowns()) {
+            // Cleanup old bank
+            if (MetaDataUtil.hasMeta(town, oldBankField)) {
+                final int val = MetaDataUtil.getInt(town, oldBankField);
+                town.removeMetaData(oldBankField);
+                TownMetaData.setBankLimit(town, val);
+            }
+
+            // Cleanup old string fields if the data is empty or null
+            for (StringDataField field : oldList) {
+                if (MetaDataUtil.hasMeta(town, field)) {
+                    final String data = MetaDataUtil.getString(town, field);
+                    if (data == null || data.isBlank())
+                        town.removeMetaData(field);
+                }
+            }
+        }
     }
 }
