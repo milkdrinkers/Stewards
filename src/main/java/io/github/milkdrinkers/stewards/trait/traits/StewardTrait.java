@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.trait;
+package io.github.milkdrinkers.stewards.trait.traits;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;

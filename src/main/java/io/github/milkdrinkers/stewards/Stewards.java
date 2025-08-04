@@ -15,8 +15,12 @@ import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.threadutil.SchedulerHandler;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.*;
+import io.github.milkdrinkers.stewards.trait.traits.*;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
 import io.github.milkdrinkers.stewards.translation.TranslationHandler;
 import io.github.milkdrinkers.stewards.updatechecker.UpdateHandler;
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -102,6 +106,8 @@ public class Stewards extends JavaPlugin {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StablemasterTrait.class).withName("stablemaster"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TreasurerTrait.class).withName("treasurer"));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ArchitectSpawnerTrait.class).withName("architectspawner"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GuardTrait.class).withName("stewardsguard"));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GuardCaptainTrait.class).withName("guardcaptain"));
 
         for (Reloadable handler : handlers)
             handler.onEnable(instance);

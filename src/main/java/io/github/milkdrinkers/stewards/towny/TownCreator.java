@@ -10,7 +10,7 @@ import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
-import io.github.milkdrinkers.stewards.trait.ArchitectTrait;
+import io.github.milkdrinkers.stewards.trait.traits.ArchitectTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -7,7 +7,7 @@ import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardType;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
+import io.github.milkdrinkers.stewards.trait.traits.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.SpawnUtils;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.format.TextDecoration;

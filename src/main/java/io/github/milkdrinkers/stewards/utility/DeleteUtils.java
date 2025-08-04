@@ -10,6 +10,7 @@ import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardType;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.*;
+import io.github.milkdrinkers.stewards.trait.traits.*;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;

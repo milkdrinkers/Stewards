@@ -15,6 +15,7 @@ import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.trait.*;
+import io.github.milkdrinkers.stewards.trait.traits.*;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

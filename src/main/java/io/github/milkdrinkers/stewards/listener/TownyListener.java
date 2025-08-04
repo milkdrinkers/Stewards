@@ -26,7 +26,7 @@ import io.github.milkdrinkers.stewards.steward.StewardType;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
+import io.github.milkdrinkers.stewards.trait.traits.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.DeleteUtils;
 import org.bukkit.event.EventHandler;

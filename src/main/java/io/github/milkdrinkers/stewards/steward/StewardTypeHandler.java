@@ -4,19 +4,20 @@ import io.github.milkdrinkers.stewards.Reloadable;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardTypeException;
 import io.github.milkdrinkers.stewards.trait.*;
+import io.github.milkdrinkers.stewards.trait.traits.*;
 import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
 import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
 
 public class StewardTypeHandler implements Reloadable {
     private StewardTypeRegistry stewardTypeRegistry;
 
-    public final String ARCHITECT_ID = "architect";
-    public final String TREASURER_ID = "treasurer";
-    public final String BAILIFF_ID = "bailiff";
-    public final String PORTMASTER_ID = "portmaster";
-    public final String STABLEMASTER_ID = "stablemaster";
-    public final String GUARDCAPTAIN_ID = "guardcaptain";
-    public final String GUARD_ID = "guard";
+    public static final String ARCHITECT_ID = "architect";
+    public static final String TREASURER_ID = "treasurer";
+    public static final String BAILIFF_ID = "bailiff";
+    public static final String PORTMASTER_ID = "portmaster";
+    public static final String STABLEMASTER_ID = "stablemaster";
+    public static final String GUARDCAPTAIN_ID = "guardcaptain";
+    public static final String GUARD_ID = "guard";
 
     @Override
     public void onLoad(Stewards plugin) {

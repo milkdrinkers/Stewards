@@ -2,15 +2,9 @@ package io.github.milkdrinkers.stewards.gui.guard;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
-import io.github.milkdrinkers.colorparser.ColorParser;
-import io.github.milkdrinkers.stewards.gui.AppearanceGui;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
-import io.github.milkdrinkers.stewards.gui.confirm.ConfirmMoveGui;
 import io.github.milkdrinkers.stewards.steward.Steward;
-import io.github.milkdrinkers.stewards.trait.traits.ArchitectTrait;
-import io.github.milkdrinkers.stewards.trait.traits.BailiffTrait;
-import io.github.milkdrinkers.stewards.trait.traits.StewardTrait;
-import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -70,7 +64,7 @@ public class GuardCaptainGui {
         ItemStack item = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(ColorParser.of(Translation.of("gui.guard.captain.guard.name-1"))
-            .parseMinimessagePlaceholder("number", String.valueOf(guardNumber)).build());
+            .with("number", String.valueOf(guardNumber)).build());
         meta.lore(List.of(ColorParser.of(Translation.of("gui.guard.captain.guard.lore-3")).build()));
         item.setItemMeta(meta);
         return item;
@@ -80,7 +74,7 @@ public class GuardCaptainGui {
         ItemStack item = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(ColorParser.of(Translation.of("gui.guard.captain.guard.name-2"))
-            .parseMinimessagePlaceholder("number", String.valueOf(guardNumber)).build());
+            .with("number", String.valueOf(guardNumber)).build());
         item.setItemMeta(meta);
         return item;
     }
@@ -89,7 +83,7 @@ public class GuardCaptainGui {
         ItemStack item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(ColorParser.of(Translation.of("gui.guard.captain.guard.name-3"))
-            .parseMinimessagePlaceholder("number", String.valueOf(guardNumber)).build());
+            .with("number", String.valueOf(guardNumber)).build());
         meta.lore(List.of(ColorParser.of(Translation.of("gui.guard.captain.guard.lore-3")).build()));
         item.setItemMeta(meta);
         return item;

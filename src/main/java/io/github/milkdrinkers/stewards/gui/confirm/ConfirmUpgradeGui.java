@@ -12,7 +12,6 @@ import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.CheckUtils;
 import io.github.milkdrinkers.stewards.utility.Logger;
