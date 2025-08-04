@@ -11,6 +11,8 @@ public class Appearance {
 
     private static final List<String> maleStewardSkinKeys = new ArrayList<>();
     private static final List<String> femaleStewardSkinKeys = new ArrayList<>();
+    private static final List<String> maleGuardSkinKeys = new ArrayList<>();
+    private static final List<String> femaleGuardSkinKeys = new ArrayList<>();
 
     public static void applyMaleStewardSkin(Steward steward) {
         if (maleStewardSkinKeys.isEmpty())
@@ -32,6 +34,26 @@ public class Appearance {
         steward.getSettler().getNpc().getOrAddTrait(SkinTrait.class).setSkinPersistent(key, getStewardFemaleSkinSignature(key), getStewardFemaleSkinValue(key));
     }
 
+    public static void applyMaleGuardSkin(Steward steward) {
+        if (maleGuardSkinKeys.isEmpty())
+            Stewards.getInstance().getConfigHandler().getSkinsCfg().getMap("male-guard").keySet()
+                .forEach(k -> maleGuardSkinKeys.add(k.toString()));
+
+        String key = maleGuardSkinKeys.get(randomInt(maleGuardSkinKeys.size()));
+
+        steward.getSettler().getNpc().getOrAddTrait(SkinTrait.class).setSkinPersistent(key, getGuardMaleSkinSignature(key), getGuardMaleSkinValue(key));
+    }
+
+    public static void applyFemaleGuardSkin(Steward steward) {
+        if (femaleGuardSkinKeys.isEmpty())
+            Stewards.getInstance().getConfigHandler().getSkinsCfg().getMap("female-guard").keySet()
+                .forEach(k -> femaleGuardSkinKeys.add(k.toString()));
+
+        String key = femaleGuardSkinKeys.get(randomInt(femaleGuardSkinKeys.size()));
+
+        steward.getSettler().getNpc().getOrAddTrait(SkinTrait.class).setSkinPersistent(key, getGuardFemaleSkinSignature(key), getGuardFemaleSkinValue(key));
+    }
+
     private static String getStewardMaleSkinValue(String skinName) {
         return Stewards.getInstance().getConfigHandler().getSkinsCfg().getString("male-steward." + skinName + ".skin-value");
     }
@@ -46,6 +68,22 @@ public class Appearance {
 
     private static String getStewardFemaleSkinSignature(String skinName) {
         return Stewards.getInstance().getConfigHandler().getSkinsCfg().getString("female-steward." + skinName + ".skin-signature");
+    }
+
+    private static String getGuardMaleSkinValue(String skinName) {
+        return Stewards.getInstance().getConfigHandler().getSkinsCfg().getString("male-guard." + skinName + ".skin-value");
+    }
+
+    private static String getGuardMaleSkinSignature(String skinName) {
+        return Stewards.getInstance().getConfigHandler().getSkinsCfg().getString("male-guard." + skinName + ".skin-signature");
+    }
+
+    private static String getGuardFemaleSkinValue(String skinName) {
+        return Stewards.getInstance().getConfigHandler().getSkinsCfg().getString("female-guard." + skinName + ".skin-value");
+    }
+
+    private static String getGuardFemaleSkinSignature(String skinName) {
+        return Stewards.getInstance().getConfigHandler().getSkinsCfg().getString("female-guard." + skinName + ".skin-signature");
     }
 
     private static String getRandomName() {
