@@ -3,6 +3,7 @@ package io.github.milkdrinkers.stewards.utility;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import io.github.milkdrinkers.stewards.guard.Guard;
 import io.github.milkdrinkers.stewards.hook.Hook;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import org.bukkit.entity.Player;
@@ -48,6 +49,40 @@ public final class CheckUtils {
         if (resident == null)
             return false;
         return resident.isMayor() || resident.getTownRanks().contains("co-mayor");
+    }
+
+    public static boolean isSameTown (final @Nullable Player player, final @Nullable Guard guard) {
+        if (player == null)
+            return false;
+
+        if (guard == null)
+            return false;
+
+        final UUID guardTownUUID = guard.getTownUUID();
+        if (guardTownUUID == null)
+            return false;
+
+        final Town playerTown = TownyAPI.getInstance().getTown(player);
+        final Town guardTown = TownyAPI.getInstance().getTown(guardTownUUID);
+
+        return isSameTown(playerTown, guardTown);
+    }
+
+    public static boolean isSameTown(final @Nullable Resident resident, final @Nullable Guard guard) {
+        if (resident == null)
+            return false;
+
+        if (guard == null)
+            return false;
+
+        final UUID guardTownUUID = guard.getTownUUID();
+        if (guardTownUUID == null)
+            return false;
+
+        final Town residentTown = resident.getTownOrNull();
+        final Town guardTown = TownyAPI.getInstance().getTown(guardTownUUID);
+
+        return isSameTown(residentTown, guardTown);
     }
 
     public static boolean isSameTown(final @Nullable Player player, final @Nullable Steward steward) {

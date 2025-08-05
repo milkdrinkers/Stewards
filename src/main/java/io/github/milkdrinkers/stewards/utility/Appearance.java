@@ -1,7 +1,9 @@
 package io.github.milkdrinkers.stewards.utility;
 
 import io.github.milkdrinkers.stewards.Stewards;
+import io.github.milkdrinkers.stewards.guard.Guard;
 import io.github.milkdrinkers.stewards.steward.Steward;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SkinTrait;
 
 import java.util.ArrayList;
@@ -34,24 +36,40 @@ public class Appearance {
         steward.getSettler().getNpc().getOrAddTrait(SkinTrait.class).setSkinPersistent(key, getStewardFemaleSkinSignature(key), getStewardFemaleSkinValue(key));
     }
 
-    public static void applyMaleGuardSkin(Steward steward) {
+    public static void applyMaleGuardSkin(NPC npc) {
         if (maleGuardSkinKeys.isEmpty())
             Stewards.getInstance().getConfigHandler().getSkinsCfg().getMap("male-guard").keySet()
                 .forEach(k -> maleGuardSkinKeys.add(k.toString()));
 
         String key = maleGuardSkinKeys.get(randomInt(maleGuardSkinKeys.size()));
 
-        steward.getSettler().getNpc().getOrAddTrait(SkinTrait.class).setSkinPersistent(key, getGuardMaleSkinSignature(key), getGuardMaleSkinValue(key));
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(key, getGuardMaleSkinSignature(key), getGuardMaleSkinValue(key));
     }
 
-    public static void applyFemaleGuardSkin(Steward steward) {
+    public static void applyMaleGuardSkin(Steward steward) {
+        applyMaleGuardSkin(steward.getNpc());
+    }
+
+    public static void applyMaleGuardSkin(Guard guard) {
+        applyMaleGuardSkin(guard.getNpc());
+    }
+
+    public static void applyFemaleGuardSkin(NPC npc) {
         if (femaleGuardSkinKeys.isEmpty())
             Stewards.getInstance().getConfigHandler().getSkinsCfg().getMap("female-guard").keySet()
                 .forEach(k -> femaleGuardSkinKeys.add(k.toString()));
 
         String key = femaleGuardSkinKeys.get(randomInt(femaleGuardSkinKeys.size()));
 
-        steward.getSettler().getNpc().getOrAddTrait(SkinTrait.class).setSkinPersistent(key, getGuardFemaleSkinSignature(key), getGuardFemaleSkinValue(key));
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(key, getGuardFemaleSkinSignature(key), getGuardFemaleSkinValue(key));
+    }
+
+    public static void applyFemaleGuardSkin(Steward steward) {
+        applyFemaleGuardSkin(steward.getNpc());
+    }
+
+    public static void applyFemaleGuardSkin(Guard guard) {
+        applyFemaleGuardSkin(guard.getNpc());
     }
 
     private static String getStewardMaleSkinValue(String skinName) {

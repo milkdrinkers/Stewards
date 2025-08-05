@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.trait.traits;
+package io.github.milkdrinkers.stewards.trait.traits.steward;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -12,10 +12,8 @@ import io.github.milkdrinkers.settlers.api.event.settler.lifetime.interact.Settl
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.spawning.SettlerSpawnEvent;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
-import io.github.milkdrinkers.stewards.hook.Hook;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.utility.CheckUtils;
-import io.github.milkdrinkers.stewards.utility.Logger;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigationCancelEvent;
 import net.citizensnpcs.api.npc.NPC;

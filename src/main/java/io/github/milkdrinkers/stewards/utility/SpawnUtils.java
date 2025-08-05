@@ -8,11 +8,12 @@ import io.github.milkdrinkers.settlers.api.settler.SettlerBuilder;
 import io.github.milkdrinkers.settlers.api.settler.Townfolk;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
+import io.github.milkdrinkers.stewards.guard.Guard;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardType;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.trait.*;
-import io.github.milkdrinkers.stewards.trait.traits.*;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
+import io.github.milkdrinkers.stewards.trait.traits.steward.*;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.LookClose;
@@ -28,9 +29,68 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.ARCHITECT_ID;
+import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.*;
 
 public final class SpawnUtils {
+
+    /**
+     * Create a new guard for a town.
+     *
+     * @param town   the town
+     * @param player the player target for the new guard
+     * @return the new guard or null
+     * @implNote This method is idempotent.
+     */
+    public static @Nullable Guard createGuard(Town town, Player player, @Nullable Location location) {
+        try {
+            final boolean female = Math.random() > 0.5;
+            final String name = female ? Appearance.getFemaleName() : Appearance.getMaleName();
+            final Location spawnLocation = location == null ? player.getLocation().clone().add(Appearance.randomInt(2), 0, Appearance.randomInt(2)) : location;
+
+            final io.github.milkdrinkers.settlers.api.settler.Guard settler = new SettlerBuilder()
+                .setName(name)
+                .setLocation(spawnLocation)
+                .createGuard();
+
+            final Guard guard = Guard.builder()
+                .setDailyUpkeepCost(0)
+                .setIsEnabled(true)
+                .setIsHidden(false)
+                .setSettler(settler)
+                .setTownUUID(town.getUUID())
+                .build();
+
+            final GuardTrait trait = guard.getTrait();
+            trait.setFemale(female);
+            trait.setTownUUID(town.getUUID());
+
+            final HologramTrait hologramTrait = guard.getNpc().getOrAddTrait(HologramTrait.class);
+            hologramTrait.clear();
+            hologramTrait.addLine("&7[&6Guard&7]");
+
+            final LookClose lookTrait = guard.getNpc().getOrAddTrait(LookClose.class);
+            lookTrait.setRange(16);
+            lookTrait.lookClose(true);
+
+            if (female) {
+                Appearance.applyFemaleGuardSkin(guard);
+            } else {
+                Appearance.applyMaleGuardSkin(guard);
+            }
+
+            StewardsAPI.getGuardLookup().add(guard);
+            TownMetaData.setHiringSteward(town, true);
+
+            settler.spawn();
+            guard.startFollowing(player);
+
+            return guard;
+        } catch (InvalidStewardException e) {
+            Logger.get().error("Error while creating steward", e);
+            return null;
+        }
+    }
+
     /**
      * Create a new steward of type for a town.
      *
@@ -43,6 +103,9 @@ public final class SpawnUtils {
     public static @Nullable Steward createSteward(StewardType type, Town town, Player player, @Nullable Location location) {
         final StewardType architectType = Objects.requireNonNull(StewardsAPI.getRegistry().getType(ARCHITECT_ID), "Architect type not found in registry");
         final boolean isArchitect = type.equals(architectType);
+
+        final StewardType guardCaptainType = Objects.requireNonNull(StewardsAPI.getRegistry().getType(GUARDCAPTAIN_ID), "Guard Captain type not found in registry");
+        final boolean isGuardCaptain = type.equals(guardCaptainType);
 
         if (!isArchitect) {
             final boolean isHiringSteward = TownMetaData.isHiringSteward(town);
@@ -101,10 +164,18 @@ public final class SpawnUtils {
             lookTrait.setRange(16);
             lookTrait.lookClose(true);
 
-            if (female) {
-                Appearance.applyFemaleStewardSkin(steward);
+            if (isGuardCaptain) {
+                if (female) {
+                    Appearance.applyFemaleGuardSkin(steward);
+                } else {
+                    Appearance.applyMaleGuardSkin(steward);
+                }
             } else {
-                Appearance.applyMaleStewardSkin(steward);
+                if (female) {
+                    Appearance.applyFemaleStewardSkin(steward);
+                } else {
+                    Appearance.applyMaleStewardSkin(steward);
+                }
             }
 
             StewardsAPI.getLookup().add(steward);

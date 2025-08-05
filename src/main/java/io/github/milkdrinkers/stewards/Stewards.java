@@ -7,6 +7,7 @@ import com.palmergames.bukkit.towny.object.metadata.StringDataField;
 import com.palmergames.bukkit.towny.utils.MetaDataUtil;
 import io.github.milkdrinkers.stewards.command.CommandHandler;
 import io.github.milkdrinkers.stewards.config.ConfigHandler;
+import io.github.milkdrinkers.stewards.guard.lookup.GuardLookup;
 import io.github.milkdrinkers.stewards.hook.HookManager;
 import io.github.milkdrinkers.stewards.listener.ListenerHandler;
 import io.github.milkdrinkers.stewards.quest.BetonQuestHandler;
@@ -14,15 +15,9 @@ import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.threadutil.SchedulerHandler;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
-import io.github.milkdrinkers.stewards.trait.*;
-import io.github.milkdrinkers.stewards.trait.traits.*;
-import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
-import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
+import io.github.milkdrinkers.stewards.trait.TraitHandler;
 import io.github.milkdrinkers.stewards.translation.TranslationHandler;
 import io.github.milkdrinkers.stewards.updatechecker.UpdateHandler;
-import net.citizensnpcs.Citizens;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +43,8 @@ public class Stewards extends JavaPlugin {
     // Steward handlers
     private StewardTypeHandler stewardTypeHandler;
     private StewardLookup stewardLookup;
+    private GuardLookup guardLookup;
+    private TraitHandler traitHandler;
 
     private BetonQuestHandler betonQuestHandler;
 
@@ -72,6 +69,8 @@ public class Stewards extends JavaPlugin {
         hookManager = new HookManager(this);
         stewardTypeHandler = new StewardTypeHandler();
         stewardLookup = new StewardLookup(this);
+        guardLookup = new GuardLookup(this);
+        traitHandler = new TraitHandler();
         commandHandler = new CommandHandler(this);
         listenerHandler = new ListenerHandler(this);
         updateHandler = new UpdateHandler(this);
@@ -85,6 +84,8 @@ public class Stewards extends JavaPlugin {
             hookManager,
             stewardTypeHandler,
             stewardLookup,
+            guardLookup,
+            traitHandler,
             commandHandler,
             listenerHandler,
             updateHandler,
@@ -99,16 +100,6 @@ public class Stewards extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StewardTrait.class).withName("steward"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ArchitectTrait.class).withName("architect"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BailiffTrait.class).withName("bailiff"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PortmasterTrait.class).withName("portmaster"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(StablemasterTrait.class).withName("stablemaster"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TreasurerTrait.class).withName("treasurer"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ArchitectSpawnerTrait.class).withName("architectspawner"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GuardTrait.class).withName("stewardsguard"));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GuardCaptainTrait.class).withName("guardcaptain"));
-
         for (Reloadable handler : handlers)
             handler.onEnable(instance);
     }
@@ -174,6 +165,14 @@ public class Stewards extends JavaPlugin {
     @NotNull
     public StewardLookup getStewardLookup() {
         return stewardLookup;
+    }
+
+    /**
+     * Gets GuardLookup instance
+     */
+    @NotNull
+    public GuardLookup getGuardLookup() {
+        return guardLookup;
     }
 
     @SuppressWarnings("ExtractMethodRecommender")

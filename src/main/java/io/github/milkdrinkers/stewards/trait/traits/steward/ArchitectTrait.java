@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.trait.traits;
+package io.github.milkdrinkers.stewards.trait.traits.steward;
 
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.spawning.SettlerSpawnEvent;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;

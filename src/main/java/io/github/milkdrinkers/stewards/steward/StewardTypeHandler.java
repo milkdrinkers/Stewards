@@ -3,10 +3,9 @@ package io.github.milkdrinkers.stewards.steward;
 import io.github.milkdrinkers.stewards.Reloadable;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.exception.InvalidStewardTypeException;
-import io.github.milkdrinkers.stewards.trait.*;
-import io.github.milkdrinkers.stewards.trait.traits.*;
 import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
 import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
+import io.github.milkdrinkers.stewards.trait.traits.steward.*;
 
 public class StewardTypeHandler implements Reloadable {
     private StewardTypeRegistry stewardTypeRegistry;
@@ -112,16 +111,6 @@ public class StewardTypeHandler implements Reloadable {
                 .build();
 
             stewardTypeRegistry.register(guardcaptain);
-
-            StewardType guard = StewardType.builder()
-                .setId(GUARD_ID)
-                .setMaxLevel(1)
-                .setMinLevel(1)
-                .setName("Guard")
-                .setStartingLevel(1)
-                .setSettlerPrefix("Guard")
-                .setTrait(GuardTrait.class)
-                .build();
         } catch (InvalidStewardTypeException e) {
             throw new RuntimeException(e);
         }

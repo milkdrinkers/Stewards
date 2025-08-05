@@ -2,9 +2,9 @@ package io.github.milkdrinkers.stewards.trait;
 
 import io.github.milkdrinkers.stewards.Reloadable;
 import io.github.milkdrinkers.stewards.Stewards;
-import io.github.milkdrinkers.stewards.trait.traits.*;
 import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
 import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
+import io.github.milkdrinkers.stewards.trait.traits.steward.*;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 

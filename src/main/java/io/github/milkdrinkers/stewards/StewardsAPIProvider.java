@@ -2,6 +2,7 @@ package io.github.milkdrinkers.stewards;
 
 import com.palmergames.bukkit.towny.object.Town;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
+import io.github.milkdrinkers.stewards.guard.lookup.GuardLookup;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardTypeRegistry;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
@@ -41,6 +42,11 @@ public class StewardsAPIProvider extends StewardsAPI implements Reloadable {
     @Override
     public StewardLookup getLookupInternal() {
         return plugin.getStewardLookup();
+    }
+
+    @Override
+    public GuardLookup getGuardLookupInternal() {
+        return plugin.getGuardLookup();
     }
 
     @Override

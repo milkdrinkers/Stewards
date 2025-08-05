@@ -1,6 +1,9 @@
 package io.github.milkdrinkers.stewards.api;
 
 import com.palmergames.bukkit.towny.object.Town;
+import io.github.milkdrinkers.stewards.guard.lookup.GuardFollowLookup;
+import io.github.milkdrinkers.stewards.guard.lookup.GuardLookup;
+import io.github.milkdrinkers.stewards.guard.lookup.GuardTownLookup;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardTypeRegistry;
 import io.github.milkdrinkers.stewards.steward.lookup.ArchitectLookup;
@@ -33,6 +36,8 @@ public abstract class StewardsAPI {
 
     public abstract StewardLookup getLookupInternal();
 
+    public abstract GuardLookup getGuardLookupInternal();
+
     public static StewardLookup getLookup() {
         return getInstance().getLookupInternal();
     }
@@ -49,8 +54,27 @@ public abstract class StewardsAPI {
         return getInstance().getLookupInternal().town();
     }
 
+    public static @NotNull GuardLookup getGuardLookup() {
+        return getInstance().getGuardLookupInternal();
+    }
+
+    public static @NotNull GuardFollowLookup getGuardLookupFollow() {
+        return getInstance().getGuardLookupInternal().follow();
+    }
+
+    public static @NotNull GuardTownLookup getGuardLookupTown() {
+        return getInstance().getGuardLookupInternal().town();
+    }
+
     public abstract Set<Steward> getTownStewards(@Nullable Town town);
 
+
+    /**
+     * Gets stewards and guards of a given town.
+     *
+     * @param town the town
+     * @return a Set of the stewards and guards.
+     */
     public static Set<Steward> getStewards(@Nullable Town town) {
         return getInstance().getTownStewards(town);
     }
