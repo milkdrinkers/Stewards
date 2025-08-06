@@ -70,7 +70,8 @@ public class SettlersListener implements Listener {
                             .setSettler(settler)
                             .build();
 
-                        lookup.architect().setArchitect(steward.getNpc().getOrAddTrait(ArchitectTrait.class).getSpawningPlayer(), steward);
+                        if (!stewardTrait.isHired())
+                            lookup.architect().setArchitect(steward.getNpc().getOrAddTrait(ArchitectTrait.class).getSpawningPlayer(), steward);
                     }
                 } else if (!stewardTrait.isHired()) { // For town stewards, if not hired delete
                     settler.delete();
