@@ -1,5 +1,6 @@
 package io.github.milkdrinkers.stewards.towny;
 
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.metadata.BooleanDataField;
 import com.palmergames.bukkit.towny.object.metadata.LongDataField;
@@ -10,6 +11,7 @@ import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardType;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.utility.Cfg;
+import io.github.milkdrinkers.stewards.utility.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -154,6 +156,15 @@ public class TownMetaData {
         if (!MetaDataUtil.hasMeta(town, HIRING_STEWARD))
             MetaDataUtil.addNewBooleanMeta(town, HIRING_STEWARD, false, true);
         MetaDataUtil.setBoolean(town, HIRING_STEWARD_FIELD, value, true);
+    }
+
+    public static void setHiringSteward(UUID uuid, boolean value) {
+        final Town town = TownyAPI.getInstance().getTown(uuid);
+        if (town == null) {
+            Logger.get().error("Something went wrong when setting hiring steward for {}. Town was null.", uuid.toString());
+            return;
+        }
+        setHiringSteward(town, value);
     }
 
     public static long getBankLimit(Town town) {
