@@ -87,6 +87,7 @@ dependencies {
         exclude("de.themoep", "minedown-adventure")
     }
     compileOnly(files("libs/AlathraPorts-1.0.3.jar"))
+    compileOnly(files("libs/AlathranWars-4.0.0-SNAPSHOT-1755026137.jar"))
 
     // Testing - Core
     testImplementation(libs.annotations)
