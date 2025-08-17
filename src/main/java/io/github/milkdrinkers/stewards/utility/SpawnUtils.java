@@ -12,6 +12,7 @@ import io.github.milkdrinkers.stewards.guard.Guard;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardType;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
 import io.github.milkdrinkers.stewards.trait.traits.guard.GuardTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.*;
 import io.github.milkdrinkers.wordweaver.Translation;
@@ -23,6 +24,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import org.mcmonkey.sentinel.SentinelTrait;
 
 import java.time.Instant;
 import java.util.List;
@@ -64,6 +66,8 @@ public final class SpawnUtils {
             trait.setFemale(female);
             trait.setTownUUID(town.getUUID());
 
+//            final SentinelTrait sentinelTrait = guard.getNpc().getOrAddTrait(SentinelTrait.class);
+
             final HologramTrait hologramTrait = guard.getNpc().getOrAddTrait(HologramTrait.class);
             hologramTrait.clear();
             hologramTrait.addLine("&7[&6Guard&7]");
@@ -79,14 +83,17 @@ public final class SpawnUtils {
             }
 
             StewardsAPI.getGuardLookup().add(guard);
-            TownMetaData.setHiringSteward(town, true);
+            Steward captain = StewardsAPI.getLookup().get(TownMetaData.NPC.get(town, StewardsAPI.getRegistry().getType(GUARDCAPTAIN_ID)));
+
+            GuardCaptainTrait captainTrait = captain.getNpc().getOrAddTrait(GuardCaptainTrait.class);
+            captainTrait.addGuard(guard.getUniqueId());
 
             settler.spawn();
             guard.startFollowing(player);
 
             return guard;
         } catch (InvalidStewardException e) {
-            Logger.get().error("Error while creating steward", e);
+            Logger.get().error("Error while creating guard", e);
             return null;
         }
     }
@@ -237,6 +244,8 @@ public final class SpawnUtils {
             PortsAPI.createAbstractCarriageStation(TownyAPI.getInstance().getTownName(player), steward.getSettler().getNpc().getEntity().getLocation());
         } else if (steward.hasTrait(TreasurerTrait.class)) {
             TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-1"));
+        } else if (steward.hasTrait(GuardCaptainTrait.class)) {
+            // Nothing needs to be done here, this case just needs to be handled.
         } else { // This should never happen.
             Logger.get().error("Something went wrong: No type-specific trait was found for {}", steward.getSettler().getNpc().getId());
         }

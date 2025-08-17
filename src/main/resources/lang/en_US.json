@@ -150,13 +150,48 @@
     },
     "guard": {
       "captain": {
-        "title": "Manage Guards",
-        "guard": {
-          "name-1": "<green>Guard #<number>",
-          "lore-1": "<grey>Click to despawn this Guard.",
-          "name-2": "<green>Spawn Guard #<number>",
-          "name-3": "<red>Guard #<number>",
-          "lore-3": "<grey>Upgrade your Guard Captain to unlock this Guard."
+        "spawn": {
+          "message": {
+            "limit-reached": "<red>You have reached the maximum number of Guards for this level.",
+            "spawned": "<green>Spawned a Guard.",
+            "failed": "<red>Failed to spawn a Guard."
+          },
+          "name": "<green>Spawn another guard.",
+          "name-limit-reached": "<red>You have reached the maximum number of Guards for this level."
+        }
+      },
+      "common": {
+        "title": "Guard",
+        "items":{
+          "increase-range": "<green>Increase range",
+          "decrease-range": "<red>Decrease range",
+          "chase-range": {
+            "name": "<green>Chase range",
+            "lore-1": "<grey>How far a guard will chase an enemy.",
+            "lore-2": "<grey>Currently set to: <range> blocks."
+          },
+          "melee-range": {
+            "name": "<green>Melee range",
+            "lore-1": "<grey>The range at which a guard will start chasing a target.",
+            "lore-2": "<grey>Currently set to: <range> blocks."
+          },
+          "ranged-range": {
+            "name": "<green>Ranged range",
+            "lore-1": "<grey>The range at which a guard will start shooting a target.",
+            "lore-2": "<grey>Currently set to: <range> blocks."
+          },
+          "wander-range": {
+            "name": "<green>Wander range",
+            "lore-1": "<grey>How far the guard will wander from their anchor point. Set to 0 to disable.",
+            "lore-2": "<grey>Currently set to: <range> blocks."
+          },
+          "target": {
+            "name": "<green>Set targets"
+          },
+          "equipment": {
+            "name": "<green>Equipment",
+            "lore-1": "<grey>Click to edit the Guard's equipment."
+          }
         }
       }
     },
@@ -217,6 +252,7 @@
     "towny-exception": "<red>Something went wrong. Please contact staff if this issue persists.",
     "improper-trait": "<red>Something went wrong. Please report this issue.",
     "no-upgrade": "<red>Something went wrong. Please report this issue.",
-    "dismiss": "<red>You need to hire or dismiss the spawned steward before you can spawn another one."
+    "dismiss": "<red>You need to hire or dismiss the spawned steward before you can spawn another one.",
+    "spawn-failed": "<red>Couldn't spawn another Guard. Please contact staff if this issue persists."
   }
 }

@@ -31,6 +31,7 @@ public class TownMetaData {
     private static final String PORTMASTER = FIELD_PREFIX + PORTMASTER_ID;
     private static final String STABLEMASTER = FIELD_PREFIX + STABLEMASTER_ID;
     private static final String TREASURER = FIELD_PREFIX + TREASURER_ID;
+    private static final String GUARDCAPTAIN = FIELD_PREFIX + GUARDCAPTAIN_ID;
 
     private static final LongDataField BANK_LIMIT_FIELD = new LongDataField(BANK_LIMIT);
     private static final BooleanDataField HIRING_STEWARD_FIELD = new BooleanDataField(HIRING_STEWARD);
@@ -41,13 +42,15 @@ public class TownMetaData {
     private static final StringDataField PORTMASTER_FIELD = new StringDataField(PORTMASTER);
     private static final StringDataField STABLEMASTER_FIELD = new StringDataField(STABLEMASTER);
     private static final StringDataField TREASURER_FIELD = new StringDataField(TREASURER);
+    private static final StringDataField GUARDCAPTAIN_FIELD = new StringDataField(GUARDCAPTAIN);
 
     private static final Map<String, StringDataField> STEWARD_FIELDS = Map.of(
         ARCHITECT, ARCHITECT_FIELD,
         BAILIFF, BAILIFF_FIELD,
         PORTMASTER, PORTMASTER_FIELD,
         STABLEMASTER, STABLEMASTER_FIELD,
-        TREASURER, TREASURER_FIELD
+        TREASURER, TREASURER_FIELD,
+        GUARDCAPTAIN, GUARDCAPTAIN_FIELD
     );
 
     public static class NPC {

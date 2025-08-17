@@ -4,84 +4,49 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class GuardCaptainTrait extends Trait {
 
-    private UUID guardOne;
-    private UUID guardTwo;
-    private UUID guardThree;
-    private UUID guardFour;
-    private UUID guardFive;
-    private UUID guardSix;
+    @Persist
+    private List<UUID> guards = new ArrayList<>();
+
+    @Persist
+    private int guardCount;
 
     protected GuardCaptainTrait() {
         super("guardcaptain");
     }
 
-    public void load(DataKey key) {
-        guardOne = UUID.fromString(key.getString("guardOne"));
-        guardTwo = UUID.fromString(key.getString("guardTwo"));
-        guardThree = UUID.fromString(key.getString("guardThree"));
-        guardFour = UUID.fromString(key.getString("guardFour"));
-        guardFive = UUID.fromString(key.getString("guardFive"));
-        guardSix = UUID.fromString(key.getString("guardSix"));
+    public List<UUID> getGuards() {
+        return guards;
     }
 
-    public void save(DataKey key) {
-        key.setString("guardOne", guardOne.toString());
-        key.setString("guardTwo", guardTwo.toString());
-        key.setString("guardThree", guardThree.toString());
-        key.setString("guardFour", guardFour.toString());
-        key.setString("guardFive", guardFive.toString());
-        key.setString("guardSix", guardSix.toString());
+    public void setGuards(List<UUID> guards) {
+        this.guards = guards;
     }
 
-    public UUID getGuardOne() {
-        return guardOne;
+    public void clearGuards() {
+        guards.clear();
     }
 
-    public void setGuardOne(UUID guardOne) {
-        this.guardOne = guardOne;
+    public int getGuardCount() {
+        return guardCount;
     }
 
-    public UUID getGuardTwo() {
-        return guardTwo;
+    public void setGuardCount(int guardCount) {
+        this.guardCount = guardCount;
     }
 
-    public void setGuardTwo(UUID guardTwo) {
-        this.guardTwo = guardTwo;
+    public void addGuard(UUID guard) {
+        guards.add(guard);
+        guardCount++;
     }
 
-    public UUID getGuardThree() {
-        return guardThree;
-    }
-
-    public void setGuardThree(UUID guardThree) {
-        this.guardThree = guardThree;
-    }
-
-    public UUID getGuardFour() {
-        return guardFour;
-    }
-
-    public void setGuardFour(UUID guardFour) {
-        this.guardFour = guardFour;
-    }
-
-    public UUID getGuardFive() {
-        return guardFive;
-    }
-
-    public void setGuardFive(UUID guardFive) {
-        this.guardFive = guardFive;
-    }
-
-    public UUID getGuardSix() {
-        return guardSix;
-    }
-
-    public void setGuardSix(UUID guardSix) {
-        this.guardSix = guardSix;
+    public void removeGuard(UUID guard) {
+        guards.remove(guard);
+        guardCount--;
     }
 }

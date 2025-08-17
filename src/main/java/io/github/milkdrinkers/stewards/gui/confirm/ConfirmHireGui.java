@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.gui;
+package io.github.milkdrinkers.stewards.gui.confirm;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
@@ -6,6 +6,7 @@ import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
+import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.utility.CheckUtils;
 import io.github.milkdrinkers.stewards.utility.Logger;

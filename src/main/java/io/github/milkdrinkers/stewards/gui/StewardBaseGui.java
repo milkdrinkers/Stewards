@@ -10,10 +10,13 @@ import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.conversation.CreateTownConversation;
+import io.github.milkdrinkers.stewards.guard.Guard;
+import io.github.milkdrinkers.stewards.gui.confirm.*;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardType;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.ArchitectTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.BailiffTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.StewardTrait;
@@ -83,6 +86,14 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
         }
 
         if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.STABLEMASTER_ID)) {
+            if (steward.getTrait().isHired()) {
+                populateHiredButtons(gui, steward, player);
+            } else {
+                populateUnHiredButtons(gui, steward, player);
+            }
+        }
+
+        if (steward.getStewardType() == plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.GUARDCAPTAIN_ID)) {
             if (steward.getTrait().isHired()) {
                 populateHiredButtons(gui, steward, player);
             } else {
@@ -273,13 +284,55 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                 PortsAPI.openTravelMenu(player, PortsAPI.getCarriageStationFromTown(TownyAPI.getInstance().getTown(steward.getTownUUID())));
             }));
 
+        } else if (steward.getStewardType() == Stewards.getInstance().getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.GUARDCAPTAIN_ID)) {
+            gui.setItem(3, 3, PaperItemBuilder.from(upgradeItem).asGuiItem(event -> {
+                if (steward.getLevel() < steward.getStewardType().maxLevel()) {
+                    ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
+                } else {
+                    gui.close(player);
+                    player.sendMessage(ColorParser.of(Translation.of("gui.general.upgrade.unclickable-message")).build().decoration(TextDecoration.ITALIC, false));
+                }
+            }));
+
+            gui.setItem(3, 7, PaperItemBuilder.from(fireItem).asGuiItem(event -> {
+                ConfirmFireGui.createGui(steward, player).open(player);
+            }));
+
+            GuardCaptainTrait guardCaptainTrait = steward.getNpc().getOrAddTrait(GuardCaptainTrait.class);
+
+            ItemStack guardItem = new ItemStack(Material.LEATHER_CHESTPLATE);
+            ItemMeta guardMeta = guardItem.getItemMeta();
+            if (guardCaptainTrait.getGuardCount() >= Cfg.get().getInt("guardcaptain.count.level-" + steward.getLevel())) {
+                guardMeta.displayName(ColorParser.of(Translation.of("gui.guard.spawn.name")).build());
+            } else {
+                guardMeta.displayName(ColorParser.of(Translation.of("gui.guard.spawn.name-limit-reached")).build());
+            }
+            guardMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+            guardItem.setItemMeta(guardMeta);
+
+            gui.setItem(3, 5, PaperItemBuilder.from(guardItem).asGuiItem(event -> {
+
+                if (guardCaptainTrait.getGuardCount() >= Cfg.get().getInt("guardcaptain.count.level-" + steward.getLevel())) {
+                    player.sendMessage(ColorParser.of(Translation.of("gui.guard.spawn.message.limit-reached")).build());
+                    gui.close(player);
+                } else {
+                    Town town = TownyAPI.getInstance().getTown(player);
+                    Guard guard = SpawnUtils.createGuard(town, player, player.getLocation());
+                    if (guard == null) {
+                        player.sendMessage(ColorParser.of(Translation.of("gui.guard.spawn.message.failed")).build());
+                        gui.close(player);
+                        return;
+                    }
+                    player.sendMessage(ColorParser.of(Translation.of("gui.guard.spawn.message.spawned")).build());
+                }
+
+            }));
         } else {
             gui.setItem(3, 3, PaperItemBuilder.from(upgradeItem).asGuiItem(event -> {
                 if (steward.getLevel() < steward.getStewardType().maxLevel()) {
                     ConfirmUpgradeGui.createGui(steward, player, cost).open(player);
                 } else {
                     gui.close(player);
-                    player.sendMessage(ColorParser.of(Translation.of("gui.general.upgrade.unclickable-message")).build());
                 }
             }));
 

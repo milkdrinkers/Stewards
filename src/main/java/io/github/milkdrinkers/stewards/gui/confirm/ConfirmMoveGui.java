@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.gui;
+package io.github.milkdrinkers.stewards.gui.confirm;
 
 import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.components.GuiType;

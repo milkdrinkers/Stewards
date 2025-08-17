@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.gui;
+package io.github.milkdrinkers.stewards.gui.confirm;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
@@ -9,6 +9,7 @@ import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
 import io.github.alathra.alathraports.core.ports.Port;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
+import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;

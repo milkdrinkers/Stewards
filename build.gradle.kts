@@ -178,8 +178,8 @@ tasks {
             github("Alathra", "AlathraPorts", "1.0.5", "AlathraPorts-1.0.5.jar")
             url("https://ci.citizensnpcs.co/job/Citizens2/3851/artifact/dist/target/Citizens-2.0.39-b3851.jar")
             hangar("PlaceholderAPI", "2.11.6")
-            hangar("ViaVersion", "5.3.2")
-            hangar("ViaBackwards", "5.3.2")
+            hangar("ViaVersion", "5.4.2")
+            hangar("ViaBackwards", "5.4.2")
         }
     }
 }

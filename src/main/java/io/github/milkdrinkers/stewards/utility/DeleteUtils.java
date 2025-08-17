@@ -6,9 +6,11 @@ import com.palmergames.bukkit.towny.object.Town;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
+import io.github.milkdrinkers.stewards.guard.Guard;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardType;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.*;
 import io.github.milkdrinkers.wordweaver.Translation;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -19,8 +21,22 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.ARCHITECT_ID;
+import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.GUARDCAPTAIN_ID;
 
 public final class DeleteUtils {
+
+    public static void dismiss(Guard guard, Town town, Player player, boolean message) {
+        Objects.requireNonNull(guard, "Guard cannot be null");
+        TownMetaData.NPC.getSteward(town, StewardsAPI.getRegistry().getType(GUARDCAPTAIN_ID))
+            .getNpc().getOrAddTrait(GuardCaptainTrait.class).removeGuard(guard.getUniqueId());
+
+        if (player != null && message)
+            player.sendMessage(ColorParser.of(Translation.of("gui.fire.fire-success")).with("type", "guard").build().decoration(TextDecoration.ITALIC, false));
+
+        StewardsAPI.getGuardLookupFollow().remove(guard.getUniqueId());
+        guard.getSettler().delete();
+    }
+
     public static void dismiss(Steward steward, @Nullable Town town, @Nullable Player player, boolean message) {
         dismiss(steward, town != null ? town.getUUID() : null, player, message);
     }

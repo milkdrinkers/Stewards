@@ -1,4 +1,4 @@
-package io.github.milkdrinkers.stewards.gui;
+package io.github.milkdrinkers.stewards.gui.confirm;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
@@ -7,8 +7,10 @@ import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
+import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
+import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.PortmasterTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.StablemasterTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.StewardTrait;
@@ -77,6 +79,8 @@ public class ConfirmStipendGui {
                 } else if (steward.getSettler().getNpc().hasTrait(TreasurerTrait.class)) {
                     town.getAccount().withdraw(cost, "Stewards: Paid " + steward.getStewardType().name());
                     TownMetaData.setBankLimit(TownyAPI.getInstance().getTown(player), Cfg.get().getInt("treasurer.limit.level-" + steward.getLevel()));
+                } else if (steward.hasTrait(GuardCaptainTrait.class)) {
+                    town.getAccount().withdraw(cost, "Stewards: Paid " + steward.getStewardType().name());
                 } else { // This should never happen.
                     Logger.get().error("Something went wrong: No type-specific trait was found for " + steward.getSettler().getNpc());
                     player.sendMessage(ColorParser.of(Translation.of("error.improper-trait")).build());
