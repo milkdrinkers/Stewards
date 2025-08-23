@@ -8,7 +8,6 @@ commandapi = "10.1.2"
 # Core dependencies
 annotations = "org.jetbrains:annotations:26.0.2"
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
-morepaperlib = "space.arim.morepaperlib:morepaperlib:0.4.4"
 
 # API dependencies
 javasemver = "io.github.milkdrinkers:javasemver:1.0.2"

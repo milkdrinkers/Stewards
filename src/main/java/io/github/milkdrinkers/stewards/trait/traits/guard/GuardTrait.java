@@ -11,6 +11,7 @@ import net.citizensnpcs.api.trait.Trait;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.mcmonkey.sentinel.SentinelTrait;
 
 import java.util.UUID;
 
@@ -39,6 +40,9 @@ public class GuardTrait extends Trait {
     int chaseRange = 20;
     @Persist
     int wanderRange = 0;
+    @Persist
+    boolean ranged = false;
+    SentinelTrait sentinelTrait;
 
     public UUID getTownUUID() {
         return townUUID;
@@ -120,10 +124,26 @@ public class GuardTrait extends Trait {
         this.wanderRange = wanderRange;
     }
 
+    public boolean isRanged() {
+        return ranged;
+    }
+
+    public void setRanged(boolean ranged) {
+        this.ranged = ranged;
+        if (ranged) {
+            sentinelTrait.range = rangedRange;
+        } else {
+            sentinelTrait.range = meleeRange;
+        }
+    }
+
     public boolean increaseMeleeRange() {
         if (meleeRange >= Cfg.get().getInt("guard.melee-range.max") )
             return false;
         meleeRange++;
+
+        if (!ranged)
+            sentinelTrait.range = meleeRange;
         return true;
     }
     
@@ -131,6 +151,9 @@ public class GuardTrait extends Trait {
         if (meleeRange <= Cfg.get().getInt("guard.melee-range.min") )
             return false;
         meleeRange--;
+
+        if (!ranged)
+            sentinelTrait.range = meleeRange;
         return true;
     }
 
@@ -138,6 +161,9 @@ public class GuardTrait extends Trait {
         if (rangedRange >= Cfg.get().getInt("guard.ranged-range.max"))
             return false;
         rangedRange++;
+
+        if (ranged)
+            sentinelTrait.range = rangedRange;
         return true;
     }
 
@@ -145,6 +171,9 @@ public class GuardTrait extends Trait {
         if (rangedRange <= Cfg.get().getInt("guard.ranged-range.min"))
             return false;
         rangedRange--;
+
+        if (ranged)
+            sentinelTrait.range = rangedRange;
         return true;
     }
 
@@ -152,6 +181,8 @@ public class GuardTrait extends Trait {
         if (chaseRange >= Cfg.get().getInt("guard.chase-range.max"))
             return false;
         chaseRange++;
+
+        sentinelTrait.chaseRange = chaseRange;
         return true;
     }
 
@@ -159,6 +190,8 @@ public class GuardTrait extends Trait {
         if (chaseRange <= Cfg.get().getInt("guard.chase-range.min"))
             return false;
         chaseRange--;
+
+        sentinelTrait.chaseRange = chaseRange;
         return true;
     }
 
@@ -188,5 +221,19 @@ public class GuardTrait extends Trait {
         if (e.getClicker().isSneaking()) {
             GuardGui.createGui(StewardsAPI.getGuardLookup().get(this.getNPC()), e.getClicker()).open(e.getClicker());
         }
+    }
+
+    @Override
+    public void onAttach() {
+        sentinelTrait = this.getNPC().getOrAddTrait(SentinelTrait.class);
+        if (ranged) {
+            sentinelTrait.range = rangedRange;
+        } else {
+            sentinelTrait.range = meleeRange;
+        }
+
+        sentinelTrait.chaseRange = chaseRange;
+
+        sentinelTrait.rangedChase = true;
     }
 }

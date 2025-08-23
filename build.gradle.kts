@@ -24,7 +24,7 @@ repositories {
     mavenCentral()
 
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://mvn-repo.arim.space/lesser-gpl3/")
+//    maven("https://mvn-repo.arim.space/lesser-gpl3/")
 
     maven("https://maven.athyrium.eu/releases")
 
@@ -53,7 +53,6 @@ dependencies {
     compileOnly(libs.annotations)
     annotationProcessor(libs.annotations)
     compileOnly(libs.paper.api)
-    implementation(libs.morepaperlib)
 
     // API
     implementation(libs.javasemver) // Required by VersionWatch
@@ -135,7 +134,6 @@ tasks {
         // Shadow classes
         fun reloc(originPkg: String, targetPkg: String) = relocate(originPkg, "${project.relocationPackage}.${targetPkg}")
 
-        reloc("space.arim.morepaperlib", "morepaperlib")
         reloc("io.github.milkdrinkers.javasemver", "javasemver")
         reloc("io.github.milkdrinkers.versionwatch", "versionwatch")
         reloc("org.json", "json")
