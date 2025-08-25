@@ -29,7 +29,7 @@ bstats = "org.bstats:bstats-bukkit:3.1.0"
 vault = "com.github.MilkBowl:VaultAPI:1.7.1"
 packetevents = "com.github.retrooper:packetevents-spigot:2.9.4"
 placeholderapi = "me.clip:placeholderapi:2.11.6"
-towny = "com.palmergames.bukkit.towny:towny:0.101.2.0"
+towny = "com.palmergames.bukkit.towny:towny:0.101.2.3"
 
 # Testing
 junit-bom = "org.junit:junit-bom:5.13.4"
