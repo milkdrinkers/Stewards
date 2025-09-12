@@ -23,12 +23,33 @@
   },
   "gui": {
     "general": {
-      "back": "<red>Back",
-      "cancel": "<red>Cancel",
-      "exit": "<dark_red>Exit",
-      "re-roll": "<green>Re-roll name and skin",
-      "follow": "<green>Follow me",
-      "stop-following": "<green>Stop following",
+      "back": "<!i><red>Back",
+      "cancel": "<!i><red>Cancel",
+      "exit": "<!i><dark_red>Exit",
+      "re-roll": "<!i><green>Re-roll name and skin",
+      "follow": "<!i><green>Follow me",
+      "stop-following": "<!i><green>Stop following",
+      "enlist": {
+        "name": "<!i><green>Enlist",
+        "lore": [
+          "<!i><grey>Enlist to fight in your town wars."
+        ],
+        "playtime": "<red>You do not have enough playtime to enlist in wars. You need at least <required> hours, but you only have <current-hours> hours and <current-minutes> minutes.",
+        "success": "<green>You have successfully enlisted to fight in your town wars.",
+        "failed": "<red>You are currently on cooldown until you can join another war."
+      },
+      "mercenary": {
+        "name": "<!i><yellow>Mercenary Mode",
+        "lore": [
+          "<!i><grey>Status: <status>"
+        ],
+        "status": {
+          "enabled": "<green>Enabled",
+          "disabled": "<red>Disabled"
+        },
+        "success": "<green>Mercenary status changed.",
+        "failed": "<red>You cannot change the mercenary status while your town has active war cooldowns."
+      },
       "info": {
         "name": "<green><name>",
         "lore-1": "<grey>Type: <type>",
