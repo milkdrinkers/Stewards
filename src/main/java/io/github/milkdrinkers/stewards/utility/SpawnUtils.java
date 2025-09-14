@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.*;
+import static io.github.milkdrinkers.stewards.steward.StewardTypeHandler.ARCHITECT_ID;
 
 public final class SpawnUtils {
 

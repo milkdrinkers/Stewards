@@ -1,6 +1,6 @@
 [versions]
 paper-api = "1.21.5-R0.1-SNAPSHOT"
-paper-run = "1.21.7"
+paper-run = "1.21.8"
 crate = "4.0.0-RC.4"
 commandapi = "10.1.2"
 
@@ -44,7 +44,7 @@ junit = ["junit-jupiter", "junit-platform"]
 testcontainers = ["testcontainers-jupiter"]
 
 [plugins]
-shadow = "com.gradleup.shadow:8.3.8"
+shadow = "com.gradleup.shadow:9.0.2"
 run-paper = "xyz.jpenilla.run-paper:2.3.1"
 plugin-yml-bukkit = "de.eldoria.plugin-yml.bukkit:0.7.1"
 plugin-yml-paper = "de.eldoria.plugin-yml.paper:0.7.1"
