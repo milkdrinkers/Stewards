@@ -85,6 +85,7 @@ public class SettlersListener implements Listener {
                         .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
                             StewardTypeHandler.BAILIFF_ID)))
                         .setDailyUpkeepCost(0)
+                        .setLevel(stewardTrait.getLevel())
                         .setIsEnabled(true)
                         .setIsHidden(false)
                         .setSettler(settler)
@@ -94,6 +95,7 @@ public class SettlersListener implements Listener {
                         .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
                             StewardTypeHandler.PORTMASTER_ID)))
                         .setDailyUpkeepCost(0)
+                        .setLevel(stewardTrait.getLevel())
                         .setIsEnabled(true)
                         .setIsHidden(false)
                         .setSettler(settler)
@@ -103,6 +105,7 @@ public class SettlersListener implements Listener {
                         .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
                             StewardTypeHandler.STABLEMASTER_ID)))
                         .setDailyUpkeepCost(0)
+                        .setLevel(stewardTrait.getLevel())
                         .setIsEnabled(true)
                         .setIsHidden(false)
                         .setSettler(settler)
