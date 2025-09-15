@@ -19,7 +19,7 @@ crate-yaml = { module = "io.github.milkdrinkers:crate-yaml", version.ref = "crat
 colorparser = "io.github.milkdrinkers:colorparser-paper:4.0.0-RC.1"
 threadutil-bukkit = "io.github.milkdrinkers:threadutil-bukkit:1.2.0"
 commandapi-shade = { module = "dev.jorel:commandapi-bukkit-shade-mojang-mapped", version.ref = "commandapi" }
-triumph-gui = "dev.triumphteam:triumph-gui-paper:3.1.13-SNAPSHOT"
+triumph-gui = "dev.triumphteam:triumph-gui-paper:4.0.0-SNAPSHOT"
 betonquest = "org.betonquest:betonquest:3.0.0-SNAPSHOT"
 
 # Plugin dependencies
