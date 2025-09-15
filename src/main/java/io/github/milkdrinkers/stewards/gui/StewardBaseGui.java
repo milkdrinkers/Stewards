@@ -498,5 +498,8 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                 gui.close(player);
             }
         }));
+
+        StewardUserGui.populateWarButtons(gui, steward, player);
+        StewardUserGui.populateWarButtonsMayor(gui, steward, player);
     }
 }
