@@ -7,8 +7,8 @@ import org.betonquest.betonquest.api.quest.condition.PlayerCondition;
 import org.betonquest.betonquest.api.quest.condition.PlayerConditionFactory;
 import org.betonquest.betonquest.api.quest.condition.online.OnlineConditionAdapter;
 import org.betonquest.betonquest.api.instruction.Instruction;
-import org.betonquest.betonquest.quest.PrimaryServerThreadData;
-import org.betonquest.betonquest.quest.condition.PrimaryServerThreadPlayerCondition;
+import org.betonquest.betonquest.api.quest.PrimaryServerThreadData;
+import org.betonquest.betonquest.api.quest.condition.thread.PrimaryServerThreadPlayerCondition;
 
 public class HasArchitectConditionFactory implements PlayerConditionFactory {
 
