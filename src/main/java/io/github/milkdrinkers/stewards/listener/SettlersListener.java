@@ -115,6 +115,7 @@ public class SettlersListener implements Listener {
                         .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(
                             StewardTypeHandler.TREASURER_ID)))
                         .setDailyUpkeepCost(0)
+                        .setLevel(stewardTrait.getLevel())
                         .setIsEnabled(true)
                         .setIsHidden(false)
                         .setSettler(settler)
