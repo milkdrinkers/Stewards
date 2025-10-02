@@ -27,7 +27,7 @@ citizens = "net.citizensnpcs:citizens-main:2.0.39-SNAPSHOT"
 settlers = "io.github.milkdrinkers:settlers:0.0.19"
 bstats = "org.bstats:bstats-bukkit:3.1.0"
 vault = "com.github.MilkBowl:VaultAPI:1.7.1"
-packetevents = "com.github.retrooper:packetevents-spigot:2.9.4"
+packetevents = "com.github.retrooper:packetevents-spigot:2.9.5"
 placeholderapi = "me.clip:placeholderapi:2.11.6"
 towny = "com.palmergames.bukkit.towny:towny:0.101.2.0"
 
