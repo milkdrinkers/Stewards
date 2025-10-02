@@ -14,6 +14,7 @@ import io.github.milkdrinkers.stewards.exception.InvalidStewardException;
 import io.github.milkdrinkers.stewards.steward.Steward;
 import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
+import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.traits.guard.GuardCaptainTrait;
 import io.github.milkdrinkers.stewards.trait.traits.steward.*;
 import net.citizensnpcs.api.npc.NPC;
@@ -71,12 +72,15 @@ public class SettlersListener implements Listener {
                             .setSettler(settler)
                             .build();
 
-                        lookup.architect().setArchitect(steward.getNpc().getOrAddTrait(ArchitectTrait.class).getSpawningPlayer(), steward);
+                        if (!stewardTrait.isHired())
+                            lookup.architect().setArchitect(steward.getNpc().getOrAddTrait(ArchitectTrait.class).getSpawningPlayer(), steward);
                     }
                 } else if (!stewardTrait.isHired()) { // For town stewards, if not hired delete
                     settler.delete();
-                    if (stewardTrait.getTownUUID() != null)
+                    if (stewardTrait.getTownUUID() != null) {
                         lookup.town().remove(stewardTrait.getTownUUID(), settler.getNpc().getUniqueId());
+                        TownMetaData.setHiringSteward(stewardTrait.getTownUUID(), false);
+                    }
                 } else if (settler.getNpc().hasTrait(BailiffTrait.class)) {
                     steward = Steward.builder()
                         .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(

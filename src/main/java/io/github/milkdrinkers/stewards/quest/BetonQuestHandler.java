@@ -7,7 +7,7 @@ import io.github.milkdrinkers.stewards.quest.condition.HasArchitectConditionFact
 import io.github.milkdrinkers.stewards.quest.condition.HasTownConditionFactory;
 import org.betonquest.betonquest.BetonQuest;
 import org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory;
-import org.betonquest.betonquest.quest.PrimaryServerThreadData;
+import org.betonquest.betonquest.api.quest.PrimaryServerThreadData;
 
 public class BetonQuestHandler implements Reloadable {
     @Override

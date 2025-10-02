@@ -83,7 +83,7 @@ public class ConfirmUpgradeGui {
                 if (steward.getStewardType().id().equals(StewardTypeHandler.BAILIFF_ID)) {
 
                     town.addBonusBlocks((Cfg.get().getInt("bailiff.claims.level-" + steward.getLevel()) -
-                        Cfg.get().getInt("bailiff.claims.level-" + (steward.getLevel() - 1))));
+                        Cfg.get().getInt("bailiff.claims.level-" + (steward.getLevel()))));
 
                 } else if (steward.getStewardType().id().equals(StewardTypeHandler.PORTMASTER_ID)) {
 
