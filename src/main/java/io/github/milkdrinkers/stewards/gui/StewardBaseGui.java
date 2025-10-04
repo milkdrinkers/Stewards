@@ -324,6 +324,8 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
                         return;
                     }
                     player.sendMessage(ColorParser.of(Translation.of("gui.guard.spawn.message.spawned")).build());
+                    gui.close(player);
+                    return;
                 }
 
             }));

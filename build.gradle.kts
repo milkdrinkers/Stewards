@@ -173,7 +173,7 @@ tasks {
             github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
             github("retrooper", "packetevents", "v2.9.4", "packetevents-spigot-2.9.4.jar")
 //            github("milkdrinkers", "Settlers", "0.0.18", "Settlers-0.0.18.jar")
-            github("Alathra", "AlathraPorts", "1.0.5", "AlathraPorts-1.0.5.jar")
+//            github("Alathra", "AlathraPorts", "1.0.5", "AlathraPorts-1.0.5.jar")
 //            url("https://ci.citizensnpcs.co/job/Citizens2/3851/artifact/dist/target/Citizens-2.0.39-b3851.jar")
             hangar("PlaceholderAPI", "2.11.6")
             hangar("ViaVersion", "5.4.2")
