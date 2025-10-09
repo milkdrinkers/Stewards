@@ -77,11 +77,11 @@ public final class SpawnUtils {
             lookTrait.setRange(16);
             lookTrait.lookClose(true);
 
-            if (female) {
-                Appearance.applyFemaleGuardSkin(guard);
-            } else {
-                Appearance.applyMaleGuardSkin(guard);
-            }
+//            if (female) {
+//                Appearance.applyFemaleGuardSkin(guard);
+//            } else {
+//                Appearance.applyMaleGuardSkin(guard);
+//            }
 
             StewardsAPI.getGuardLookup().add(guard);
             Steward captain = StewardsAPI.getLookup().get(TownMetaData.NPC.get(town, StewardsAPI.getRegistry().getType(GUARDCAPTAIN_ID)));

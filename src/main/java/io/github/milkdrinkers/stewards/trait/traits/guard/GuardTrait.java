@@ -1,6 +1,8 @@
 package io.github.milkdrinkers.stewards.trait.traits.guard;
 
 import com.palmergames.bukkit.towny.TownyAPI;
+import io.github.milkdrinkers.settlers.api.enums.ClickType;
+import io.github.milkdrinkers.settlers.api.event.settler.lifetime.interact.SettlerClickedEvent;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.gui.guard.GuardGui;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
@@ -214,11 +216,11 @@ public class GuardTrait extends Trait {
     }
 
     @EventHandler
-    public void onClick(NPCRightClickEvent e) {
-        if (e.getNPC() != this.getNPC())
+    public void click(SettlerClickedEvent e) {
+        if (e.getSettler().getNpc() != this.getNPC())
             return;
 
-        if (e.getClicker().isSneaking()) {
+        if (e.getClickType().equals(ClickType.SHIFT_RIGHT)) {
             GuardGui.createGui(StewardsAPI.getGuardLookup().get(this.getNPC()), e.getClicker()).open(e.getClicker());
         }
     }

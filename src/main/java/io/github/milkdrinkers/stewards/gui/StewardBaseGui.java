@@ -313,17 +313,17 @@ public class StewardBaseGui { // TODO refactor this absolutely disgusting class
             gui.setItem(3, 5, PaperItemBuilder.from(guardItem).asGuiItem(event -> {
 
                 if (guardCaptainTrait.getGuardCount() >= Cfg.get().getInt("guardcaptain.count.level-" + steward.getLevel())) {
-                    player.sendMessage(ColorParser.of(Translation.of("gui.guard.spawn.message.limit-reached")).build());
+                    player.sendMessage(ColorParser.of(Translation.of("gui.guard.captain.spawn.message.limit-reached")).build());
                     gui.close(player);
                 } else {
                     Town town = TownyAPI.getInstance().getTown(player);
                     Guard guard = SpawnUtils.createGuard(town, player, player.getLocation());
                     if (guard == null) {
-                        player.sendMessage(ColorParser.of(Translation.of("gui.guard.spawn.message.failed")).build());
+                        player.sendMessage(ColorParser.of(Translation.of("gui.guard.captain.spawn.message.failed")).build());
                         gui.close(player);
                         return;
                     }
-                    player.sendMessage(ColorParser.of(Translation.of("gui.guard.spawn.message.spawned")).build());
+                    player.sendMessage(ColorParser.of(Translation.of("gui.guard.captain.spawn.message.spawned")).build());
                     gui.close(player);
                     return;
                 }
