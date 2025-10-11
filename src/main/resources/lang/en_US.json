@@ -247,6 +247,11 @@
     "new-town-name": "What do you want your town to be called?",
     "new-town-confirmation": "Do you want to create the town %s? [Yes/No]"
   },
+  "guard": {
+    "equipment": {
+      "damaged": "<red>Guards can only equip undamaged items."
+    }
+  },
   "error": {
     "resident-null": "<red>Something went wrong. Please contact staff if this issue persists.",
     "towny-exception": "<red>Something went wrong. Please contact staff if this issue persists.",

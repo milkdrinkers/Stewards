@@ -1,18 +1,24 @@
 package io.github.milkdrinkers.stewards.trait.traits.guard;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.palmergames.bukkit.towny.TownyAPI;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.settlers.api.enums.ClickType;
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.interact.SettlerClickedEvent;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.gui.guard.GuardGui;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.utility.Cfg;
+import io.github.milkdrinkers.wordweaver.Translation;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.mcmonkey.sentinel.SentinelTrait;
 
 import java.util.UUID;
@@ -24,12 +30,15 @@ public class GuardTrait extends Trait {
         super("stewardsguard");
     }
 
+    boolean equipMode = false;
     boolean following = false;
     Player followingPlayer;
     @Persist
     Location anchorLocation;
     @Persist
     boolean female; // Stored to keep track of whether the skin and name is "male" or "female"
+    @Persist
+    boolean ranged = false;
     @Persist("townuuid")
     UUID townUUID;
     @Persist
@@ -42,9 +51,8 @@ public class GuardTrait extends Trait {
     int chaseRange = 20;
     @Persist
     int wanderRange = 0;
-    @Persist
-    boolean ranged = false;
     SentinelTrait sentinelTrait;
+    Equipment equipmentTrait;
 
     public UUID getTownUUID() {
         return townUUID;
@@ -222,6 +230,52 @@ public class GuardTrait extends Trait {
 
         if (e.getClickType().equals(ClickType.SHIFT_RIGHT)) {
             GuardGui.createGui(StewardsAPI.getGuardLookup().get(this.getNPC()), e.getClicker()).open(e.getClicker());
+            return;
+        }
+
+        if (e.getClickType().equals(ClickType.RIGHT)) {
+            if (equipMode) {
+                if (e.getClicker().getEquipment().getItemInMainHand().getType().isAir())
+                    return;
+
+                ItemStack mainHandItem = e.getClicker().getEquipment().getItemInMainHand();
+                if (MaterialTags.ARMOR.isTagged(mainHandItem)) {
+                    if (MaterialTags.HELMETS.isTagged(mainHandItem)) {
+                        equipArmor(mainHandItem, e.getClicker(), Equipment.EquipmentSlot.HELMET);
+                    } else if (MaterialTags.CHESTPLATES.isTagged(mainHandItem)) {
+                        equipArmor(mainHandItem, e.getClicker(), Equipment.EquipmentSlot.CHESTPLATE);
+                    } else if (MaterialTags.LEGGINGS.isTagged(mainHandItem)) {
+                        equipArmor(mainHandItem, e.getClicker(), Equipment.EquipmentSlot.LEGGINGS);
+                    } else if (MaterialTags.BOOTS.isTagged(mainHandItem)) {
+                        equipArmor(mainHandItem, e.getClicker(), Equipment.EquipmentSlot.BOOTS);
+                    } else {
+                        equipItem(mainHandItem, e.getClicker(), Equipment.EquipmentSlot.HAND);
+                    }
+                }
+            }
+        }
+    }
+
+    private void equipArmor(ItemStack mainHandItem, Player player, Equipment.EquipmentSlot slot) {
+        if (mainHandItem.getItemMeta() instanceof Damageable damageable) {
+            if (damageable.hasDamage() && damageable.getDamage() > 0) {
+                player.sendMessage(ColorParser.of(Translation.of("guard.equipment.damaged")).build());
+            } else {
+                equipItem(mainHandItem, player, slot);
+            }
+        } else {
+            equipItem(mainHandItem, player, slot);
+        }
+    }
+
+    private void equipItem(ItemStack mainHandItem, Player player, Equipment.EquipmentSlot slot) {
+        if (equipmentTrait.get(slot).isEmpty()) {
+            equipmentTrait.set(slot, mainHandItem);
+            player.getInventory().setItemInMainHand(ItemStack.empty());
+        } else {
+            ItemStack equippedItem = equipmentTrait.get(slot).clone();
+            equipmentTrait.set(slot, mainHandItem);
+            player.getInventory().setItemInMainHand(equippedItem);
         }
     }
 
@@ -237,5 +291,7 @@ public class GuardTrait extends Trait {
         sentinelTrait.chaseRange = chaseRange;
 
         sentinelTrait.rangedChase = true;
+
+        equipmentTrait = this.getNPC().getOrAddTrait(Equipment.class);
     }
 }
