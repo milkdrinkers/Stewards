@@ -2,6 +2,7 @@ package io.github.milkdrinkers.stewards.trait.traits.guard;
 
 import com.destroystokyo.paper.MaterialTags;
 import com.palmergames.bukkit.towny.TownyAPI;
+import dev.triumphteam.gui.guis.Gui;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.settlers.api.enums.ClickType;
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.interact.SettlerClickedEvent;
@@ -229,11 +230,13 @@ public class GuardTrait extends Trait {
             return;
 
         if (e.getClickType().equals(ClickType.SHIFT_RIGHT)) {
-            GuardGui.createGui(StewardsAPI.getGuardLookup().get(this.getNPC()), e.getClicker()).open(e.getClicker());
-            return;
-        }
-
-        if (e.getClickType().equals(ClickType.RIGHT)) {
+            if (following) {
+                StewardsAPI.getLookup().get(this.getNPC()).stopFollowing(e.getClicker(), false);
+            } else {
+                Gui gui = GuardGui.createGui(StewardsAPI.getGuardLookup().get(this.getNPC()), e.getClicker());
+                gui.open(e.getClicker());
+            }
+        } else if (e.getClickType().equals(ClickType.RIGHT)) {
             if (equipMode) {
                 if (e.getClicker().getEquipment().getItemInMainHand().getType().isAir())
                     return;
@@ -251,6 +254,12 @@ public class GuardTrait extends Trait {
                     } else {
                         equipItem(mainHandItem, e.getClicker(), Equipment.EquipmentSlot.HAND);
                     }
+                }
+            } else {
+                if (following) {
+                    StewardsAPI.getLookup().get(this.getNPC()).stopFollowing(e.getClicker(), true);
+                } else {
+                    StewardsAPI.getLookup().get(this.getNPC()).startFollowing(e.getClicker());
                 }
             }
         }

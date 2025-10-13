@@ -81,7 +81,7 @@ public class GuardGui {
         fireMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         fireItem.setItemMeta(fireMeta);
 
-        gui.setItem(1, 7, PaperItemBuilder.from(fireItem).asGuiItem(e -> {
+        gui.setItem(5, 5, PaperItemBuilder.from(fireItem).asGuiItem(e -> {
 
         }));
     }
@@ -93,7 +93,7 @@ public class GuardGui {
     private static void populateContent(Gui gui, Guard guard, Player player) { // TODO backend for this
         ItemStack increaseRange = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta increaseMeta = (SkullMeta) increaseRange.getItemMeta();
-        PlayerProfile increaseProfile = Bukkit.createProfile(UUID.randomUUID(), "Increase Range");
+        PlayerProfile increaseProfile = Bukkit.createProfile(UUID.randomUUID(), "IncreaseRange");
         increaseProfile.setProperty(new ProfileProperty("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzA0MGZlODM2YTZjMmZiZDJjN2E5YzhlYzZiZTUxNzRmZGRmMWFjMjBmNTVlMzY2MTU2ZmE1ZjcxMmUxMCJ9fX0=")); // TODO Not have this be hardcoded
         increaseMeta.setPlayerProfile(increaseProfile);
         increaseMeta.displayName(ColorParser.of(Translation.of("gui.guard.common.items.increase-range")).build().decoration(TextDecoration.ITALIC, false));
@@ -102,7 +102,7 @@ public class GuardGui {
 
         ItemStack decreaseRange = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta decreaseMeta = (SkullMeta) decreaseRange.getItemMeta();
-        PlayerProfile decreaseProfile = Bukkit.createProfile(UUID.randomUUID(), "Decrease Range");
+        PlayerProfile decreaseProfile = Bukkit.createProfile(UUID.randomUUID(), "DecreaseRange");
         decreaseProfile.setProperty(new ProfileProperty("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzQzNzM0NmQ4YmRhNzhkNTI1ZDE5ZjU0MGE5NWU0ZTc5ZGFlZGE3OTVjYmM1YTEzMjU2MjM2MzEyY2YifX19"));
         decreaseMeta.setPlayerProfile(decreaseProfile);
         decreaseMeta.displayName(ColorParser.of(Translation.of("gui.guard.common.items.decrease-range")).build().decoration(TextDecoration.ITALIC, false));
@@ -114,7 +114,7 @@ public class GuardGui {
         chaseMeta.displayName(ColorParser.of(Translation.of("gui.guard.common.items.chase-range.name")).build().decoration(TextDecoration.ITALIC, false));
         chaseMeta.lore(List.of(
             ColorParser.of(Translation.of("gui.guard.common.items.chase-range.lore-1")).build().decoration(TextDecoration.ITALIC, false),
-            ColorParser.of(Translation.of("gui.guard.common.items.chase-range.lore-2")).with("range", String.valueOf(1)).build().decoration(TextDecoration.ITALIC, false) // TODO placeholder range
+            ColorParser.of(Translation.of("gui.guard.common.items.chase-range.lore-2")).with("range", String.valueOf(guard.getTrait().getChaseRange())).build().decoration(TextDecoration.ITALIC, false) // TODO placeholder range
         ));
         chaseMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         chaseRange.setItemMeta(chaseMeta);
@@ -124,7 +124,7 @@ public class GuardGui {
         wanderMeta.displayName(ColorParser.of(Translation.of("gui.guard.common.items.wander-range.name")).build().decoration(TextDecoration.ITALIC, false));
         wanderMeta.lore(List.of(
             ColorParser.of(Translation.of("gui.guard.common.items.wander-range.lore-1")).build().decoration(TextDecoration.ITALIC, false),
-            ColorParser.of(Translation.of("gui.guard.common.items.wander-range.lore-2")).with("range", String.valueOf(1)).build().decoration(TextDecoration.ITALIC, false) // TODO placeholder range
+            ColorParser.of(Translation.of("gui.guard.common.items.wander-range.lore-2")).with("range", String.valueOf(guard.getTrait().getWanderRange())).build().decoration(TextDecoration.ITALIC, false) // TODO placeholder range
         ));
         wanderMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         wanderRange.setItemMeta(wanderMeta);
@@ -134,7 +134,7 @@ public class GuardGui {
         meleeMeta.displayName(ColorParser.of(Translation.of("gui.guard.common.items.melee-range.name")).build().decoration(TextDecoration.ITALIC, false));
         meleeMeta.lore(List.of(
             ColorParser.of(Translation.of("gui.guard.common.items.melee-range.lore-1")).build().decoration(TextDecoration.ITALIC, false),
-            ColorParser.of(Translation.of("gui.guard.common.items.melee-range.lore-2")).with("range", String.valueOf(1)).build().decoration(TextDecoration.ITALIC, false) // TODO placeholder range
+            ColorParser.of(Translation.of("gui.guard.common.items.melee-range.lore-2")).with("range", String.valueOf(guard.getTrait().getMeleeRange())).build().decoration(TextDecoration.ITALIC, false) // TODO placeholder range
         ));
         meleeMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         meleeRange.setItemMeta(meleeMeta);
@@ -144,7 +144,7 @@ public class GuardGui {
         rangedMeta.displayName(ColorParser.of(Translation.of("gui.guard.common.items.ranged-range.name")).build().decoration(TextDecoration.ITALIC, false));
         rangedMeta.lore(List.of(
             ColorParser.of(Translation.of("gui.guard.common.items.ranged-range.lore-1")).build().decoration(TextDecoration.ITALIC, false),
-            ColorParser.of(Translation.of("gui.guard.common.items.ranged-range.lore-2")).with("range", String.valueOf(1)).build().decoration(TextDecoration.ITALIC, false) // TODO placeholder range
+            ColorParser.of(Translation.of("gui.guard.common.items.ranged-range.lore-2")).with("range", String.valueOf(guard.getTrait().getRangedRange())).build().decoration(TextDecoration.ITALIC, false) // TODO placeholder range
         ));
         rangedMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         rangedRange.setItemMeta(rangedMeta);
@@ -215,7 +215,7 @@ public class GuardGui {
         targetMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         targetItem.setItemMeta(targetMeta);
 
-        gui.setItem(5, 4, PaperItemBuilder.from(targetItem).asGuiItem());
+        gui.setItem(3, 4, PaperItemBuilder.from(targetItem).asGuiItem());
 
         ItemStack equipmentItem = new ItemStack(Material.CHAINMAIL_CHESTPLATE);
         ItemMeta equipmentMeta = equipmentItem.getItemMeta();
@@ -223,7 +223,7 @@ public class GuardGui {
         equipmentMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         equipmentItem.setItemMeta(equipmentMeta);
 
-        gui.setItem(5, 6, PaperItemBuilder.from(equipmentItem).asGuiItem());
+        gui.setItem(3, 6, PaperItemBuilder.from(equipmentItem).asGuiItem());
     }
 
 }
