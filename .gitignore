@@ -85,4 +85,4 @@ nb-configuration.xml
 .DS_Store
 /run/
 
-!/libs/AlathraPorts**
+!/libs/**
