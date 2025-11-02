@@ -46,6 +46,15 @@ repositories {
     maven("https://repo.triumphteam.dev/snapshots/")
 }
 
+val cleanAlathraPorts by tasks.registering(Jar::class) {
+    from(zipTree("libs/AlathraPorts-1.0.3.jar")) {
+        exclude("io/github/milkdrinkers/**")
+        exclude("com/github/milkdrinkers/**")
+    }
+    archiveFileName.set("AlathraPorts-cleaned.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("cleaned-libs"))
+}
+
 dependencies {
     // Core dependencies
     compileOnly(libs.annotations)
@@ -84,8 +93,8 @@ dependencies {
         exclude("com.comphenix.packetwrapper", "PacketWrapper")
         exclude("de.themoep", "minedown-adventure")
     }
-    compileOnly(files("libs/AlathraPorts-1.0.3.jar"))
-    compileOnly(files("libs/AlathranWars-4.0.0.jar"))
+    compileOnly(files(cleanAlathraPorts))
+    compileOnly(files("libs/AlathranWars-4.0.0-SNAPSHOT-1762101675.jar"))
 
     // Testing - Core
     testImplementation(libs.annotations)
