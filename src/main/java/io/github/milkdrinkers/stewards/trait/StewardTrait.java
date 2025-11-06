@@ -3,6 +3,7 @@ package io.github.milkdrinkers.stewards.trait;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import io.github.alathra.alathraports.AlathraPorts;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
 import io.github.alathra.alathraports.core.ports.Port;
@@ -73,6 +74,24 @@ public class StewardTrait extends Trait {
 
     public void setAnchorLocation(Location anchorLocation) {
         this.anchorLocation = anchorLocation;
+
+        if (this.getNPC().hasTrait(StablemasterTrait.class)) {
+            Town town = TownyAPI.getInstance().getTown(townUUID);
+            CarriageStation station = PortsAPI.getCarriageStationFromTown(town);
+            if (station != null) {
+                station.setTeleportLocation(anchorLocation);
+            } else {
+                Logger.get().error("Stablemaster steward {} in town {} has no carriage station.", this.getNPC().getId(), town.getName());
+            }
+        } else if (this.getNPC().hasTrait(PortmasterTrait.class)) {
+            Town town = TownyAPI.getInstance().getTown(townUUID);
+            Port port = PortsAPI.getPortFromTown(town);
+            if (port != null) {
+                port.setTeleportLocation(anchorLocation);
+            } else {
+                Logger.get().error("Portmaster steward {} in town {} has no port.", this.getNPC().getId(), town.getName());
+            }
+        }
     }
 
     public boolean isFemale() {
