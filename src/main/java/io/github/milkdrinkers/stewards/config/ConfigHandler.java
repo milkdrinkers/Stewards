@@ -1,6 +1,7 @@
 package io.github.milkdrinkers.stewards.config;
 
 import io.github.milkdrinkers.crate.Config;
+import io.github.milkdrinkers.crate.internal.settings.ReloadSetting;
 import io.github.milkdrinkers.stewards.Reloadable;
 import io.github.milkdrinkers.stewards.Stewards;
 
@@ -24,9 +25,21 @@ public class ConfigHandler implements Reloadable {
 
     @Override
     public void onLoad(Stewards plugin) {
-        cfg = new Config("config", plugin.getDataFolder().getPath(), plugin.getResource("config.yml")); // Create a config file from the template in our resources folder
-        nameCfg = new Config("names", plugin.getDataFolder().getPath(), plugin.getResource("names.yml"));
-        skinsCfg = new Config("skins", plugin.getDataFolder().getPath(), plugin.getResource("skins.yml"));
+        cfg = Config.builderConfig()
+            .path(plugin.getDataFolder().toPath().resolve("config.yml"))
+            .defaults(plugin.getResource("config.yml"))
+            .reload(ReloadSetting.MANUALLY)
+            .build();
+        nameCfg = Config.builderConfig()
+            .path(plugin.getDataFolder().toPath().resolve("names.yml"))
+            .defaults(plugin.getResource("names.yml"))
+            .reload(ReloadSetting.MANUALLY)
+            .build();
+        skinsCfg = Config.builderConfig()
+            .path(plugin.getDataFolder().toPath().resolve("skins.yml"))
+            .defaults(plugin.getResource("skins.yml"))
+            .reload(ReloadSetting.MANUALLY)
+            .build();
     }
 
     @Override

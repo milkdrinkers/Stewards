@@ -16,18 +16,18 @@ versionwatch = "io.github.milkdrinkers:versionwatch:1.0.2"
 wordweaver = "io.github.milkdrinkers:wordweaver:0.0.7"
 crate-api = { module = "io.github.milkdrinkers:crate-api", version.ref = "crate" }
 crate-yaml = { module = "io.github.milkdrinkers:crate-yaml", version.ref = "crate" }
-colorparser = "io.github.milkdrinkers:colorparser-paper:4.0.0-RC.1"
+colorparser = "io.github.milkdrinkers:colorparser-paper:4.1.0"
 threadutil-bukkit = "io.github.milkdrinkers:threadutil-bukkit:1.2.0"
 commandapi-shade = { module = "dev.jorel:commandapi-bukkit-shade-mojang-mapped", version.ref = "commandapi" }
-triumph-gui = "dev.triumphteam:triumph-gui-paper:3.1.13-SNAPSHOT"
-betonquest = "org.betonquest:betonquest:3.0.0-SNAPSHOT"
+triumph-gui = "dev.triumphteam:triumph-gui-paper:3.1.13"
+betonquest = "org.betonquest:betonquest:3.0.0-20251102.142314-419"
 
 # Plugin dependencies
 citizens = "net.citizensnpcs:citizens-main:2.0.39-SNAPSHOT"
 settlers = "io.github.milkdrinkers:settlers:0.0.19"
 bstats = "org.bstats:bstats-bukkit:3.1.0"
 vault = "com.github.MilkBowl:VaultAPI:1.7.1"
-packetevents = "com.github.retrooper:packetevents-spigot:2.9.4"
+packetevents = "com.github.retrooper:packetevents-spigot:2.10.0"
 placeholderapi = "me.clip:placeholderapi:2.11.6"
 towny = "com.palmergames.bukkit.towny:towny:0.101.2.0"
 

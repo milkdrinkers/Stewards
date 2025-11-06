@@ -10,10 +10,13 @@ import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.settlers.api.enums.ClickType;
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.interact.SettlerClickedEvent;
 import io.github.milkdrinkers.settlers.api.event.settler.lifetime.spawning.SettlerSpawnEvent;
+import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.gui.StewardBaseGui;
+import io.github.milkdrinkers.stewards.gui.StewardUserGui;
 import io.github.milkdrinkers.stewards.hook.Hook;
 import io.github.milkdrinkers.stewards.steward.Steward;
+import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.utility.CheckUtils;
 import io.github.milkdrinkers.stewards.utility.Logger;
 import net.citizensnpcs.api.ai.event.CancelReason;
@@ -211,7 +214,13 @@ public class StewardTrait extends Trait {
             return;
         }
 
-        if (!isMayor && !isAdmin) {
+        if (!isAdmin && !isMayor) {
+            // Open user architect menu for non-mayors
+            if (steward.getStewardType() == Stewards.getInstance().getStewardTypeHandler().getStewardTypeRegistry().getType(StewardTypeHandler.ARCHITECT_ID) && isHired()) {
+                StewardUserGui.createBaseGui(steward, e.getClicker()).open(e.getClicker());
+                return;
+            }
+
             e.getClicker().sendMessage(ColorParser.of("<red>You must be mayor or co-mayor to interact with stewards.").build()); // TODO Translate
             return;
         }

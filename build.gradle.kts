@@ -26,8 +26,6 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://mvn-repo.arim.space/lesser-gpl3/")
 
-    maven("https://maven.athyrium.eu/releases")
-
     maven("https://maven.citizensnpcs.co/repo")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
     maven("https://repo.codemc.org/repository/maven-public/") {
@@ -46,6 +44,15 @@ repositories {
     maven("https://nexus.betonquest.org/repository/betonquest/") // BetonQuest
 
     maven("https://repo.triumphteam.dev/snapshots/")
+}
+
+val cleanAlathraPorts by tasks.registering(Jar::class) {
+    from(zipTree("libs/AlathraPorts-1.0.3.jar")) {
+        exclude("io/github/milkdrinkers/**")
+        exclude("com/github/milkdrinkers/**")
+    }
+    archiveFileName.set("AlathraPorts-cleaned.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("cleaned-libs"))
 }
 
 dependencies {
@@ -86,7 +93,8 @@ dependencies {
         exclude("com.comphenix.packetwrapper", "PacketWrapper")
         exclude("de.themoep", "minedown-adventure")
     }
-    compileOnly(files("libs/AlathraPorts-1.0.3.jar"))
+    compileOnly(files(cleanAlathraPorts))
+    compileOnly(files("libs/AlathranWars-4.0.0-SNAPSHOT-1762101675.jar"))
 
     // Testing - Core
     testImplementation(libs.annotations)
