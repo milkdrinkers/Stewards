@@ -5,6 +5,7 @@ import com.palmergames.bukkit.towny.object.Town;
 import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
+import io.github.alathra.activeupkeep.api.ActiveUpkeepAPI;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
 import io.github.alathra.alathraports.core.ports.Port;
@@ -84,6 +85,11 @@ public class ConfirmUpgradeGui {
 
                     town.addBonusBlocks((Cfg.get().getInt("bailiff.claims.level-" + steward.getLevel()) -
                         Cfg.get().getInt("bailiff.claims.level-" + (steward.getLevel()))));
+
+                    int addedBonusClaims = Cfg.get().getInt("bailiff.claims.level-" + (steward.getLevel())) -
+                        Cfg.get().getInt("bailiff.claims.level-" + (steward.getLevel() - 1));
+
+                    ActiveUpkeepAPI.setBonusClaims(town, ActiveUpkeepAPI.getBonusClaims(town) + addedBonusClaims);
 
                 } else if (steward.getStewardType().id().equals(StewardTypeHandler.PORTMASTER_ID)) {
 

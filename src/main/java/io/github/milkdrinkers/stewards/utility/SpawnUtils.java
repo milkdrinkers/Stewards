@@ -2,6 +2,7 @@ package io.github.milkdrinkers.stewards.utility;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
+import io.github.alathra.activeupkeep.api.ActiveUpkeepAPI;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.settlers.api.settler.SettlerBuilder;
@@ -158,7 +159,7 @@ public final class SpawnUtils {
         TownMetaData.NPC.set(town, steward);
 
         if (steward.hasTrait(BailiffTrait.class)) {
-            town.addBonusBlocks(Cfg.get().getInt("bailiff.claims.level-1"));
+            ActiveUpkeepAPI.setBonusClaims(town, ActiveUpkeepAPI.getBonusClaims(town) + Cfg.get().getInt("bailiff.claims.level-1"));
         } else if (steward.hasTrait(PortmasterTrait.class)) {
             PortsAPI.createAbstractPort(TownyAPI.getInstance().getTownName(player), steward.getSettler().getNpc().getEntity().getLocation());
         } else if (steward.hasTrait(StablemasterTrait.class)) {

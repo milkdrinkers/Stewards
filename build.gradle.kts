@@ -55,6 +55,15 @@ val cleanAlathraPorts by tasks.registering(Jar::class) {
     destinationDirectory.set(layout.buildDirectory.dir("cleaned-libs"))
 }
 
+val cleanActiveUpkeep by tasks.registering(Jar::class) {
+    from (zipTree("libs/ActiveUpkeep-1.1.0-SNAPSHOT-1763234452.jar")) {
+        exclude("io/github/milkdrinkers/**")
+        exclude("com/github/milkdrinkers/**")
+    }
+    archiveFileName.set("ActiveUpkeep-cleaned.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("cleaned-libs"))
+}
+
 dependencies {
     // Core dependencies
     compileOnly(libs.annotations)
@@ -94,6 +103,7 @@ dependencies {
         exclude("de.themoep", "minedown-adventure")
     }
     compileOnly(files(cleanAlathraPorts))
+    compileOnly(files(cleanActiveUpkeep))
     compileOnly(files("libs/AlathranWars-4.0.0-SNAPSHOT-1762101675.jar"))
 
     // Testing - Core
@@ -210,7 +220,7 @@ bukkit { // Options: https://github.com/eldoriarpg/plugin-yml/wiki/Bukkit
     foliaSupported = false
 
     // Dependencies
-    depend = listOf("Citizens", "Settlers", "Towny", "BetonQuest", "AlathraPorts")
+    depend = listOf("Citizens", "Settlers", "Towny", "BetonQuest", "AlathraPorts", "ActiveUpkeep")
     softDepend = listOf("PacketEvents", "Vault", "PlaceholderAPI")
     loadBefore = listOf()
     provides = listOf()
