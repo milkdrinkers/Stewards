@@ -1,6 +1,7 @@
 package io.github.milkdrinkers.stewards.listener;
 
 import com.palmergames.bukkit.towny.TownyAPI;
+import io.github.alathra.activeupkeep.api.ActiveUpkeepAPI;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.settlers.api.SettlersAPI;
 import io.github.milkdrinkers.settlers.api.enums.RemoveReason;
@@ -16,6 +17,7 @@ import io.github.milkdrinkers.stewards.steward.StewardTypeHandler;
 import io.github.milkdrinkers.stewards.steward.lookup.StewardLookup;
 import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.*;
+import io.github.milkdrinkers.stewards.utility.Cfg;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -194,6 +196,11 @@ public class SettlersListener implements Listener {
                     .setLevel(stewardTrait.getLevel())
                     .setSettler(e.getSettler())
                     .build();
+
+                // For "broken" towns where the bonus claims have not been added correctly. 
+                if (ActiveUpkeepAPI.getBonusClaims(Objects.requireNonNull(TownyAPI.getInstance().getTown(stewardTrait.getTownUUID()))) <= 0) {
+                    ActiveUpkeepAPI.setBonusClaims(Objects.requireNonNull(TownyAPI.getInstance().getTown(stewardTrait.getTownUUID())), Cfg.get().getInt("bailiff.claims.level-" + (steward.getLevel())));
+                }
             } else if (e.getSettler().getNpc().hasTrait(PortmasterTrait.class)) {
                 steward = Steward.builder()
                     .setStewardType(Objects.requireNonNull(plugin.getStewardTypeHandler().getStewardTypeRegistry().getType(

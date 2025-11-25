@@ -94,6 +94,7 @@ dependencies {
         exclude("de.themoep", "minedown-adventure")
     }
     compileOnly(files(cleanAlathraPorts))
+    compileOnly(files("libs/ActiveUpkeep-1.1.1-SNAPSHOT-1763948959.jar"))
     compileOnly(files("libs/AlathranWars-4.0.0-SNAPSHOT-1762101675.jar"))
 
     // Testing - Core
@@ -210,7 +211,7 @@ bukkit { // Options: https://github.com/eldoriarpg/plugin-yml/wiki/Bukkit
     foliaSupported = false
 
     // Dependencies
-    depend = listOf("Citizens", "Settlers", "Towny", "BetonQuest", "AlathraPorts")
+    depend = listOf("Citizens", "Settlers", "Towny", "BetonQuest", "AlathraPorts", "ActiveUpkeep")
     softDepend = listOf("PacketEvents", "Vault", "PlaceholderAPI")
     loadBefore = listOf()
     provides = listOf()
