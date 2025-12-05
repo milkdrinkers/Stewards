@@ -1,8 +1,5 @@
 package io.github.milkdrinkers.stewards.listener;
 
-import com.palmergames.adventure.text.Component;
-import com.palmergames.adventure.text.event.HoverEvent;
-import com.palmergames.adventure.text.format.NamedTextColor;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.event.DeleteTownEvent;
 import com.palmergames.bukkit.towny.event.NewDayEvent;
@@ -19,6 +16,7 @@ import com.palmergames.bukkit.towny.object.economy.transaction.TransactionType;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.alathra.alathraports.core.carriagestations.CarriageStation;
 import io.github.alathra.alathraports.core.ports.Port;
+import io.github.milkdrinkers.colorparser.paper.ColorParser;
 import io.github.milkdrinkers.stewards.Stewards;
 import io.github.milkdrinkers.stewards.api.StewardsAPI;
 import io.github.milkdrinkers.stewards.steward.Steward;
@@ -29,6 +27,7 @@ import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.DeleteUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -64,12 +63,16 @@ public class TownyListener implements Listener {
         final StewardType type = StewardsAPI.getRegistry().getType(StewardTypeHandler.TREASURER_ID);
 
         if (TownMetaData.NPC.has(e.getTown(), type)) {
-            hoverComponent = Component.text("Your Treasurer is level " + TownMetaData.NPC.getStewardOptional(e.getTown(), type).map(Steward::getLevel).orElse(0) + ". To increase this limit, upgrade your Treasurer.", NamedTextColor.GRAY);
+            hoverComponent = ColorParser.of("<gray>Your treasurer is level <level>. To increase this limit, upgrade your treasurer.")
+                .with("level", String.valueOf(TownMetaData.NPC.getStewardOptional(e.getTown(), type).map(Steward::getLevel).orElse(0))).build(); // TODO Translate
         } else {
-            hoverComponent = Component.text("You don't have a Treasurer. To increase this limit, hire a Treasurer.", NamedTextColor.GRAY);
+            hoverComponent = ColorParser.of("<gray>You don't have a treasurer. To increase this limit, hire a treasurer.").build(); // TODO Translate
         }
 
-        Component bankLimit = Component.newline().append(Component.text("[", NamedTextColor.GRAY)).append(Component.text("Stewards", NamedTextColor.GREEN)).append(Component.text("] ", NamedTextColor.GRAY)).append(Component.text("Town bank limit: %s⊚.".formatted(TownMetaData.getBankLimit(e.getTown())), NamedTextColor.WHITE)).hoverEvent(HoverEvent.showText(hoverComponent));
+        Component bankLimit = Component.newline()
+            .append((ColorParser.of("<gray>[<green>Stewards<gray>] <white>Town bank limit: <limit>")
+                .with("limit", String.valueOf(TownMetaData.getBankLimit(e.getTown()))))
+                .build()); // TODO Translate
 
         e.getStatusScreen().addComponentOf("Stewards", bankLimit);
     }
