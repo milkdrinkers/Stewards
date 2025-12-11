@@ -27,6 +27,7 @@ import io.github.milkdrinkers.stewards.towny.TownMetaData;
 import io.github.milkdrinkers.stewards.trait.StewardTrait;
 import io.github.milkdrinkers.stewards.utility.Cfg;
 import io.github.milkdrinkers.stewards.utility.DeleteUtils;
+import io.github.milkdrinkers.threadutil.Scheduler;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -79,10 +80,12 @@ public class TownyListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTownRemoved(DeleteTownEvent e) {
-        for (final Steward steward : lookup.town().getTownStewards(e.getTownUUID())) {
-            DeleteUtils.dismiss(steward, e.getTownUUID(), null, false);
-        }
-        lookup.town().clear(e.getTownUUID());
+        Scheduler.sync(() -> {
+            for (final Steward steward : lookup.town().getTownStewards(e.getTownUUID())) {
+                DeleteUtils.dismiss(steward, e.getTownUUID(), null, false);
+            }
+            lookup.town().clear(e.getTownUUID());
+        }).execute();
     }
 
     @EventHandler
