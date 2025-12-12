@@ -23,7 +23,7 @@ triumph-gui = "dev.triumphteam:triumph-gui-paper:3.1.13"
 betonquest = "org.betonquest:betonquest:3.0.0-20251102.142314-419"
 
 # Plugin dependencies
-citizens = "net.citizensnpcs:citizens-main:2.0.39-SNAPSHOT"
+citizens = "net.citizensnpcs:citizens-main:2.0.40-SNAPSHOT"
 settlers = "io.github.milkdrinkers:settlers:0.0.19"
 bstats = "org.bstats:bstats-bukkit:3.1.0"
 vault = "com.github.MilkBowl:VaultAPI:1.7.1"
