@@ -47,4 +47,4 @@ testcontainers = ["testcontainers-jupiter"]
 shadow = "com.gradleup.shadow:9.0.2"
 run-paper = "xyz.jpenilla.run-paper:2.3.1"
 plugin-yml-bukkit = "de.eldoria.plugin-yml.bukkit:0.7.1"
-plugin-yml-paper = "de.eldoria.plugin-yml.paper:0.7.1"
+plugin-yml-paper = "de.eldoria.plugin-yml.paper:v0.8.0"
