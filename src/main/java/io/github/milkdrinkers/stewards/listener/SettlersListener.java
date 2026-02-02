@@ -1,6 +1,7 @@
 package io.github.milkdrinkers.stewards.listener;
 
 import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.object.Town;
 import io.github.alathra.activeupkeep.api.ActiveUpkeepAPI;
 import io.github.alathra.alathraports.api.PortsAPI;
 import io.github.milkdrinkers.settlers.api.SettlersAPI;
@@ -231,6 +232,11 @@ public class SettlersListener implements Listener {
                     .setLevel(stewardTrait.getLevel())
                     .setSettler(e.getSettler())
                     .build();
+
+                Town town = TownyAPI.getInstance().getTown(stewardTrait.getTownUUID());
+                if (TownMetaData.getBankLimit(town) != Cfg.get().getInt("treasurer.limit.level-" + (steward.getLevel()))) {
+                    TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-" + (steward.getLevel())));
+                }
             }
 
             if (steward != null) {
