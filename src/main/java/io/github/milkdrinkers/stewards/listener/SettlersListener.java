@@ -245,6 +245,9 @@ public class SettlersListener implements Listener {
                 final UUID town = stewardTrait.getTownUUID();
                 if (town != null)
                     lookup.town().add(town, steward.getUniqueId());
+                else {
+                    e.getSettler().delete();
+                }
             }
         } catch (InvalidStewardException ex) {
             throw new RuntimeException(ex);
