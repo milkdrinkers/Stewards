@@ -232,11 +232,6 @@ public class SettlersListener implements Listener {
                     .setLevel(stewardTrait.getLevel())
                     .setSettler(e.getSettler())
                     .build();
-
-                Town town = TownyAPI.getInstance().getTown(stewardTrait.getTownUUID());
-                if (TownMetaData.getBankLimit(town) != Cfg.get().getInt("treasurer.limit.level-" + (steward.getLevel()))) {
-                    TownMetaData.setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-" + (steward.getLevel())));
-                }
             }
 
             if (steward != null) {

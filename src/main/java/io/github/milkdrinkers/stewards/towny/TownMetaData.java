@@ -176,7 +176,10 @@ public class TownMetaData {
             } else {
                 setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-0"));
             }
+        } else if (MetaDataUtil.getLong(town, BANK_LIMIT_FIELD) != Cfg.get().getInt("treasurer.limit.level-" + NPC.getStewardOptional(town, type).map(Steward::getLevel).orElse(1))) {
+            setBankLimit(town, Cfg.get().getInt("treasurer.limit.level-" + NPC.getStewardOptional(town, type).map(Steward::getLevel).orElse(1)));
         }
+
         return MetaDataUtil.getLong(town, BANK_LIMIT_FIELD);
     }
 
