@@ -41,7 +41,7 @@ repositories {
     maven("https://repo.glaremasters.me/repository/towny/") { // Towny
         content { includeGroup("com.palmergames.bukkit.towny") }
     }
-    maven("https://nexus.betonquest.org/repository/betonquest/") // BetonQuest
+    maven("https://repo.betonquest.org/betonquest/") // BetonQuest
 
     maven("https://repo.triumphteam.dev/snapshots/")
 }
